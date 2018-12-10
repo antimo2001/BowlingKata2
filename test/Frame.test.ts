@@ -10,8 +10,8 @@ describe("Frame", () => {
     });
     it("#score", () => {
         frame = new Frame([]);
-        const badfunc = () => frame.score();
-        const msg = "Frame.score is abstract method; it cannot be directly invoked";
-        expect(badfunc).throws(msg);
+        const scoreMethod = () => frame.score();
+        const errorMessage = "Frame.score is abstract method; it cannot be directly invoked";
+        expect(scoreMethod).throws(errorMessage);
     });
 });
