@@ -1,0 +1,21 @@
+import { Frame } from '../src/Frame';
+
+export class StrikeFrame extends Frame {
+    constructor(throws: number[]) {
+        super(throws);
+        this.throws = [...throws, 10];
+    }
+
+    /**
+    * Overrides the Frame.Score method. Note this only sums the 2 throws in
+    * this current frame and the next 2 throws.
+    */
+    public score(): number {
+        let start = this.startingThrow;
+        let next = this.throws[start + 1];
+        let nextnext = this.throws[start + 2];
+        next = !!next ? next : 0;
+        nextnext = !!nextnext ? nextnext : 0;
+        return 10 + next + nextnext;
+    }
+}
