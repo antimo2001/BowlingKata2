@@ -1,6 +1,6 @@
 {
   "name": "bowlingkata2",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "practice typescript with mocha tests",
   "main": "index.js",
   "dependencies": {
@@ -14,9 +14,11 @@
     "ts-node": "^7.0.1"
   },
   "scripts": {
-    "test0": "mocha -r ts-node/register test/hello-world.test.ts",
     "mocha-help": "mocha --help",
-    "test-watch": "mocha  -w  -r ts-node/register  test/**/*.test.ts",
+    "types-check": "tsc",
+    "types-build": "tsc --build",
+    "test0": "mocha -r ts-node/register test/hello-world.test.ts",
+    "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec > out/test-report.txt",
     "test": "mocha -r ts-node/register  test/**/*.test.ts"
   },
   "author": "",
