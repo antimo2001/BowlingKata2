@@ -6,8 +6,6 @@ describe("OpenFrame", () => {
     let frame: OpenFrame;
     it("#constructor", () => {
         frame = new OpenFrame([], 0, 0);
-        // console.log(`...DEBUGTESTS: frame.throws==${frame.throws}`);
-        expect(frame.throws).to.be.include(0);
         expect(frame.score()).to.be.equal(0);
     });
 

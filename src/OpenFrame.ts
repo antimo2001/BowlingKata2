@@ -4,7 +4,6 @@ export class OpenFrame extends Frame {
     constructor(throws: number[], firstThrow: number, secondThrow: number) {
         super(throws);
         this.throws = [...throws, firstThrow, secondThrow];
-        // this.startingThrow = this.throws.length;
     }
 
     /**

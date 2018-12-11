@@ -1,10 +1,18 @@
 export class Frame {
-    throws: number[];
-    startingThrow: number;
+    protected throws: number[];
+    public startingThrow: number;
 
     constructor(throws: number[]) {
         this.throws = throws;
         this.startingThrow = throws.length;
+    }
+
+    public getThrows(): number[] {
+        return this.throws;
+    }
+
+    public setThrows(throws: number[]): void {
+        this.throws = throws;
     }
 
     public score(): number {

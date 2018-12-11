@@ -1,4 +1,7 @@
+import debug from 'debug';
 import { Frame } from '../src/Frame';
+
+const debugTest = debug("test:src:SpareFrame");
 
 export class SpareFrame extends Frame {
     constructor(throws: number[], firstThrow: number) {
@@ -12,8 +15,11 @@ export class SpareFrame extends Frame {
     */
     public score(): number {
         let start = this.startingThrow;
+        // debugTest(`start==${start}`);
+        // debugTest(`this.throws.length==${this.throws.length}`);
         let next = this.throws[start + 2];
         next = !!next ? next : 0;
+        debugTest(`next==${next}; and is NAN? ${(next===NaN)}`);
         return 10 + next;
     }
 }
