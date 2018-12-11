@@ -109,14 +109,43 @@ describe("BowlingGame", () => {
         });
     });
 
-    xdescribe("#strike", () => {
-        xit("player bowls a single strike", () => {
-            throw "notyetimplemented";
+    describe("#strike", () => {
+        it("player bowls a strike in frame 1", () => {
+            test.game.strike();
+            test.game.open(1, 6);
+            test.playOpenFrames(8, 0, 0);
+            const expectedScore = sumReduce(10, 1, 6, 1, 6);
+            expect(test.game.score()).to.be.equal(expectedScore);
+        });
+        it("player bowls a strike in frame 4", () => {
+            test.playOpenFrames(3, 0, 0);
+            debugLog(`test.game.throws===${test.game.throws}`);
+            test.game.strike();
+            test.game.open(4, 2);
+            test.playOpenFrames(5, 0, 0);
+            debugLog(`test.game.throws===${test.game.throws}`);
+            const expectedScore = sumReduce(10, 4, 2, 4, 2);
+            expect(test.game.score()).to.be.equal(expectedScore);
+        });
+        it("player bowls a strike in frame 10", () => {
+            test.playOpenFrames(9, 0, 0);
+            test.game.strike();
+            test.game.bonusRoll(10);
+            test.game.bonusRoll(10);
+            expect(test.game.score()).to.be.equal(30);
+        });
+        it("player bowls perfect game", () => {
+            for (let i = 0; i < 10; i++) {
+                test.game.strike();
+            }
+            test.game.bonusRoll(10);
+            test.game.bonusRoll(10);
+            expect(test.game.score()).to.be.equal(300);
         });
     });
 
     xdescribe("#mixture of frames", () => {
-        xit("player bowls strike/spare alternativley", () => {
+        xit("player bowls strike/spare alternating", () => {
             throw "notyetimplemented";
         });
     });

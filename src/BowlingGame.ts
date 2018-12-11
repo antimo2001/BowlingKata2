@@ -29,11 +29,10 @@ export class BowlingGame {
     }
     
     public spare(firstThrow: number): void {
-        // debugTest(`before: this.throws.length==${this.throws.length}`);
         let frame = new SpareFrame(this.throws, firstThrow);
         this.frames.push(frame);
         this.setAllFrames(firstThrow, 10 - firstThrow);
-        debugTest(`after: this.throws.length==${this.throws.length}`);
+        // debugTest(`after: this.throws.length==${this.throws.length}`);
     }
     
     public strike(): void {
@@ -45,6 +44,9 @@ export class BowlingGame {
     public bonusRoll(pins: number): void {
         this.frames.push(new BonusFrame(this.throws));
         this.setAllFrames(pins);
+        // debugTest(`this.frames.length==${this.frames.length}`);
+        // debugTest(`this.throws==${this.throws}`);
+        debugTest(`this.score()==${this.score()}`);
     }
 
     /**
@@ -58,9 +60,11 @@ export class BowlingGame {
      * Calculates the total score for the game (simple for-of loop)
      */
     private scoreForOf(): number {
+        let i = 0;
         let total = 0;
         for(let f of this.frames) {
             total += f.score();
+            // debugTest(`frame[${i++}]; total==${total}`);
         }
         return total;
     }
@@ -75,8 +79,10 @@ export class BowlingGame {
     }
 
     /** Update all of the frames in this game with all of the new throws */
-    private setAllFrames(throw1: number, throw2: number = 0): void {
-        let newThrows = [...this.throws, throw1, throw2];
+    private setAllFrames(throw1: number, throw2?: number): void {
+        let newThrows = [...this.throws, throw1];
+        //Concat throw2 only if it is defined
+        newThrows = (throw2===undefined ? newThrows: [...newThrows, throw2]);
         for (let f of this.frames) {
             f.setThrows(newThrows);
         }

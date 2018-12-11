@@ -1,4 +1,6 @@
+import debug from 'debug';
 import { Frame } from '../src/Frame';
+const debugTest = debug("test:src:OpenFrame");
 
 export class OpenFrame extends Frame {
     constructor(throws: number[], firstThrow: number, secondThrow: number) {
@@ -13,6 +15,10 @@ export class OpenFrame extends Frame {
     public score(): number {
         let start = this.startingThrow;
         let t = this.throws;
-        return t[start] + t[start+1];
+        // debugTest(`start==${start}`);
+        // debugTest(`t==${t}`);
+        let current = !!t[start]? t[start]: 0;
+        let next = !!t[start+1]? t[start+1]: 0;
+        return current + next;
     }
 }
