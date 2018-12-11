@@ -1,26 +1,30 @@
 {
   "name": "bowlingkata2",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "practice typescript with mocha tests",
   "main": "index.js",
   "dependencies": {
     "typescript": "^3.2.2"
   },
   "devDependencies": {
+    "@types/debug": "0.0.31",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
     "chai": "^4.2.0",
+    "debug": "^4.1.0",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.json && npm test > out/build.out",
-    "mocha-help": "mocha --help",
+    "build": "npm run tsc-build > out/build01.log  &&  npm test > out/build02.log",
+    "mocha-help": "mocha --help > out/mocha-help.out",
     "tsc": "tsc",
     "tsc-build": "tsc --build tsconfig.json",
     "test0": "mocha -r ts-node/register test/hello-world.test.ts",
-    "test-watch": "mocha  --watch  -r ts-node/register  test/**/*.test.ts",
-    "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec > out/test-report.txt",
+    "test1": "SET DEBUG=test:*  &&  mocha -r ts-node/register test/hello-world.test.ts",
+    "test-debug": "SET DEBUG=test:*  &&  mocha -w -r ts-node/register test/**/*.test.ts",
+    "test-watch": "mocha  -w  -r ts-node/register  test/**/*.test.ts",
+    "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec",
     "test": "mocha -r ts-node/register  test/**/*.test.ts"
   },
   "author": "",
