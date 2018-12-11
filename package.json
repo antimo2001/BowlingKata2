@@ -14,10 +14,12 @@
     "ts-node": "^7.0.1"
   },
   "scripts": {
+    "build": "tsc --build tsconfig.json && npm test > out/build.out",
     "mocha-help": "mocha --help",
-    "types-check": "tsc",
-    "types-build": "tsc --build",
+    "tsc": "tsc",
+    "tsc-build": "tsc --build tsconfig.json",
     "test0": "mocha -r ts-node/register test/hello-world.test.ts",
+    "test-watch": "mocha  --watch  -r ts-node/register  test/**/*.test.ts",
     "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec > out/test-report.txt",
     "test": "mocha -r ts-node/register  test/**/*.test.ts"
   },
