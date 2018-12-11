@@ -27,7 +27,7 @@ class TestSubject {
     }
 }
 
-describe.only("BowlingGame", () => {
+describe("BowlingGame", () => {
     let test: TestSubject;
 
     beforeEach(() => {
