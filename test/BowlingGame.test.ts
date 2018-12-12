@@ -157,7 +157,15 @@ describe("BowlingGame", () => {
                 game.spare(5);
             });
             test.game.bonusRoll(10);
-            test.game.bonusRoll(10);
+            expect(test.game.score()).to.equal(200);
+        });
+        it("player bowls alternating spares & strikes", () => {
+            test.playMultipleFrames(5, (game: BowlingGame) => {
+                game.spare(8);
+                game.strike();
+            });
+            test.game.bonusRoll(5);
+            test.game.bonusRoll(5);
             expect(test.game.score()).to.equal(200);
         });
         it("player bowls 1 strike and 1 spare, no bonus", () => {
