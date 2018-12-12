@@ -5,8 +5,8 @@ import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
 import { BonusFrame } from './BonusFrame';
 
-// const debugLog = debug("src:BowlingGame");
-const debugTest = debug("test:src:BowlingGame");
+// const debugLog = debug("test:src:BowlingGame");
+const debugTest = debug("src:BowlingGame");
 
 export class BowlingGame {
     frames: Frame[];

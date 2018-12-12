@@ -1,7 +1,7 @@
 import debug from 'debug';
 import { Frame } from '../src/Frame';
 
-const debugTest = debug("test:src:SpareFrame");
+const debugTest = debug("src:SpareFrame");
 
 export class SpareFrame extends Frame {
     constructor(throws: number[], firstThrow: number) {
