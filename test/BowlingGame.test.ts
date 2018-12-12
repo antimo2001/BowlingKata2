@@ -26,10 +26,10 @@ class TestSubject {
         }
     }
     /** Helper function is used to execute multiple frames (of any type) for a game */
-    simulateGamePlay(frameTotalCount: number, iterator?: Function): void {
+    playMultipleFrames(loopCount: number, iterator: Function): void {
         let cb = (iterator===undefined? () => {} : iterator);
-        for (let i = 0; i < frameTotalCount; i++) {
-            cb.call(this);
+        for (let i = 0; i < loopCount; i++) {
+            cb.call(this, this.game);
         }
     }
 }
@@ -60,7 +60,7 @@ describe("BowlingGame", () => {
             test.game.open(1, 1);
             test.game.open(2, 2);
             test.game.open(3, 3);
-            let expectedScore = sumReduce(10, 2, 4, 6);
+            let expectedScore = sumReduce(3, 7, 2, 4, 6);
             expect(test.game.score()).to.be.equal(expectedScore);
         });
         it("player throws all gutterballs", () => {
@@ -126,11 +126,11 @@ describe("BowlingGame", () => {
         });
         it("player bowls a strike in frame 4", () => {
             test.playOpenFrames(3, 0, 0);
-            debugLog(`test.game.throws===${test.game.throws}`);
+            // debugLog(`before test.game.throws===${test.game.throws}`);
             test.game.strike();
             test.game.open(4, 2);
             test.playOpenFrames(5, 0, 0);
-            debugLog(`test.game.throws===${test.game.throws}`);
+            debugLog(`after test.game.throws===${test.game.throws}`);
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
             expect(test.game.score()).to.be.equal(expectedScore);
         });
@@ -142,18 +142,34 @@ describe("BowlingGame", () => {
             expect(test.game.score()).to.be.equal(30);
         });
         it("player bowls perfect game", () => {
-            for (let i = 0; i < 10; i++) {
-                test.game.strike();
-            }
+            test.playMultipleFrames(10, (g: BowlingGame) => g.strike());
             test.game.bonusRoll(10);
             test.game.bonusRoll(10);
             expect(test.game.score()).to.be.equal(300);
         });
     });
 
-    xdescribe("#mixture of frames", () => {
-        xit("player bowls strike/spare alternating", () => {
-            throw "notyetimplemented";
+    describe("#mixture of frames", () => {
+        it("player bowls 1 strike and 1 spare, no bonus", () => {
+            test.playOpenFrames(3, 1, 1);
+            test.game.strike();
+            test.game.spare(4);
+            test.playOpenFrames(5, 1, 2);
+            let firstFrames = 3 * 2;
+            let lastFrames = 5 * 3;
+            let middleFrames = sumReduce(10, 4, 6, 10, 1);
+            const expectedScore = sumReduce(firstFrames, lastFrames, middleFrames);
+            expect(test.game.score()).to.equal(expectedScore);
+        });
+        it("player bowls alternating strikes & spares", () => {
+            //Simulate a game where a player alternates between strike/spare
+            test.playMultipleFrames(5, (game: BowlingGame) => {
+                game.strike();
+                game.spare(5);
+            });
+            test.game.bonusRoll(10);
+            test.game.bonusRoll(10);
+            expect(test.game.score()).to.equal(200);
         });
     });
 

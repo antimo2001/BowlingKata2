@@ -26,5 +26,5 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 
 ## Ideas
 
-- redesign the method `TestSubject.playOpenFrame()` so that it takes a callback param? and so that the method can be a standalone function
-- design flaw: why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...redesign so that only BowlingGame has this throws[]
+- [x] redesign the method `TestSubject.playOpenFrame()` so that it takes a callback param? and so that the method can be a standalone function
+- [ ] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
