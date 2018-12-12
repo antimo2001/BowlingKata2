@@ -14,13 +14,20 @@
         },
         {
             "type": "npm",
+            "script": "test",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
             "script": "test-report",
             "problemMatcher": []
         },
         {
             "type": "npm",
-            "script": "test",
-            "problemMatcher": []
+            "script": "test-debug",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
