@@ -23,27 +23,27 @@ export class BowlingGame {
      * @param secondThrow the second throw in the frame
      */
     public open(firstThrow: number, secondThrow: number): void {
-        let frame = new OpenFrame(this.throws, firstThrow, secondThrow);
+        let frame = new OpenFrame(this.throws.length);
         this.frames.push(frame);
-        this.setAllFrames(firstThrow, secondThrow);
+        this.updateThrows(firstThrow, secondThrow);
     }
     
     public spare(firstThrow: number): void {
-        let frame = new SpareFrame(this.throws, firstThrow);
+        let frame = new SpareFrame(this.throws.length);
         this.frames.push(frame);
-        this.setAllFrames(firstThrow, 10 - firstThrow);
+        this.updateThrows(firstThrow, 10 - firstThrow);
         // debugTest(`after: this.throws.length==${this.throws.length}`);
     }
     
     public strike(): void {
-        let frame = new StrikeFrame(this.throws);
+        let frame = new StrikeFrame(this.throws.length);
         this.frames.push(frame);
-        this.setAllFrames(10);
+        this.updateThrows(10);
     }
 
     public bonusRoll(pins: number): void {
-        this.frames.push(new BonusFrame(this.throws));
-        this.setAllFrames(pins);
+        this.frames.push(new BonusFrame(this.throws.length));
+        this.updateThrows(pins);
         // debugTest(`this.frames.length==${this.frames.length}`);
         // debugTest(`this.throws==${this.throws}`);
         debugTest(`this.score()==${this.score()}`);
@@ -63,7 +63,7 @@ export class BowlingGame {
         let i = 0;
         let total = 0;
         for(let f of this.frames) {
-            total += f.score();
+            total += f.score(this.throws);
             // debugTest(`frame[${i++}]; total==${total}`);
         }
         return total;
@@ -73,19 +73,16 @@ export class BowlingGame {
      * Calculates the total score for the game (with map-reduce algorithm)
      */
     private scoreMapReduce(): number {
-        const scores = this.frames.map(f => f.score());
+        const scores = this.frames.map(f => f.score(this.throws));
         const total = scores.reduce((p, c) => p + c, 0);
         return total;
     }
 
-    /** Update all of the frames in this game with all of the new throws */
-    private setAllFrames(throw1: number, throw2?: number): void {
+    /** Update all of throws in this game with all of the new throws */
+    private updateThrows(throw1: number, throw2?: number): void {
         let newThrows = [...this.throws, throw1];
         //Concat throw2 only if it is defined
         newThrows = (throw2===undefined ? newThrows: [...newThrows, throw2]);
-        for (let f of this.frames) {
-            f.setThrows(newThrows);
-        }
         this.throws = newThrows;
     }
 }

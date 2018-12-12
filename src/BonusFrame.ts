@@ -1,14 +1,14 @@
 import { Frame } from '../src/Frame';
 
 export class BonusFrame extends Frame {
-    constructor(throws: number[]) {
-        super(throws);
+    constructor(frameIndex: number) {
+        super(frameIndex);
     }
 
     /**
     * Overrides the Frame.Score method.
     */
-    public score(): number {
+    public score(throws: number[]): number {
         return 0;
     }
 }

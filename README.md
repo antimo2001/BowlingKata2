@@ -28,6 +28,11 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 
 ## Ideas
 
+### Design
+
 - [x] redesign the method `TestSubject.playOpenFrame()` so that it takes a callback param? ~~and so that the method can be a standalone function~~
-- [ ] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
+- [x] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
+
+### Future Exploration
+
 - [ ] i should learn how to use github's feature to create tags (instead of using branches to create my "tags", which i intended to be simply read-only branches while i continue to commit new code in to the master-branch)

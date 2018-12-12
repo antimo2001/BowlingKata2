@@ -5,19 +5,13 @@ import 'mocha';
 describe("Frame", () => {
     let frame: Frame;
     it("#constructor", () => {
-        frame = new Frame([]);
-        expect(frame.getThrows()).to.be.empty;
+        frame = new Frame(0);
+        // expect(frame.getThrows()).to.be.empty;
     });
     it("#score", () => {
-        frame = new Frame([]);
-        const scoreMethod = () => frame.score();
+        frame = new Frame(0);
+        const scoreMethod = () => frame.score([1, 0]);
         const errorMessage = "Frame.score is abstract method; it cannot be directly invoked";
         expect(scoreMethod).throws(errorMessage);
-    });
-    it("#setThrows", () => {
-        frame = new Frame([]);
-        let throws = [1,2,3,4];
-        frame.setThrows(throws);
-        expect(frame.getThrows()).to.equal(throws);
     });
 });
