@@ -25,6 +25,13 @@ class TestSubject {
             this.game.open(firstThrow, secondThrow);
         }
     }
+    /** Helper function is used to execute multiple frames (of any type) for a game */
+    simulateGamePlay(frameTotalCount: number, iterator?: Function): void {
+        let cb = (iterator===undefined? () => {} : iterator);
+        for (let i = 0; i < frameTotalCount; i++) {
+            cb.call(this);
+        }
+    }
 }
 
 describe("BowlingGame", () => {
