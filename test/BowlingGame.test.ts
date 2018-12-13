@@ -38,14 +38,14 @@ class TestSubject {
     }
 }
 
-describe.only("BowlingGame", () => {
+describe("BowlingGame", () => {
     let test: TestSubject;
 
     beforeEach(() => {
         test = new TestSubject();
     });
 
-    describe.skip("#openFrame", () => {
+    describe("#openFrame", () => {
         it("single frame", () => {
             test.game.open(1, 2);
             expect(test.game.score()).to.be.equal(3);
