@@ -160,6 +160,7 @@ describe("BowlingGame", () => {
             expect(test.game.score()).to.equal(200);
         });
         it("player bowls alternating spares & strikes", () => {
+            //Simulate a game where a player alternates between spares/strikes
             test.playMultipleFrames(5, (game: BowlingGame) => {
                 game.spare(8);
                 game.strike();
@@ -186,18 +187,23 @@ describe("BowlingGame", () => {
             test.game.spare(4);
             test.game.spare(7);
             test.game.open(1, 1);
-            test.playOpenFrames(2, 5, 0);
-            //Show all the math for increased confidence in the total
-            let first = 3 * 2;
-            let strike1 = sumReduce(10, 10, 4);
-            let strike2 = sumReduce(10, 4, 6);
-            let spare1 = sumReduce(4, 6, 7);
-            let spare2 = sumReduce(7, 3, 1);
-            let mid = sumReduce(strike1, strike2, spare1, spare2, 1, 1);
-            let last = 2 * 5;
-            let expectedScore = sumReduce(first, mid, last);
-            //Also tested with online bowling calculator: www.bowlinggenius.com
-            debugLog(`${expectedScore}; expectedScore?==90 ...${90 === expectedScore? "yes": "ZOMG NO"}`);
+            test.game.open(5, 0);
+            test.game.open(5, 0);
+            let expectedScore: number;
+            {
+                //Show all the math for 100% confidence in the total
+                let first = 3 * 2;
+                let strike1 = sumReduce(10, 10, 4);
+                let strike2 = sumReduce(10, 4, 6);
+                let spare1 = sumReduce(4, 6, 7);
+                let spare2 = sumReduce(7, 3, 1);
+                let mid = sumReduce(strike1, strike2, spare1, spare2, 1, 1);
+                let last = 2 * 5;
+                expectedScore = sumReduce(first, mid, last);
+                //Also tested with online bowling calculator: www.bowlinggenius.com
+                debugLog(`expectedScore===${expectedScore}`);
+                debugLog(`is expectedScore===90? ${90 === expectedScore? "yes": "OH NO"}`);
+            }
             expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls many strikes and spares, yes bonus", () => {
@@ -208,15 +214,34 @@ describe("BowlingGame", () => {
             test.game.strike();
             test.game.bonusRoll(9);
             test.game.bonusRoll(1);
-            //Show all the math for increased confidence in the total
-            let first = 6 * 2;
-            let strike1 = sumReduce(10, 4, 6);
-            let spare1 = sumReduce(4, 6, 7);
-            let spare2 = sumReduce(7, 3, 10);
-            let strike2 = sumReduce(10, 9, 1);
-            let mid = sumReduce(strike1, spare1, spare2);
-            let expectedScore = sumReduce(first, mid, strike2);
-            debugLog(`${expectedScore}; expectedScore?==89 ...${89 === expectedScore? "yes": "ZOMG NO"}`);
+            let expectedScore: number;
+            {
+                //Show all the math for 100% confidence in the total
+                let first = 6 * 2;
+                let strike1 = sumReduce(10, 4, 6);
+                let spare1 = sumReduce(4, 6, 7);
+                let spare2 = sumReduce(7, 3, 10);
+                let strike2 = sumReduce(10, 9, 1);
+                let mid = sumReduce(strike1, spare1, spare2);
+                expectedScore = sumReduce(first, mid, strike2);
+                debugLog(`expectedScore===${expectedScore}`);
+                debugLog(`is expectedScore===89? ${89 === expectedScore ? "yes" : "OH NO"}`);
+            }
+            expect(test.game.score()).to.equal(expectedScore);
+        });
+        it("player bowls alternating frames of strike/spare/open", () => {
+            test.playMultipleFrames(3, (game: BowlingGame) => {
+                game.strike();
+                game.spare(9);
+                game.open(4, 4);
+            });
+            test.game.open(4, 5);
+            //Show all the math for 100% confidence in the total
+            let expectedScore = sumReduce(10, 9, 1);
+            expectedScore += sumReduce(9, 1, 4);
+            expectedScore += sumReduce(4, 4);
+            expectedScore *= 3;
+            expectedScore += sumReduce(4, 5);
             expect(test.game.score()).to.equal(expectedScore);
         });
     });
