@@ -19,7 +19,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     PATTERN="describe\.only\(\|it\.only\(|describe\.skip\(|it\.skip\("
     MESSAGE="Tried to commit mocha tests with .only or .skip; DO NOT DO THAT ANYMORE!"
 
-    if git diff --name-only --cached | xargs grep -Hn --color=always -P $PATTERN; then
+    if git diff --name-only --cached | xargs grep -Hn --color=always $PATTERN; then
       echo ""
       echo $MESSAGE
       exit 1
@@ -27,7 +27,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
       exit 0
     fi
     ```
-- Hint: practice grep with this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
+- Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
 ### when adding a new repo and want to publish on to github.com, use these simple steps
 
