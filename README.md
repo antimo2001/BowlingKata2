@@ -7,13 +7,13 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 ### Lessons: Part 1
 
 - the debug node-module can be used in mocha unit tests ...sample: ```import debug from "debug"```
-- to focus on a test-suite or test-case, use these: `describe.only`, `it.only` ...see mocha's documentation about [exclusivity](https://mochajs.org/#exclusive-tests) and [inclusivity](https://mochajs.org/#inclusive-tests)
+- to focus on a test-suite or test-case, use these: `describe.only()`, `it.only()` ...see mocha's documentation about [exclusivity](https://mochajs.org/#exclusive-tests) and [inclusivity](https://mochajs.org/#inclusive-tests)
 - launch.json is a config file for debugging within VSCode
 - tasks.json is a config file for running tasks and even executing the npm scripts defined in package.json (noice)
 
 ### Lessons: Part 2
 
-- its a best practice to create a git pre-commit hook to avoid committing any mocha tests with `describe.only` or `describe.skip` in them ...see the following:
+- its a best practice to create a git pre-commit hook to avoid committing any mocha tests with `describe.only()` or `describe.skip()` in them ...see the following:
     ```bash
     #!/bin/sh
     PATTERN="describe\.only\(\|it\.only\(|describe\.skip\(|it\.skip\("
