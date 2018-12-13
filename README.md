@@ -16,7 +16,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 - its a best practice to create a git pre-commit hook to avoid committing any mocha tests with `describe.only` or `describe.skip` in them ...see the following:
     ```bash
     #!/bin/sh
-    PATTERN="describe\.only\|it\.only|describe\.skip|it\.skip"
+    PATTERN="^\s+(describe|it)\.(only|skip)"
     MESSAGE="Tried to commit mocha tests with .only or .skip; DO NOT DO THAT ANYMORE!"
 
     if git diff --name-only --cached | xargs grep -Hn --color=always $PATTERN; then
