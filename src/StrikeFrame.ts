@@ -1,7 +1,7 @@
 import debug from 'debug';
 import { Frame } from '../src/Frame';
 
-const debugTest = debug("src:StrikeFrame");
+const debugSrc = debug("src:StrikeFrame");
 
 export class StrikeFrame extends Frame {
     constructor(frameIndex: number) {
@@ -19,7 +19,7 @@ export class StrikeFrame extends Frame {
         let nextnext = throws[start + 2];
         next = !!next ? next : 0;
         nextnext = !!nextnext ? nextnext : 0;
-        debugTest(`after: (start,next,nextnext)===(${start},${next},${nextnext})`);
+        debugSrc(`after: (start,next,nextnext)===(${start},${next},${nextnext})`);
         return throws[start] + next + nextnext;
     }
 }
