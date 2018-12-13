@@ -1,6 +1,6 @@
 {
   "name": "bowlingkata2",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "practice typescript with mocha tests",
   "main": "index.js",
   "dependencies": {
