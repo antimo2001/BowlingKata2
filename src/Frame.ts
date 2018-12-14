@@ -10,4 +10,8 @@ export class Frame {
     public score(throws: number[]): number {
         throw "Frame.score is abstract method; it cannot be directly invoked";
     }
+
+    public getFrameIndex(): number {
+        return this.frameIndex;
+    }
 }

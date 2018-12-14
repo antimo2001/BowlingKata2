@@ -28,6 +28,13 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "test-fip",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
