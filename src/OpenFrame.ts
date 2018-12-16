@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { Frame } from '../src/Frame';
-const debugSrc = debug("src:OpenFrame");
+const debugFip = debug("src:OpenFrame");
 
 export class OpenFrame extends Frame {
     constructor(frameIndex: number) {
@@ -14,8 +14,7 @@ export class OpenFrame extends Frame {
     */
     public score(throws: number[]): number {
         let fi = this.frameIndex;
-        // debugSrc(`start==${start}`);
-        debugSrc(`throws==${throws}`);
+        debugFip(`throws==${throws}`);
         let current = !!throws[fi]? throws[fi]: 0;
         let next = !!throws[fi+1]? throws[fi+1]: 0;
         return current + next;

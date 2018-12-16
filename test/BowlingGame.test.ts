@@ -279,28 +279,30 @@ describe("BowlingGame", () => {
     });
 
     describe("#scoreNthFrame", () => {
+        /** Helper function that constructs functions for testing errors */
+        let createFn: Function;
+        beforeEach(() => {
+            createFn = (test: TestSubject, nth: number) => {
+                return function() {
+                    test.game.open(1, 1);
+                    test.game.scoreNthFrame(nth);
+                }
+            }
+        });
         describe("fails with error", () => {
             it("expect error; part 1", () => {
-                let cleanfunc = () => {
-                    test.game.open(1, 1);
-                    test.game.scoreNthFrame(1);
-                }
-                expect(cleanfunc).to.not.throws(/array index out of bounds/);
-
-                let evilfunc = () => {
-                    test.game.open(1, 1);
-                    test.game.scoreNthFrame(9);
-                }
+                let evilfunc = createFn(test, 9);
                 expect(evilfunc).to.throws(/array index out of bounds/);
                 expect(evilfunc).to.throws(/RangeError/);
             });
             it("expect error; part 2", () => {
-                let evilfunc = () => {
-                    test.game.open(1, 1);
-                    test.game.scoreNthFrame(-22);
-                }
+                let evilfunc = createFn(test, -22);
                 expect(evilfunc).to.throws(/array index out of bounds/);
                 expect(evilfunc).to.throws(/RangeError/);
+            });
+            it("clean; no errors", () => {
+                let cleanfunc = createFn(test, 1);
+                expect(cleanfunc).to.not.throws(/array index out of bounds/);
             });
         });
 
@@ -338,18 +340,69 @@ describe("BowlingGame", () => {
             it("regression test end-game score", () => {
                 expect(test.game.scoreNthFrame(10)).to.equal(CALCULATOR_SCORES[10]);
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
-            })
+            });
             it("happy test for open frames 3, 6, 9", () => {
                 expect(test.game.scoreNthFrame(3)).to.equal(CALCULATOR_SCORES[3]);
                 expect(test.game.scoreNthFrame(6)).to.equal(CALCULATOR_SCORES[6]);
                 expect(test.game.scoreNthFrame(9)).to.equal(CALCULATOR_SCORES[9]);
             });
-            xit("verify spare frames at 2, 5, 8", () => {
+            it("verify spare frames at 2, 5, 8", () => {
                 expect(test.game.scoreNthFrame(2)).to.equal(CALCULATOR_SCORES[2]);
                 expect(test.game.scoreNthFrame(5)).to.equal(CALCULATOR_SCORES[5]);
                 expect(test.game.scoreNthFrame(8)).to.equal(CALCULATOR_SCORES[8]);
             });
-            xit("verify strike frames at 1, 4, 7", () => {
+            it("verify strike frames at 1, 4, 7", () => {
+                expect(test.game.scoreNthFrame(1)).to.equal(CALCULATOR_SCORES[1]);
+                expect(test.game.scoreNthFrame(4)).to.equal(CALCULATOR_SCORES[4]);
+                expect(test.game.scoreNthFrame(7)).to.equal(CALCULATOR_SCORES[7]);
+            });
+        });
+
+        describe("bowls frames in specific sequence 2: spare/strike/open", () => {
+            /**
+             * Define a constant array representing scores for a specifc game.
+             * Note: this is Nth based array (instead of based on N-1); that's why
+             * the 0th value is NaN!
+             */
+            const CALCULATOR_SCORES = [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158];
+
+            beforeEach(() => {
+                // debugs.fip01(`...begin game`);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.open(4, 4);
+                // const scoreAtFrame3 = test.game.score();
+                // debugs.fip01(`scoreAtFrame3===${scoreAtFrame3}; and is 46? (${46 === scoreAtFrame3})`);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.open(4, 4);
+                // const scoreAtFrame6 = test.game.score();
+                // debugs.fip01(`scoreAtFrame6===${scoreAtFrame6}; and is 92? (${92 === scoreAtFrame6})`);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.open(4, 4);
+                // const scoreAtFrame9 = test.game.score();
+                // debugs.fip01(`scoreAtFrame9===${scoreAtFrame9}; and is 138? (${138 === scoreAtFrame9})`);
+                test.game.spare(5);
+                test.game.bonusRoll(10);
+                debugs.fip01(`...END GAME`);
+            });
+
+            it("regression test end-game score", () => {
+                expect(test.game.scoreNthFrame(10)).to.equal(CALCULATOR_SCORES[10]);
+                expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
+            });
+            it("happy test for open frames 3, 6, 9", () => {
+                expect(test.game.scoreNthFrame(3)).to.equal(CALCULATOR_SCORES[3]);
+                expect(test.game.scoreNthFrame(6)).to.equal(CALCULATOR_SCORES[6]);
+                expect(test.game.scoreNthFrame(9)).to.equal(CALCULATOR_SCORES[9]);
+            });
+            it("verify spare frames at 2, 5, 8", () => {
+                expect(test.game.scoreNthFrame(2)).to.equal(CALCULATOR_SCORES[2]);
+                expect(test.game.scoreNthFrame(5)).to.equal(CALCULATOR_SCORES[5]);
+                expect(test.game.scoreNthFrame(8)).to.equal(CALCULATOR_SCORES[8]);
+            });
+            it("verify strike frames at 1, 4, 7", () => {
                 expect(test.game.scoreNthFrame(1)).to.equal(CALCULATOR_SCORES[1]);
                 expect(test.game.scoreNthFrame(4)).to.equal(CALCULATOR_SCORES[4]);
                 expect(test.game.scoreNthFrame(7)).to.equal(CALCULATOR_SCORES[7]);

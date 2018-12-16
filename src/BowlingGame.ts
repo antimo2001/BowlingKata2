@@ -6,7 +6,7 @@ import { OpenFrame } from './OpenFrame';
 import { BonusFrame } from './BonusFrame';
 
 // const debugSrc = debug("src:BowlingGame");
-const debugFip = debug("fip00:src:BowlingGame");
+const debugFip = debug("fip01:src:BowlingGame");
 
 export class BowlingGame {
     /**
@@ -38,7 +38,8 @@ export class BowlingGame {
         let frame = new OpenFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(firstThrow, secondThrow);
-        this.updateScorePerFrame();
+        // this.updateScorePerFrame();
+        this.updateScoreWhenOpenFrame();
     }
 
     /** Method for a player bowling a spare frame */
@@ -46,7 +47,7 @@ export class BowlingGame {
         let frame = new SpareFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(firstThrow, 10 - firstThrow);
-        this.updateScorePerFrame();
+        // this.updateScorePerFrame();
     }
     
     /** Method for a player bowling a strike */
@@ -54,19 +55,20 @@ export class BowlingGame {
         let frame = new StrikeFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(10);
-        this.updateScorePerFrame();
+        // this.updateScorePerFrame();
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
     public bonusRoll(pins: number): void {
         this.frames.push(new BonusFrame(this.throws.length));
         this.updateThrows(pins);
-        this.updateScorePerFrame();
+        // this.updateScorePerFrame();
+        this.updateScoreWhenOpenFrame();
     }
 
     /** Calculates score prior to the 10th frame */
     public scoreNthFrame(nthFrame: number): number {
-        debugFip(`frameScores.length===${this.frameScores.length}`);
+        // debugFip(`frameScores.length===${this.frameScores.length}`);
         const scoreNth = this.frameScores[nthFrame - 1];
         debugFip(`scoreNth===${scoreNth}`);
         if (!scoreNth) {
@@ -112,5 +114,70 @@ export class BowlingGame {
     private updateScorePerFrame() {
         let scoreAtFrame = this.scoreMapReduce();
         this.frameScores = [...this.frameScores, scoreAtFrame];
+    }
+
+    /** Update the scores only when the current frame is open or bonus */
+    private updateScoreWhenOpenFrame() {
+        debugFip('...');
+        debugFip('...BEGIN updateScoreWhenOpenFrame');
+        const sumReduce = (p: number, c: number) => p + c;
+        const throws = this.throws;
+        let baseScores: number[] = [];
+        let extraScores: number[] = [];
+
+        function getBaseScore(frame: Frame) {
+            const frameIndex = frame.getFrameIndex();
+            let base = 10;
+            if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
+                let twothrows = [throws[frameIndex], throws[frameIndex + 1]];
+                base = twothrows.reduce(sumReduce, 0);
+            }
+
+            return base;
+        }
+
+        function getExtraScore(frame: Frame) {
+            const frameIndex = frame.getFrameIndex();
+
+            /** Represents the extra scores added for strikes and spares */
+            const extra = throws.filter((t, i) => {
+                if (frame instanceof StrikeFrame) {
+                    return (frameIndex + 2 === i || frameIndex + 1 === i);
+                }
+                if (frame instanceof SpareFrame) {
+                    return (frameIndex + 2 === i);
+                }
+                if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
+                    return false;
+                }
+                throw `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`
+            });
+
+            return extra.reduce(sumReduce, 0);
+        }
+
+        // Iterate thru all frames to recalculate the scores for each
+        for (const frame of this.frames) {
+            //Find the base scores per frame
+            const base = getBaseScore(frame);
+            //Find the extrascores per frame
+            const extra = getExtraScore(frame);
+            baseScores = [...baseScores, base];
+            extraScores = [...extraScores, extra];
+        }
+        debugFip(`baseScores.length===${baseScores.length}; which should be 10? ${10===baseScores.length}`);
+        debugFip(`baseScores===${baseScores}`);
+        debugFip(`extraScores.length===${extraScores.length}; which should be 10? ${10===extraScores.length}`);
+        debugFip(`extraScores===${extraScores}`);
+        let totalSum: number = 0;
+        const finalScores = baseScores.map((base, index) => {
+            const extra = extraScores[index];
+            totalSum += base + extra;
+            debugFip(`prior,base,extra: ${totalSum},${base},${extra}`);
+            return totalSum;
+        });
+        debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
+        debugFip(`finalScores===${finalScores}`);
+        this.frameScores = finalScores;
     }
 }
