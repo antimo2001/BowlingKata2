@@ -385,7 +385,7 @@ describe("BowlingGame", () => {
                 // debugs.fip01(`scoreAtFrame9===${scoreAtFrame9}; and is 138? (${138 === scoreAtFrame9})`);
                 test.game.spare(5);
                 test.game.bonusRoll(10);
-                debugs.fip01(`...END GAME`);
+                // debugs.fip01(`...END GAME`);
             });
 
             it("regression test end-game score", () => {

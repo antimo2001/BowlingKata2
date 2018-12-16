@@ -19,22 +19,15 @@
         },
         {
             "type": "npm",
-            "script": "test-report",
-            "problemMatcher": []
-        },
-        {
-            "type": "npm",
-            "script": "test-debug",
-            "problemMatcher": [
-                "$tsc"
-            ]
-        },
-        {
-            "type": "npm",
             "script": "test-fip",
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "goto-f-drive",
+            "problemMatcher": []
         }
     ]
 }

@@ -7,18 +7,27 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch index.js",
+            "program": "${workspaceRoot}/dist/src/index.js",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "goto-f-drive"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch via NPM",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "test"
             ],
+            "cwd":"${workspaceRoot}",
             "port": 9229
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Mocha Tests",
-            "program": "${workspaceFolder}/node_modules/.bin/_mocha",
+            "program": "${workspaceRoot}/node_modules/.bin/mocha",
             //mocha -r ts-node/register  test/**/*.test.ts
             "args": [
                 "-r",
@@ -28,7 +37,11 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test/**/*.test.ts"
+                "${workspaceRoot}/test/**/*.test.ts"
+            ],
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/{dist,node_modules}/**/*.js"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         }
