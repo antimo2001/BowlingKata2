@@ -38,7 +38,6 @@ export class BowlingGame {
         let frame = new OpenFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(firstThrow, secondThrow);
-        // this.updateScorePerFrame();
         this.updateScoreWhenOpenFrame();
     }
 
@@ -47,7 +46,6 @@ export class BowlingGame {
         let frame = new SpareFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(firstThrow, 10 - firstThrow);
-        // this.updateScorePerFrame();
     }
     
     /** Method for a player bowling a strike */
@@ -55,14 +53,12 @@ export class BowlingGame {
         let frame = new StrikeFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(10);
-        // this.updateScorePerFrame();
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
     public bonusRoll(pins: number): void {
         this.frames.push(new BonusFrame(this.throws.length));
         this.updateThrows(pins);
-        // this.updateScorePerFrame();
         this.updateScoreWhenOpenFrame();
     }
 
@@ -173,7 +169,7 @@ export class BowlingGame {
         const finalScores = baseScores.map((base, index) => {
             const extra = extraScores[index];
             totalSum += base + extra;
-            debugFip(`prior,base,extra: ${totalSum},${base},${extra}`);
+            debugFip(`totalSum,base,extra: ${totalSum},${base},${extra}`);
             return totalSum;
         });
         debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
