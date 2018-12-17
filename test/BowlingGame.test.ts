@@ -317,7 +317,7 @@ describe("BowlingGame", () => {
             const CALCULATOR_SCORES = [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128];
             
             beforeEach(() => {
-                debugs.fip00(`...begin game`);
+                // debugs.fip00(`...begin game`);
                 test.game.strike();
                 test.game.spare(9);
                 test.game.open(4, 4);
@@ -364,20 +364,16 @@ describe("BowlingGame", () => {
              * Note: this is Nth based array (instead of based on N-1); that's why
              * the 0th value is NaN!
              */
-            const CALCULATOR_SCORES = [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158];
+            const calculatorScores = [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158];
 
             beforeEach(() => {
                 // debugs.fip01(`...begin game`);
                 test.game.spare(9);
                 test.game.strike();
                 test.game.open(4, 4);
-                // const scoreAtFrame3 = test.game.score();
-                // debugs.fip01(`scoreAtFrame3===${scoreAtFrame3}; and is 46? (${46 === scoreAtFrame3})`);
                 test.game.spare(9);
                 test.game.strike();
                 test.game.open(4, 4);
-                // const scoreAtFrame6 = test.game.score();
-                // debugs.fip01(`scoreAtFrame6===${scoreAtFrame6}; and is 92? (${92 === scoreAtFrame6})`);
                 test.game.spare(9);
                 test.game.strike();
                 test.game.open(4, 4);
@@ -389,23 +385,56 @@ describe("BowlingGame", () => {
             });
 
             it("regression test end-game score", () => {
-                expect(test.game.scoreNthFrame(10)).to.equal(CALCULATOR_SCORES[10]);
+                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
-            it("happy test for open frames 3, 6, 9", () => {
-                expect(test.game.scoreNthFrame(3)).to.equal(CALCULATOR_SCORES[3]);
-                expect(test.game.scoreNthFrame(6)).to.equal(CALCULATOR_SCORES[6]);
-                expect(test.game.scoreNthFrame(9)).to.equal(CALCULATOR_SCORES[9]);
+
+            calculatorScores.map((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
             });
-            it("verify spare frames at 2, 5, 8", () => {
-                expect(test.game.scoreNthFrame(2)).to.equal(CALCULATOR_SCORES[2]);
-                expect(test.game.scoreNthFrame(5)).to.equal(CALCULATOR_SCORES[5]);
-                expect(test.game.scoreNthFrame(8)).to.equal(CALCULATOR_SCORES[8]);
+        });
+
+
+        describe("bowls frames in specific sequence 3: open/spare/strike", () => {
+            /**
+             * This is Nth based (instead of N-1); that's why NaN is the 0th value
+             */
+            const calculatorScores = [NaN, 8, 28, 46, 54, 74, 92, 100, 120, 150, 180];
+
+            beforeEach(() => {
+                // debugs.fip01(`...begin game`);
+                test.game.open(4, 4);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.open(4, 4);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.open(4, 4);
+                test.game.spare(9);
+                test.game.strike();
+                test.game.strike();
+                test.game.bonusRoll(10);
+                test.game.bonusRoll(10);
+                // debugs.fip01(`...END GAME`);
             });
-            it("verify strike frames at 1, 4, 7", () => {
-                expect(test.game.scoreNthFrame(1)).to.equal(CALCULATOR_SCORES[1]);
-                expect(test.game.scoreNthFrame(4)).to.equal(CALCULATOR_SCORES[4]);
-                expect(test.game.scoreNthFrame(7)).to.equal(CALCULATOR_SCORES[7]);
+
+            it("regression test end-game score", () => {
+                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
+                expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
+            });
+
+            calculatorScores.map((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
             });
         });
     });
