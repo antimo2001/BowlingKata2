@@ -117,6 +117,10 @@ export class BowlingGame {
 
     /** Update the scores only when the current frame is open or bonus */
     private updateScoresPerFrame() {
+        if (this.isGameOver()) {
+            debugFip(`game is over; scoring per frame has stopped`);
+            return;
+        }
         // Use 2 parallel arrays to represent the base scores and extra scores
         let baseScores: number[] = [];
         let extraScores: number[] = [];
@@ -188,11 +192,11 @@ export class BowlingGame {
         return this.sumnums(extra);
     }
 
-    /** This is for future usage? */
+    /** This is for determining that the game is over and scored */
     private isGameOver(): boolean {
         const maxFrameCount = 10;
         const areAllFramesDoneScoring = this.frames.length === this.frameScores.length;
-        return this.frames.length >= maxFrameCount && areAllFramesDoneScoring;
+        return areAllFramesDoneScoring;
     }
 
     /** This is for easily adding numbers */

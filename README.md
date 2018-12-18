@@ -29,7 +29,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     ```
 - Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
-### when adding a new repo and want to publish on to github.com, use these simple steps
+### When adding a new repo and want to publish on to github.com, use these simple steps
 
 - at local machine and your root project folder, execute this git command: `git init {MY_NEW_REPO}`
 - git commit (and you can continue git commit until you're ready to publish)
