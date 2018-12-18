@@ -21,6 +21,8 @@ export class BowlingGame {
      * Represents the score as per the prior frames of the game.
      */
     frameScores: number[];
+    private static MAX_PINS = 10;
+    private static BOWLING_ERROR = "BowlingGameError";
 
     constructor() {
         this.frameScores = [];
@@ -34,6 +36,11 @@ export class BowlingGame {
      * @param secondThrow the second throw in the frame
      */
     public open(firstThrow: number, secondThrow: number): void {
+        if (firstThrow + secondThrow > BowlingGame.MAX_PINS) {
+            let msg = `${BowlingGame.BOWLING_ERROR}: 2 throws cannot exceed ${BowlingGame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw RangeError(msg);
+        }
         let frame = new OpenFrame(this.throws.length);
         this.frames.push(frame);
         this.updateThrows(firstThrow, secondThrow);
@@ -42,16 +49,21 @@ export class BowlingGame {
 
     /** Method for a player bowling a spare frame */
     public spare(firstThrow: number): void {
+        if (firstThrow >= BowlingGame.MAX_PINS) {
+            let msg = `${BowlingGame.BOWLING_ERROR}: first throw of a spare cannot exceed ${BowlingGame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw RangeError(msg);
+        }
         let frame = new SpareFrame(this.throws.length);
         this.frames.push(frame);
-        this.updateThrows(firstThrow, 10 - firstThrow);
+        this.updateThrows(firstThrow, BowlingGame.MAX_PINS - firstThrow);
     }
     
     /** Method for a player bowling a strike */
     public strike(): void {
         let frame = new StrikeFrame(this.throws.length);
         this.frames.push(frame);
-        this.updateThrows(10);
+        this.updateThrows(BowlingGame.MAX_PINS);
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
@@ -66,7 +78,7 @@ export class BowlingGame {
         const scoreNth = this.frameScores[nthFrame - 1];
         debugFip(`scoreNth===${scoreNth}`);
         if (!scoreNth) {
-            let msg = `***RangeError: array index out of bounds; nthFrame===${nthFrame}`;
+            let msg = `${BowlingGame.BOWLING_ERROR}: array index out of bounds; nthFrame===${nthFrame}`;
             debugFip(msg);
             throw RangeError(msg);
         }
@@ -92,7 +104,6 @@ export class BowlingGame {
     private scoreMapReduce(frames?: Frame[]): number {
         frames = frames!==undefined? frames: this.frames;
         const scores = frames.map(f => f.score(this.throws));
-        // const total = scores.reduce((p, c) => p + c, 0);
         return this.sumnums(scores);
     }
 
@@ -106,7 +117,6 @@ export class BowlingGame {
 
     /** Update the scores only when the current frame is open or bonus */
     private updateScoresPerFrame() {
-        // debugFip('...BEGIN updateScoresPerFrame');
         // Use 2 parallel arrays to represent the base scores and extra scores
         let baseScores: number[] = [];
         let extraScores: number[] = [];
@@ -131,7 +141,7 @@ export class BowlingGame {
             // debugFip(`totalSum,base,extra: ${totalSum},${base},${extra}`);
             return totalSum;
         });
-        debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
+        // debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
         // debugFip(`finalScores===${finalScores}`);
         this.frameScores = finalScores;
     }
@@ -147,7 +157,7 @@ export class BowlingGame {
             return this.sumnums(twothrows);
         }
         if (frame instanceof StrikeFrame || frame instanceof SpareFrame) {
-            return 10;
+            return BowlingGame.MAX_PINS;
         }
         throw `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`;
     }
@@ -169,12 +179,20 @@ export class BowlingGame {
             if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
                 return false;
             }
-            throw `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`
+            debugFip(`(t,i,fi)==(${t},${i},${fi})`);
+            const msg = `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`;
+            debugFip(msg);
+            throw msg;
         });
-
         debugFip(`assert that extra.length is 2 or fewer? ${extra.length <= 2}`);
-
         return this.sumnums(extra);
+    }
+
+    /** This is for future usage? */
+    private isGameOver(): boolean {
+        const maxFrameCount = 10;
+        const areAllFramesDoneScoring = this.frames.length === this.frameScores.length;
+        return this.frames.length >= maxFrameCount && areAllFramesDoneScoring;
     }
 
     /** This is for easily adding numbers */
