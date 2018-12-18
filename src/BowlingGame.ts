@@ -104,21 +104,11 @@ export class BowlingGame {
         this.throws = newThrows;
     }
 
-    /** Update the running tally of scores for each frame */
-    private updateScorePerFrame() {
-        let scoreAtFrame = this.scoreMapReduce();
-        this.frameScores = [...this.frameScores, scoreAtFrame];
-    }
-
     /** Update the scores only when the current frame is open or bonus */
     private updateScoresPerFrame() {
-        debugFip('...');
-        debugFip('...BEGIN updateScoresPerFrame');
-        /** This is for easy reference to all throws in this bowling game */
-        const throws = this.throws;
-        /** Represents the array of base scores per frame */
+        // debugFip('...BEGIN updateScoresPerFrame');
+        // Use 2 parallel arrays to represent the base scores and extra scores
         let baseScores: number[] = [];
-        /** Represents the array of extra scores per frame */
         let extraScores: number[] = [];
 
         // Iterate thru all frames to recalculate the scores for each
@@ -126,25 +116,23 @@ export class BowlingGame {
             //Find the base scores per frame and the extrascores per frame
             const base = this.getBaseScore(frame);
             const extra = this.getExtraScore(frame);
-            //Concat the base scores and extras (parallel arrays)
+            //Concat the base scores and extras
             baseScores = [...baseScores, base];
             extraScores = [...extraScores, extra];
         }
-        // debugFip(`baseScores.length===${baseScores.length}; which should be 10? ${10===baseScores.length}`);
         // debugFip(`baseScores===${baseScores}`);
-        // debugFip(`extraScores.length===${extraScores.length}; which should be 10? ${10===extraScores.length}`);
         // debugFip(`extraScores===${extraScores}`);
-        debugFip(`assert baseScores has same length as frames? ${baseScores.length===this.frames.length}`);
-        debugFip(`assert extraScores has same length as frames? ${extraScores.length===this.frames.length}`);
+        debugFip(`baseScores has same length as frames? ${baseScores.length===this.frames.length}`);
+        debugFip(`extraScores has same length as frames? ${extraScores.length===this.frames.length}`);
         let totalSum: number = 0;
         const finalScores = baseScores.map((base, index) => {
             const extra = extraScores[index];
             totalSum += base + extra;
-            debugFip(`totalSum,base,extra: ${totalSum},${base},${extra}`);
+            // debugFip(`totalSum,base,extra: ${totalSum},${base},${extra}`);
             return totalSum;
         });
         debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
-        debugFip(`finalScores===${finalScores}`);
+        // debugFip(`finalScores===${finalScores}`);
         this.frameScores = finalScores;
     }
 

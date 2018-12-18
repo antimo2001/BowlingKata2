@@ -289,16 +289,22 @@ describe("BowlingGame", () => {
                 }
             }
         });
-        describe("fails with error", () => {
+
+        describe("when it fails", () => {
+            it("expect error; part 0", () => {
+                let testFn = createFn(test, 0);
+                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throws(/RangeError/);
+            });
             it("expect error; part 1", () => {
-                let evilfunc = createFn(test, 9);
-                expect(evilfunc).to.throws(/array index out of bounds/);
-                expect(evilfunc).to.throws(/RangeError/);
+                let testFn = createFn(test, 9);
+                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throws(/RangeError/);
             });
             it("expect error; part 2", () => {
-                let evilfunc = createFn(test, -22);
-                expect(evilfunc).to.throws(/array index out of bounds/);
-                expect(evilfunc).to.throws(/RangeError/);
+                let testFn = createFn(test, -22);
+                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throws(/RangeError/);
             });
             it("clean; no errors", () => {
                 let cleanfunc = createFn(test, 1);
@@ -314,7 +320,7 @@ describe("BowlingGame", () => {
              * Note: this is Nth based array (instead of based on N-1); that's why
              * the 0th value is NaN!
              */
-            const CALCULATOR_SCORES = [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128];
+            const calculatorScores = [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128];
             
             beforeEach(() => {
                 // debugs.fip00(`...begin game`);
@@ -338,23 +344,16 @@ describe("BowlingGame", () => {
             });
 
             it("regression test end-game score", () => {
-                expect(test.game.scoreNthFrame(10)).to.equal(CALCULATOR_SCORES[10]);
+                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
-            it("happy test for open frames 3, 6, 9", () => {
-                expect(test.game.scoreNthFrame(3)).to.equal(CALCULATOR_SCORES[3]);
-                expect(test.game.scoreNthFrame(6)).to.equal(CALCULATOR_SCORES[6]);
-                expect(test.game.scoreNthFrame(9)).to.equal(CALCULATOR_SCORES[9]);
-            });
-            it("verify spare frames at 2, 5, 8", () => {
-                expect(test.game.scoreNthFrame(2)).to.equal(CALCULATOR_SCORES[2]);
-                expect(test.game.scoreNthFrame(5)).to.equal(CALCULATOR_SCORES[5]);
-                expect(test.game.scoreNthFrame(8)).to.equal(CALCULATOR_SCORES[8]);
-            });
-            it("verify strike frames at 1, 4, 7", () => {
-                expect(test.game.scoreNthFrame(1)).to.equal(CALCULATOR_SCORES[1]);
-                expect(test.game.scoreNthFrame(4)).to.equal(CALCULATOR_SCORES[4]);
-                expect(test.game.scoreNthFrame(7)).to.equal(CALCULATOR_SCORES[7]);
+
+            calculatorScores.map((score, i) => {
+                it(`verify calculator (${score}) at frame: ${i}`, () => {
+                    if (i > 0) {
+                        expect(test.game.scoreNthFrame(i)).to.equal(score);
+                    }
+                });
             });
         });
 
@@ -390,15 +389,13 @@ describe("BowlingGame", () => {
             });
 
             calculatorScores.map((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
                 it(`verify calculator score at frame: ${i}`, () => {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                    if (i > 0) {
+                        expect(test.game.scoreNthFrame(i)).to.equal(score);
+                    }
                 });
             });
         });
-
 
         describe("bowls frames in specific sequence 3: open/spare/strike", () => {
             /**
@@ -429,11 +426,10 @@ describe("BowlingGame", () => {
             });
 
             calculatorScores.map((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
                 it(`verify calculator score at frame: ${i}`, () => {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                    if (i > 0) {
+                        expect(test.game.scoreNthFrame(i)).to.equal(score);
+                    }
                 });
             });
         });
