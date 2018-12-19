@@ -29,6 +29,10 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     ```
 - Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
+### How to create a tag
+
+To create a git tag, simply create a release at github.com and it prompts you to name the release, which also gives recommendations to the naming convention of tags (which I'm already used to semnatic versioning: see sample: `v1.2.3`)
+
 ### When adding a new repo and want to publish on to github.com, use these simple steps
 
 - at local machine and your root project folder, execute this git command: `git init {MY_NEW_REPO}`
@@ -45,7 +49,6 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 ## But I'm still confused about
 
 - how do I use VSCode debugger with its config file launch.json; why it fails to stop at a certain breakpoint when i press F5?
-- how do tags in git work? why doesn't Github Desktop have an easy button for tagging?
 
 ## Ideas
 
@@ -56,4 +59,4 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 
 ### Future Exploration
 
-- [ ] i should learn how to use github's feature to create tags (instead of using branches to create my "tags", which i intended to be simply read-only branches while i continue to commit new code in to the master-branch)
+- [x] i should learn how to use github's feature to create tags (instead of using branches to create my "tags", which i intended to be simply read-only branches while i continue to commit new code in to the master-branch) ...how do tags in git work? why doesn't Github Desktop have an easy button for tagging?
