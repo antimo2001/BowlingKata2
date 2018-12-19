@@ -3,7 +3,7 @@ import { Frame } from './Frame';
 import { StrikeFrame } from './StrikeFrame';
 import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
-import { BonusFrame } from './BonusFrame';
+import { TenthFrame } from './TenthFrame';
 
 const debugFip = debug("src:BowlingGame");
 
@@ -41,7 +41,7 @@ export class BowlingGame {
             debugFip(msg);
             throw RangeError(msg);
         }
-        let frame = new OpenFrame(this.throws.length);
+        let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
         this.updateThrows(firstThrow, secondThrow);
         this.updateScoresPerFrame();
@@ -68,7 +68,7 @@ export class BowlingGame {
     
     /** Method for a player bowling the extra throws in the 10th frame */
     public bonusRoll(pins: number): void {
-        this.frames.push(new BonusFrame(this.throws.length));
+        this.frames.push(new TenthFrame(this.throws.length));
         this.updateThrows(pins);
         this.updateScoresPerFrame();
     }
@@ -95,7 +95,7 @@ export class BowlingGame {
         frames = frames!==undefined? frames: this.frames;
         let total = 0;
         for(let f of frames) {
-            total += f.score(this.throws);
+            total += f.getScore();
         }
         return total;
     }
@@ -103,8 +103,8 @@ export class BowlingGame {
     /** Calculates the total score for the game (with map-reduce algorithm) */
     private scoreMapReduce(frames?: Frame[]): number {
         frames = frames!==undefined? frames: this.frames;
-        const scores = frames.map(f => f.score(this.throws));
-        return this.sumnums(scores);
+        const scores = frames.map(f => f.getScore());
+        return Frame.sum(...scores);
     }
 
     /** Concat more throws with all of the new throws */
@@ -151,7 +151,7 @@ export class BowlingGame {
      */
     private getBaseScore(frame: Frame): number {
         const fi = frame.getFrameIndex();
-        if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
+        if (frame instanceof OpenFrame || frame instanceof TenthFrame) {
             let twothrows = [this.throws[fi], this.throws[fi + 1]];
             return this.sumnums(twothrows);
         }
@@ -175,7 +175,7 @@ export class BowlingGame {
             if (frame instanceof SpareFrame) {
                 return (fi + 2 === i);
             }
-            if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
+            if (frame instanceof OpenFrame || frame instanceof TenthFrame) {
                 return false;
             }
             debugFip(`(t,i,fi)==(${t},${i},${fi})`);
@@ -185,21 +185,6 @@ export class BowlingGame {
         });
         debugFip(`assert that extra.length is 2 or fewer? ${extra.length <= 2}`);
         return this.sumnums(extra);
-    }
-
-    /** This is for determining that the game is over and scored */
-    private isGameOver(): boolean {
-        // const maxFrameCount = 10;
-        // const areAllFramesDoneScoring = this.frames.length === this.frameScores.length;
-        // return areAllFramesDoneScoring;
-
-        //TODO: the above algorithm seems off; for now, game is never over
-        return false;
-    }
-
-    /** This is for easily adding numbers */
-    private sumnums(nums: number[], initialValue: number = 0): number {
-        return nums.reduce((p, c) => p + c, initialValue);
     }
 
 }

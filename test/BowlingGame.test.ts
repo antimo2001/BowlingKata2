@@ -5,6 +5,7 @@ import { BowlingGame } from '../src/BowlingGame';
 import { StrikeFrame } from '../src/StrikeFrame';
 import { SpareFrame } from '../src/SpareFrame';
 import { OpenFrame } from '../src/OpenFrame';
+import { Frame } from '../src/Frame';
 
 /** Helper function for debugging */
 const debugLog = debug("test:BowlingGame");
@@ -19,7 +20,7 @@ const debugs = {
 
 /** Helper function for calculating the sum */
 const sumReduce = (...scores: number[]) => {
-    return scores.reduce((p, n) => p + n, 0);
+    return Frame.sum(...scores);
 }
 
 class TestSubject {
