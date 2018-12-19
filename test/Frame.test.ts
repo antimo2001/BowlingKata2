@@ -4,7 +4,7 @@ import 'mocha';
 import debug from 'debug';
 const debugFip = debug("fip01:test:Frame");
 
-describe.only("Frame", () => {
+describe("Frame", () => {
     let gutter: Frame;
     let frame: Frame;
     beforeEach(() => {
