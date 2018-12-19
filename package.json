@@ -20,11 +20,12 @@
     "goto-f-drive": "F:",
     "build": "npm run tsc-build > out/build01.log  &&  npm test > out/build02.log",
     "mocha-help": "mocha --help > out/mocha-help.out",
+    "tsc-repl": "ts-node",
     "tsc": "tsc",
     "tsc-build": "tsc --build tsconfig.json",
     "test-fip": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/**/*.test.ts",
     "test0": "mocha -r ts-node/register test/hello-world.test.ts",
-    "test1": "SET DEBUG=test:*  &&  mocha -r ts-node/register test/hello-world.test.ts",
+    "test1": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/Frame.test.ts",
     "test-watch": "mocha  -w  -r ts-node/register  test/**/*.test.ts",
     "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec",
     "test": "mocha -r ts-node/register  test/**/*.test.ts"
