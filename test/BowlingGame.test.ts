@@ -454,7 +454,7 @@ describe("BowlingGame", () => {
                 expect(test.game.score()).to.equal(expectedScore);
                 expect(test.game.scoreNthFrame(8)).to.equal(expectedScore);
             });
-            it("when 11+ pins", () => {
+            it("fails with error when 11+ pins", () => {
                 let evilfunc = () => {
                     test.game.open(1, 11);
                     test.game.open(2, 22);
@@ -462,7 +462,7 @@ describe("BowlingGame", () => {
                 expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
                 expect(evilfunc).to.throw(/BowlingGameError/);
             });
-            it("when 99 frames", () => {
+            it("fails with error when 99 frames", () => {
                 const LOTSA_FRAMES = 99;
                 test.playOpenFrames(LOTSA_FRAMES, 0, 1);
                 expect(test.game.frames.length).to.equal(LOTSA_FRAMES);

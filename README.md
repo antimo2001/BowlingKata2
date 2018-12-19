@@ -45,6 +45,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 ## But I'm still confused about
 
 - how do I use VSCode debugger with its config file launch.json; why it fails to stop at a certain breakpoint when i press F5?
+- how do tags in git work? why doesn't Github Desktop have an easy button for tagging?
 
 ## Ideas
 
