@@ -11,14 +11,13 @@ export class Frame implements Scoreable {
     // protected throwIndex: number;
     // protected throws: number[];
     // protected maxBonusThrows: number;
-    protected minBonusThrows: number;
+    // protected minBonusThrows: number;
     protected bonusThrows: number[];
     protected base: number[];
     protected score: number;
     protected isScored: boolean;
 
     constructor(...throws: number[]) {
-        this.minBonusThrows = 0;
         this.bonusThrows = [];
         this.base = throws.slice(0, 2);
         this.score = 0;
