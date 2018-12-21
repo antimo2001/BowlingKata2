@@ -27,15 +27,21 @@ describe("Frame", () => {
     });
     describe("#constructor", () => {
         it("part 1", () => {
-            expect(gutter.canScore()).to.equal(true);
+            expect(gutter.doneScoring()).to.equal(false);
+            gutter.setBonusThrows();
+            expect(gutter.doneScoring()).to.equal(true);
         });
         it("part 2", () => {
             frame = new Frame(1, 1, 2, 2);
-            expect(frame.canScore()).to.equal(true);
+            expect(frame.doneScoring()).to.equal(false);
+            gutter.setBonusThrows();
+            expect(gutter.doneScoring()).to.equal(true);
         });
         it("#getScore, part 3", () => {
             frame = new Frame(9, 1, 2, 2);
-            expect(frame.canScore()).to.equal(true);
+            expect(frame.doneScoring()).to.equal(false);
+            gutter.setBonusThrows();
+            expect(gutter.doneScoring()).to.equal(true);
         });
     });
     describe("#getScore", () => {

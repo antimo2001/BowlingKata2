@@ -14,14 +14,6 @@ export class SpareFrame extends Frame {
     }
 
     /**
-     * Returns true iff this Spare frame has enough bonus throws to be scored
-     * @override Frame.canScore
-     */
-    public canScore(): boolean {
-        return this.bonusThrows.length >= 1;
-    }
-
-    /**
      * Concats the bonus on to this Spare frame
      * @param bonusThrows the rest args to be used as the bonus throws
      * @override Frame.setBonusThrows
@@ -32,12 +24,20 @@ export class SpareFrame extends Frame {
     }
 
     /**
+     * Returns true iff this Spare frame has enough bonus throws to be scored
+     * @override Frame.canScore
+     */
+    protected canScore(): boolean {
+        return this.bonusThrows.length >= 1;
+    }
+
+    /**
      * Set the score for this Spare
      * @override Frame.setScore
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            debugFip(`didnt set the score`);
+            debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
         const baseScore = this.base.slice(0, 2);

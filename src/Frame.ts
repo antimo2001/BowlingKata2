@@ -39,21 +39,21 @@ export class Frame implements Scoreable {
         return numbers.reduce((p, c) => p + c, 0);
     }
 
+    /** Returns true iff frame is done scoring */
+    public doneScoring(): boolean {
+        return this.isScored;
+    }
+    /** Get the base throws */
+    public getBaseThrows(): number[] {
+        return this.base;
+    }
     /**
      * Concats the given array with the bonusThrows
-     * @param bonusThrows this rest args contains the array of all throws
+     * @param bonusThrows this rest args contains the array of bonus throws
      */
     public setBonusThrows(...bonusThrows: number[]): Frame {
-        this.bonusThrows = bonusThrows.slice(0, 2); //NTS: this really applies to spares and strikes
-        // this.bonusThrows = [];
+        this.bonusThrows = bonusThrows.slice(0, 2);
         return this;
-    }
-
-    /**
-     * Returns true iff this frame has enough throws to be scored
-     */
-    public canScore(): boolean {
-        return true;
     }
 
     /** Gets the score */
@@ -63,6 +63,13 @@ export class Frame implements Scoreable {
         } else {
             return this.setScore().score;
         }
+    }
+
+    /**
+     * Returns true iff this frame has enough throws to be scored
+     */
+    protected canScore(): boolean {
+        return true;
     }
     /** Sets the score based on throws array */
     protected setScore(): Frame {

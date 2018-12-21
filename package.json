@@ -17,7 +17,6 @@
   },
   "scripts": {
     "pre-build": "mkdir out",
-    "goto-f-drive": "F:",
     "build": "npm run tsc-build > out/build01.log  &&  npm test > out/build02.log",
     "mocha-help": "mocha --help > out/mocha-help.out",
     "tsc-repl": "ts-node",

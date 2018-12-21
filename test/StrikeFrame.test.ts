@@ -5,14 +5,12 @@ import 'mocha';
 describe("StrikeFrame", () => {
     let frame: StrikeFrame;
     it("#constructor", () => {
-        let currentThrows = [10, 0, 0];
-        frame = new StrikeFrame(0);
-        expect(frame.score(currentThrows)).to.be.equal(10);
+        frame = new StrikeFrame();
+        expect(frame.getScore()).to.be.equal(0);
     });
     
     it("#score", () => {
-        let currentThrows = [10, 0, 0];
-        frame = new StrikeFrame(0);
-        expect(frame.score(currentThrows)).to.be.equal(10);
+        frame = new StrikeFrame();
+        expect(frame.getScore()).to.be.equal(0);
     });
 });
