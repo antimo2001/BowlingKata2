@@ -77,7 +77,7 @@ export class BowlingGame {
 
     /** Gets the total score for the game */
     public score(): number {
-        return this.frameScores[this.frameScores.length];
+        return this.frameScores[this.frameScores.length - 1];
     }
 
     /** Update the scores only when the frame can be scored */

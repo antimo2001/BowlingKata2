@@ -1,11 +1,11 @@
 import 'mocha';
 import debug from 'debug';
 import { expect } from 'chai';
-import { BowlingGame } from '../src/BowlingGame';
-import { StrikeFrame } from '../src/StrikeFrame';
-import { SpareFrame } from '../src/SpareFrame';
-import { OpenFrame } from '../src/OpenFrame';
 import { Frame } from '../src/Frame';
+import { BowlingGame } from '../src/BowlingGame';
+// import { StrikeFrame } from '../src/StrikeFrame';
+// import { SpareFrame } from '../src/SpareFrame';
+// import { OpenFrame } from '../src/OpenFrame';
 
 /** Helper function for debugging */
 const debugLog = debug("test:BowlingGame");
@@ -43,7 +43,7 @@ class TestSubject {
     }
 }
 
-xdescribe("BowlingGame", () => {
+describe("BowlingGame", () => {
     let test: TestSubject;
 
     beforeEach(() => {
