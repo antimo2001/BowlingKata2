@@ -37,12 +37,16 @@ export class StrikeFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
+            // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
+            return this;
+        }
+        if (this.isScored) {
+            debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
         const baseScore = this.base.slice(0, 1);
         const bonusScore = this.bonusThrows.slice(0, 2);
-        debugFip(`is baseScore still just 10? ${this.base[0]===10? 'yes': 'OMG NO'}`);
+        // debugFip(`is baseScore still just 10? ${this.base[0]===10? 'yes': 'OMG NO'}`);
         this.score = Frame.sum(...[...baseScore, ...bonusScore]);
         this.isScored = true;
         return this;

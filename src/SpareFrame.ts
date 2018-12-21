@@ -37,7 +37,11 @@ export class SpareFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
+            // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
+            return this;
+        }
+        if (this.isScored) {
+            debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
         const baseScore = this.base.slice(0, 2);

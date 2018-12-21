@@ -13,14 +13,14 @@ export class BowlingGame {
      */
     frames: Frame[];
     /**
-     * Represents the score as per the prior frames of the game.
+     * Represents the accumlated scores for each frame of the game.
      */
-    frameScores: number[];
+    scores: number[];
     private static MAX_PINS = 10;
     private static BOWLING_ERROR = "BowlingGameError";
 
     constructor() {
-        this.frameScores = [];
+        this.scores = [];
         this.frames = [];
     }
 
@@ -49,12 +49,14 @@ export class BowlingGame {
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
+        this.updateScoresPerFrame();
     }
     
     /** Method for a player bowling a strike */
     public strike(): void {
         let frame = new StrikeFrame();
         this.frames.push(frame);
+        this.updateScoresPerFrame();
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
@@ -65,8 +67,7 @@ export class BowlingGame {
 
     /** Calculates score prior to the 10th frame */
     public scoreNthFrame(nthFrame: number): number {
-        const scoreNth = this.frameScores[nthFrame - 1];
-        debugFip(`scoreNth===${scoreNth}`);
+        const scoreNth = this.scores[nthFrame - 1];
         if (!scoreNth) {
             let msg = `${BowlingGame.BOWLING_ERROR}: array index out of bounds; nthFrame===${nthFrame}`;
             debugFip(msg);
@@ -77,7 +78,7 @@ export class BowlingGame {
 
     /** Gets the total score for the game */
     public score(): number {
-        return this.frameScores[this.frameScores.length - 1];
+        return this.scores[this.scores.length - 1];
     }
 
     /** Update the scores only when the frame can be scored */
@@ -104,14 +105,14 @@ export class BowlingGame {
         });
 
         let totalSum: number = 0;
-        const scores = nextFrames.map(nf => {
+        const cumulatives = nextFrames.map(nf => {
             const {frame, bonus} = nf;
             const s = frame.setBonusThrows(...bonus).getScore();
             totalSum += s;
             return totalSum;
         });
-        debugFip(`scores===${scores}`);
-        this.frameScores = scores;
+        debugFip(`cumulatives===${cumulatives}`);
+        this.scores = cumulatives;
     }
 
     private cannotScoreYet(): boolean {

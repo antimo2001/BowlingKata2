@@ -1,5 +1,5 @@
 import debug from "debug";
-const debugFip = debug("fip01:src:Frame");
+const debugFip = debug("src:Frame");
 
 /** Represents something with a score */
 interface Scoreable {
@@ -8,20 +8,18 @@ interface Scoreable {
 
 /** Represents a frame in a bowling game */
 export class Frame implements Scoreable {
-    // protected throwIndex: number;
-    // protected throws: number[];
-    // protected maxBonusThrows: number;
-    // protected minBonusThrows: number;
     protected bonusThrows: number[];
     protected base: number[];
     protected score: number;
     protected isScored: boolean;
+    protected invokeCount: number;
 
     constructor(...throws: number[]) {
         this.bonusThrows = [];
         this.base = throws.slice(0, 2);
         this.score = 0;
         this.isScored = false;
+        this.invokeCount = 0;
     }
 
     /**
@@ -52,13 +50,14 @@ export class Frame implements Scoreable {
      * @param bonusThrows this rest args contains the array of bonus throws
      */
     public setBonusThrows(...bonusThrows: number[]): Frame {
-        this.bonusThrows = bonusThrows.slice(0, 2);
+        // this.bonusThrows = bonusThrows.slice(0, 2);
         return this;
     }
 
     /** Gets the score */
     public getScore(): number {
         if (this.isScored) {
+            debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
             return this.score;
         } else {
             return this.setScore().score;
@@ -75,6 +74,10 @@ export class Frame implements Scoreable {
     protected setScore(): Frame {
         if (!this.canScore()) {
             debugFip(`didnt set the score`);
+            return this;
+        }
+        if (this.isScored) {
+            debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
         const baseScore = this.base.slice(0, 2);
