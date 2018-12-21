@@ -28,19 +28,19 @@ describe("Frame", () => {
     describe("#constructor", () => {
         it("part 1", () => {
             expect(gutter.doneScoring()).to.equal(false);
-            gutter.setBonusThrows();
+            gutter.setBonusThrows().getScore();
             expect(gutter.doneScoring()).to.equal(true);
         });
         it("part 2", () => {
             frame = new Frame(1, 1, 2, 2);
             expect(frame.doneScoring()).to.equal(false);
-            gutter.setBonusThrows();
+            gutter.setBonusThrows().getScore();
             expect(gutter.doneScoring()).to.equal(true);
         });
         it("#getScore, part 3", () => {
             frame = new Frame(9, 1, 2, 2);
             expect(frame.doneScoring()).to.equal(false);
-            gutter.setBonusThrows();
+            gutter.setBonusThrows().getScore();
             expect(gutter.doneScoring()).to.equal(true);
         });
     });

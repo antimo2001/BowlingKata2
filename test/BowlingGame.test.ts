@@ -43,7 +43,7 @@ class TestSubject {
     }
 }
 
-describe("BowlingGame", () => {
+xdescribe("BowlingGame", () => {
     let test: TestSubject;
 
     beforeEach(() => {

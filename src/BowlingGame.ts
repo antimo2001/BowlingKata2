@@ -37,7 +37,6 @@ export class BowlingGame {
         }
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
-        // this.updateThrows(firstThrow, secondThrow);
         this.updateScoresPerFrame();
     }
 
@@ -50,20 +49,17 @@ export class BowlingGame {
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
-        // this.updateThrows(firstThrow, BowlingGame.MAX_PINS - firstThrow);
     }
     
     /** Method for a player bowling a strike */
     public strike(): void {
         let frame = new StrikeFrame();
         this.frames.push(frame);
-        // this.updateThrows(BowlingGame.MAX_PINS);
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
     public bowlTenthFrame(throw1: number, throw2: number, throw3: number = 0): void {
         this.frames.push(new TenthFrame(throw1, throw2, throw3));
-        // this.updateThrows(pins);
         this.updateScoresPerFrame();
     }
 
@@ -92,12 +88,18 @@ export class BowlingGame {
         }
         //Create array of frames with their bonuses
         const nextFrames = this.frames.map((frame, i, frames) => {
-            const next1 = frames[i+1].getBaseThrows();
-            const next2 = frames[i+2].getBaseThrows();
-            let numBonus = 0;
-            numBonus = frame instanceof SpareFrame? 1 : numBonus;
-            numBonus = frame instanceof StrikeFrame? 2 : numBonus;
-            const bonus = [...next1, ...next2].slice(0, numBonus);
+            let next1 = frames[i+1];
+            let bonus1 = !!next1? next1.getBaseThrows(): [];
+            let bonus: number[] = [];
+
+            if (frame instanceof StrikeFrame) {
+                let next2 = frames[i+2];
+                let bonus2 = !!next2? next2.getBaseThrows(): [];
+                bonus = [...bonus1, ...bonus2].slice(0, 2);
+            }
+            else if (frame instanceof SpareFrame) {
+                bonus = bonus1.slice(0, 1);
+            }
             return { frame, bonus };
         });
 
