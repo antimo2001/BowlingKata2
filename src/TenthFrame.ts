@@ -21,7 +21,7 @@ export class TenthFrame extends Frame {
     }
 
     /**
-     * Set the score for this Spare
+     * Set the score for this 10th frame
      * @override Frame.setScore
      */
     protected setScore(): Frame {
