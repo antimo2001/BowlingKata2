@@ -29,6 +29,14 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     ```
 - Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
+### Do you ever want to use a repl of typescript?
+
+See [ts-node](https://www.npmjs.com/package/ts-node).  I also made an npm script to start one in this repo: `npm run tsc-repl`
+
+### How to create a tag
+
+To create a git tag, simply create a release at github.com and it prompts you to name the release, which also gives recommendations to the naming convention of tags (which I'm already used to semnatic versioning: see sample: `v1.2.3`)
+
 ### When adding a new repo and want to publish on to github.com, use these simple steps
 
 - at local machine and your root project folder, execute this git command: `git init {MY_NEW_REPO}`
@@ -45,7 +53,6 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 ## But I'm still confused about
 
 - how do I use VSCode debugger with its config file launch.json; why it fails to stop at a certain breakpoint when i press F5?
-- how do tags in git work? why doesn't Github Desktop have an easy button for tagging?
 
 ## Ideas
 
@@ -53,7 +60,8 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 
 - [x] redesign the method `TestSubject.playOpenFrame()` so that it takes a callback param? ~~and so that the method can be a standalone function~~
 - [x] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
+- [x] refactor classes for 2 goals; new interface: `Scorable` that represents a `score` and so that the BowlingGame only has 10 instances of Frame class ...the prior design could have 10 frames with 2 BonusFrame instances, so up to 12 frames per game ...which is weird and doesn't represent a real bowling game of 10 frames
 
 ### Future Exploration
 
-- [ ] i should learn how to use github's feature to create tags (instead of using branches to create my "tags", which i intended to be simply read-only branches while i continue to commit new code in to the master-branch)
+- [x] i should learn how to use github's feature to create tags (instead of using branches to create my "tags", which i intended to be simply read-only branches while i continue to commit new code in to the master-branch) ...how do tags in git work? why doesn't Github Desktop have an easy button for tagging?

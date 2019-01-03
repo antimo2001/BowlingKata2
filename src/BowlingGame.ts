@@ -3,7 +3,7 @@ import { Frame } from './Frame';
 import { StrikeFrame } from './StrikeFrame';
 import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
-import { BonusFrame } from './BonusFrame';
+import { TenthFrame } from './TenthFrame';
 
 const debugFip = debug("src:BowlingGame");
 
@@ -13,21 +13,15 @@ export class BowlingGame {
      */
     frames: Frame[];
     /**
-     * Represents all throws for a bowling game; frames usually have 2 throws,
-     * with the obvious exception of strike-frames.
+     * Represents the accumlated scores for each frame of the game.
      */
-    throws: number[];
-    /**
-     * Represents the score as per the prior frames of the game.
-     */
-    frameScores: number[];
+    scores: number[];
     private static MAX_PINS = 10;
     private static BOWLING_ERROR = "BowlingGameError";
 
     constructor() {
-        this.frameScores = [];
+        this.scores = [];
         this.frames = [];
-        this.throws = [];
     }
 
     /**
@@ -41,9 +35,8 @@ export class BowlingGame {
             debugFip(msg);
             throw RangeError(msg);
         }
-        let frame = new OpenFrame(this.throws.length);
+        let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
-        this.updateThrows(firstThrow, secondThrow);
         this.updateScoresPerFrame();
     }
 
@@ -54,29 +47,27 @@ export class BowlingGame {
             debugFip(msg);
             throw RangeError(msg);
         }
-        let frame = new SpareFrame(this.throws.length);
+        let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
-        this.updateThrows(firstThrow, BowlingGame.MAX_PINS - firstThrow);
+        this.updateScoresPerFrame();
     }
     
     /** Method for a player bowling a strike */
     public strike(): void {
-        let frame = new StrikeFrame(this.throws.length);
+        let frame = new StrikeFrame();
         this.frames.push(frame);
-        this.updateThrows(BowlingGame.MAX_PINS);
+        this.updateScoresPerFrame();
     }
     
     /** Method for a player bowling the extra throws in the 10th frame */
-    public bonusRoll(pins: number): void {
-        this.frames.push(new BonusFrame(this.throws.length));
-        this.updateThrows(pins);
+    public bowlTenthFrame(throw1: number, throw2: number, throw3: number = 0): void {
+        this.frames.push(new TenthFrame(throw1, throw2, throw3));
         this.updateScoresPerFrame();
     }
 
     /** Calculates score prior to the 10th frame */
     public scoreNthFrame(nthFrame: number): number {
-        const scoreNth = this.frameScores[nthFrame - 1];
-        debugFip(`scoreNth===${scoreNth}`);
+        const scoreNth = this.scores[nthFrame - 1];
         if (!scoreNth) {
             let msg = `${BowlingGame.BOWLING_ERROR}: array index out of bounds; nthFrame===${nthFrame}`;
             debugFip(msg);
@@ -85,121 +76,56 @@ export class BowlingGame {
         return scoreNth;
     }
 
-    /** Calculates the total score for the game */
-    public score(simple: boolean = true): number {
-        return simple ? this.scoreForOf() : this.scoreMapReduce();
+    /** Gets the total score for the game */
+    public score(): number {
+        return this.scores[this.scores.length - 1];
     }
 
-    /** Calculates the total score for the game (simple for-of loop) */
-    private scoreForOf(frames?: Frame[]): number {
-        frames = frames!==undefined? frames: this.frames;
-        let total = 0;
-        for(let f of frames) {
-            total += f.score(this.throws);
-        }
-        return total;
-    }
-
-    /** Calculates the total score for the game (with map-reduce algorithm) */
-    private scoreMapReduce(frames?: Frame[]): number {
-        frames = frames!==undefined? frames: this.frames;
-        const scores = frames.map(f => f.score(this.throws));
-        return this.sumnums(scores);
-    }
-
-    /** Concat more throws with all of the new throws */
-    private updateThrows(throw1: number, throw2?: number): void {
-        let newThrows = [...this.throws, throw1];
-        //Concat throw2 only if it is defined
-        newThrows = (throw2===undefined ? newThrows: [...newThrows, throw2]);
-        this.throws = newThrows;
-    }
-
-    /** Update the scores only when the current frame is open or bonus */
+    /** Update the scores only when the frame can be scored */
     private updateScoresPerFrame() {
-        // Use 2 parallel arrays to represent the base scores and extra scores
-        let baseScores: number[] = [];
-        let extraScores: number[] = [];
-        // Iterate thru all frames to recalculate the scores for each
-        for (const frame of this.frames) {
-            //Find the base scores per frame and the extrascores per frame
-            const base = this.getBaseScore(frame);
-            const extra = this.getExtraScore(frame);
-            //Concat the base scores and extras
-            baseScores = [...baseScores, base];
-            extraScores = [...extraScores, extra];
+        if (this.cannotScoreYet()) {
+            debugFip(`cannot score this game yet`);
+            return;
         }
-        // debugFip(`baseScores===${baseScores}`);
-        // debugFip(`extraScores===${extraScores}`);
-        debugFip(`baseScores has same length as frames? ${baseScores.length===this.frames.length}`);
-        debugFip(`extraScores has same length as frames? ${extraScores.length===this.frames.length}`);
+        //Create array of frames with their bonuses
+        const nextFrames = this.frames.map((frame, i, frames) => {
+            let next1 = frames[i+1];
+            let bonus1 = !!next1? next1.getBaseThrows(): [];
+            let bonus: number[] = [];
+
+            if (frame instanceof StrikeFrame) {
+                let next2 = frames[i+2];
+                let bonus2 = !!next2? next2.getBaseThrows(): [];
+                bonus = [...bonus1, ...bonus2].slice(0, 2);
+            }
+            else if (frame instanceof SpareFrame) {
+                bonus = bonus1.slice(0, 1);
+            }
+            return { frame, bonus };
+        });
+
         let totalSum: number = 0;
-        const finalScores = baseScores.map((base, index) => {
-            const extra = extraScores[index];
-            totalSum += base + extra;
-            // debugFip(`totalSum,base,extra: ${totalSum},${base},${extra}`);
+        const cumulatives = nextFrames.map(nf => {
+            const {frame, bonus} = nf;
+            const s = frame.setBonusThrows(...bonus).getScore();
+            totalSum += s;
             return totalSum;
         });
-        // debugFip(`finalScores.length===${finalScores.length}; which should be 10? ${10===finalScores.length}`);
-        // debugFip(`finalScores===${finalScores}`);
-        this.frameScores = finalScores;
+        debugFip(`cumulatives===${cumulatives}`);
+        this.scores = cumulatives;
     }
 
-    /**
-     * This is for getting the base score per frame. Strikes and spares have
-     * a base score of 10. Other frames have less.
-     */
-    private getBaseScore(frame: Frame): number {
-        const fi = frame.getFrameIndex();
-        if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
-            let twothrows = [this.throws[fi], this.throws[fi + 1]];
-            return this.sumnums(twothrows);
-        }
-        if (frame instanceof StrikeFrame || frame instanceof SpareFrame) {
-            return BowlingGame.MAX_PINS;
-        }
-        throw `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`;
+    private cannotScoreYet(): boolean {
+        //Game cannot be scored if these:
+        //only 1 frame and is a strike or spare
+        //only 2 frames and both are strikes
+        const f = this.frames;
+        const violations = [
+            f.length === 2 && f[0] instanceof StrikeFrame && f[1] instanceof StrikeFrame,
+            f.length === 1 && f[0] instanceof StrikeFrame,
+            f.length === 1 && f[0] instanceof SpareFrame,
+        ];
+        const cant = violations.filter(r => !!r);
+        return cant.length > 0;
     }
-
-    /**
-     * This is for getting the extra scores per frame.  Strikes get 2 extra
-     * throws added to its score; spares get 1 extra. Other frames get none.
-     */
-    private getExtraScore(frame: Frame): number {
-        const fi = frame.getFrameIndex();
-        //Filter the throws for only strikes and spares
-        const extra = this.throws.filter((t, i) => {
-            if (frame instanceof StrikeFrame) {
-                return (fi + 2 === i || fi + 1 === i);
-            }
-            if (frame instanceof SpareFrame) {
-                return (fi + 2 === i);
-            }
-            if (frame instanceof OpenFrame || frame instanceof BonusFrame) {
-                return false;
-            }
-            debugFip(`(t,i,fi)==(${t},${i},${fi})`);
-            const msg = `***DevError: unknown instance of Frame: ${frame.constructor.toString()}`;
-            debugFip(msg);
-            throw msg;
-        });
-        debugFip(`assert that extra.length is 2 or fewer? ${extra.length <= 2}`);
-        return this.sumnums(extra);
-    }
-
-    /** This is for determining that the game is over and scored */
-    private isGameOver(): boolean {
-        // const maxFrameCount = 10;
-        // const areAllFramesDoneScoring = this.frames.length === this.frameScores.length;
-        // return areAllFramesDoneScoring;
-
-        //TODO: the above algorithm seems off; for now, game is never over
-        return false;
-    }
-
-    /** This is for easily adding numbers */
-    private sumnums(nums: number[], initialValue: number = 0): number {
-        return nums.reduce((p, c) => p + c, initialValue);
-    }
-
 }
