@@ -29,8 +29,7 @@ export class TenthFrame extends Frame {
             debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
-        this.score = Frame.sum(...this.base);
-        this.isScored = true;
+        super.setScore();
         return this;
     }
 }

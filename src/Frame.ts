@@ -85,8 +85,7 @@ export class Frame implements Scoreable {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        const baseScore = this.base.slice(0, 2);
-        this.score = Frame.sum(...baseScore);
+        this.score = Frame.sum(...this.base);
         this.isScored = true;
         return this;
     }
