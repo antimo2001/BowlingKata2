@@ -13,9 +13,7 @@ const debugs = {
 };
 
 /** Helper function for calculating the sum */
-const sumReduce = (...scores: number[]) => {
-    return Frame.sum(...scores);
-}
+const sumReduce = Frame.sum;
 
 class TestSubject {
     public game: BowlingGame;

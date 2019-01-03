@@ -2,7 +2,7 @@ import { Frame } from '../src/Frame';
 import { expect } from 'chai';
 import 'mocha';
 import debug from 'debug';
-const debugFip = debug("fip01:test:Frame");
+const debugFip = debug("test:Frame");
 
 describe("Frame", () => {
     let gutter: Frame;

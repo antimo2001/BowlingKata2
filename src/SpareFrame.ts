@@ -46,7 +46,8 @@ export class SpareFrame extends Frame {
         }
         const baseScore = this.base.slice(0, 2);
         const bonusScore = this.bonusThrows.slice(0, 1);
-        this.score = Frame.sum(...[...baseScore, ...bonusScore]);
+        const concats = [...baseScore, ...bonusScore];
+        this.score = Frame.sum(...concats);
         this.isScored = true;
         return this;
     }

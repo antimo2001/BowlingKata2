@@ -34,7 +34,7 @@ export class Frame implements Scoreable {
      * @param numbers array contains the numbers to sum
      */
     public static sumApply(numbers: number[]) {
-        return numbers.reduce((p, c) => p + c, 0);
+        return this.sum(...numbers);
     }
 
     /** Returns true iff frame is done scoring */
