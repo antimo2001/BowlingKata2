@@ -8,10 +8,15 @@ interface Scoreable {
 
 /** Represents a frame in a bowling game */
 export class Frame implements Scoreable {
+    /** Represents the bonus throws */
     protected bonusThrows: number[];
+    /** Represents the base throws */
     protected base: number[];
+    /** Represents the calucated score (includes the base and bonus) */
     protected score: number;
+    /** Represents that the score is already calculated */
     protected isScored: boolean;
+    /** A debugging count */
     protected invokeCount: number;
 
     constructor(...throws: number[]) {

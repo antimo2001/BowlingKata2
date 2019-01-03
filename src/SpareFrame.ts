@@ -41,12 +41,10 @@ export class SpareFrame extends Frame {
             return this;
         }
         if (this.isScored) {
-            debugFip(`already done scoring; keep score as is: ${this.score}`);
+            // debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        const baseScore = this.base.slice(0, 2);
-        const bonusScore = this.bonusThrows.slice(0, 1);
-        const concats = [...baseScore, ...bonusScore];
+        const concats = [...this.base, ...this.bonusThrows];
         this.score = Frame.sum(...concats);
         this.isScored = true;
         return this;

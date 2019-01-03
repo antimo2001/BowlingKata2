@@ -104,6 +104,7 @@ export class BowlingGame {
             return { frame, bonus };
         });
 
+        //Iterate thru all frames to calculate the total for the game
         let totalSum: number = 0;
         const cumulatives = nextFrames.map(nf => {
             const {frame, bonus} = nf;
@@ -125,7 +126,7 @@ export class BowlingGame {
             f.length === 1 && f[0] instanceof StrikeFrame,
             f.length === 1 && f[0] instanceof SpareFrame,
         ];
-        const cant = violations.filter(r => !!r);
-        return cant.length > 0;
+        const foundViolations = violations.filter(r => !!r).length > 0;
+        return foundViolations;
     }
 }

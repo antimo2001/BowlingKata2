@@ -44,9 +44,7 @@ export class StrikeFrame extends Frame {
             // debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        const baseScore = this.base.slice(0, 1);
-        const bonusScore = this.bonusThrows.slice(0, 2);
-        const concats = [...baseScore, ...bonusScore];
+        const concats = [...this.base, ...this.bonusThrows];
         // debugFip(`is baseScore still just 10? ${this.base[0]===10? 'yes': 'OMG NO'}`);
         this.score = Frame.sum(...concats);
         this.isScored = true;
