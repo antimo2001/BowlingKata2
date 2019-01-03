@@ -310,11 +310,12 @@ describe("BowlingGame", () => {
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
 
-            calculatorScores.map((score, i) => {
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
                 it(`verify calculator (${score}) at frame: ${i}`, () => {
-                    if (i > 0) {
-                        expect(test.game.scoreNthFrame(i)).to.equal(score);
-                    }
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
@@ -349,11 +350,12 @@ describe("BowlingGame", () => {
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
 
-            calculatorScores.map((score, i) => {
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
                 it(`verify calculator score at frame: ${i}`, () => {
-                    if (i > 0) {
-                        expect(test.game.scoreNthFrame(i)).to.equal(score);
-                    }
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
@@ -384,11 +386,12 @@ describe("BowlingGame", () => {
                 expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
 
-            calculatorScores.map((score, i) => {
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
                 it(`verify calculator score at frame: ${i}`, () => {
-                    if (i > 0) {
-                        expect(test.game.scoreNthFrame(i)).to.equal(score);
-                    }
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
