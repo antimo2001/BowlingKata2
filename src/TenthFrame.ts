@@ -26,7 +26,7 @@ export class TenthFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
+            debugFip(`didnt set the score: base.length===${this.base.length}`);
             return this;
         }
         super.setScore();

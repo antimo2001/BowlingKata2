@@ -68,7 +68,7 @@ export class BowlingGame {
     /** Calculates score prior to the 10th frame */
     public scoreNthFrame(nthFrame: number): number {
         const scoreNth = this.scores[nthFrame - 1];
-        if (!scoreNth) {
+        if (scoreNth===undefined || scoreNth===null) {
             let msg = `${BowlingGame.BOWLING_ERROR}: array index out of bounds; nthFrame===${nthFrame}`;
             debugFip(msg);
             throw RangeError(msg);
