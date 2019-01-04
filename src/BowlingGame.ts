@@ -87,12 +87,13 @@ export class BowlingGame {
             debugFip(`cannot score this game yet`);
             return;
         }
-        //Create array of frames with their bonuses
-        const nextFrames = this.frames.map((frame, i, frames) => {
+        //Iterate thru any unscored frames to set each bonus
+        const unscored = this.frames.filter(f => !f.doneScoring());
+        unscored.forEach((frame, i, frames) => {
             let next1 = frames[i+1];
             let bonus1 = !!next1? next1.getBaseThrows(): [];
             let bonus: number[] = [];
-
+            
             if (frame instanceof StrikeFrame) {
                 let next2 = frames[i+2];
                 let bonus2 = !!next2? next2.getBaseThrows(): [];
@@ -101,16 +102,14 @@ export class BowlingGame {
             else if (frame instanceof SpareFrame) {
                 bonus = bonus1.slice(0, 1);
             }
-            return { frame, bonus };
+            frame.setBonusThrows(...bonus);
         });
 
         //Iterate thru all frames to calculate the total for the game
-        let totalSum: number = 0;
-        const cumulatives = nextFrames.map(nf => {
-            const {frame, bonus} = nf;
-            const s = frame.setBonusThrows(...bonus).getScore();
-            totalSum += s;
-            return totalSum;
+        let total: number = 0;
+        const cumulatives = this.frames.map(frame => {
+            total += frame.getScore();
+            return total;
         });
         debugFip(`cumulatives===${cumulatives}`);
         this.scores = cumulatives;
