@@ -51,11 +51,11 @@ export class Frame implements Scoreable {
         return this.base;
     }
     /**
-     * Concats the given array with the bonusThrows
+     * Sets the bonusThrows
      * @param bonusThrows this rest args contains the array of bonus throws
      */
     public setBonusThrows(...bonusThrows: number[]): Frame {
-        // this.bonusThrows = bonusThrows.slice(0, 2);
+        this.bonusThrows = [];
         return this;
     }
 

@@ -6,11 +6,8 @@ const debugFip = debug("src:SpareFrame");
 export class SpareFrame extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
-        this.bonusThrows = [];
         //A spare should only use the first throw; the 2nd throw is inferred
         this.base = [throws[0], 10 - throws[0]];
-        this.score = 0;
-        this.isScored = false;
     }
 
     /**

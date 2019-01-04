@@ -6,11 +6,8 @@ const debugFip = debug("src:StrikeFrame");
 export class StrikeFrame extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
-        this.bonusThrows = [];
         //A strike is assumed to be 10 pins
         this.base = [10];
-        this.score = 0;
-        this.isScored = false;
     }
 
     /**
@@ -50,5 +47,4 @@ export class StrikeFrame extends Frame {
         this.isScored = true;
         return this;
     }
-
 }
