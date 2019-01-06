@@ -408,12 +408,12 @@ describe("BowlingGame", () => {
                 expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
                 expect(evilfunc).to.throw(/BowlingGameError/);
             });
-            it("fails with error when 99 frames", () => {
+            it("when 99 frames", () => {
                 const LOTSA_FRAMES = 99;
                 test.playOpenFrames(LOTSA_FRAMES, 0, 1);
                 expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
-            })
+            });
         });
 
         describe("only spare frames", () => {
@@ -453,7 +453,7 @@ describe("BowlingGame", () => {
                 let evilfunc = () => {
                     test.game.spare(11);
                 }
-                expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10 pins/);
+                expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
                 expect(evilfunc).to.throw(/BowlingGameError/);
             });
         });
