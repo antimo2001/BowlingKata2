@@ -45,14 +45,14 @@ describe("BowlingGame", () => {
     describe("#openFrame", () => {
         it("single frame", () => {
             test.game.open(1, 2);
-            expect(test.game.score()).to.be.equal(3);
+            expect(test.game.score()).to.equal(3);
         });
 
         it("multiple frames", () => {
             test.game.open(1, 2);
             test.game.open(3, 4);
             const expectedScore = sumReduce(1, 2, 3, 4);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
 
         it("up to 5 frames", () => {
@@ -62,15 +62,15 @@ describe("BowlingGame", () => {
             test.game.open(2, 2);
             test.game.open(3, 3);
             let expectedScore = sumReduce(3, 7, 2, 4, 6);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player throws all gutterballs", () => {
             test.playOpenFrames(10, 0, 0);
-            expect(test.game.score()).to.be.equal(0);
+            expect(test.game.score()).to.equal(0);
         });
         it("player bowls 3 pins per throw", () => {
             test.playOpenFrames(10, 3, 3);
-            expect(test.game.score()).to.be.equal(60);
+            expect(test.game.score()).to.equal(60);
         });
     });
 
@@ -80,7 +80,7 @@ describe("BowlingGame", () => {
             test.game.open(8, 1);
             test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 8, 8, 1);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a spare in frame 8", () => {
             test.playOpenFrames(7, 0, 0);
@@ -88,14 +88,14 @@ describe("BowlingGame", () => {
             test.game.open(4, 5);
             test.game.open(0, 0);
             const expectedScore = sumReduce(10, 4, 4, 5);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a spare in frame 10", () => {
             test.playOpenFrames(8, 0, 0);
             test.game.open(4, 5);
             test.game.bowlTenthFrame(4, 6, 3);
             const expectedScore = sumReduce(9, 10, 3);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls many spares", () => {
             test.game.spare(7);
@@ -103,14 +103,14 @@ describe("BowlingGame", () => {
             test.game.open(3, 4);
             test.playOpenFrames(7, 0, 0);
             const expectedScore = sumReduce(10, 8, 10, 3, 7);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls many spares with bonus", () => {
             test.playOpenFrames(8, 0, 0);
             test.game.spare(4);
             test.game.bowlTenthFrame(5, 5, 3);
             const expectedScore = sumReduce(10, 5, 10, 3);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
     });
 
@@ -120,7 +120,7 @@ describe("BowlingGame", () => {
             test.game.open(1, 6);
             test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 1, 6, 1, 6);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a strike in frame 4", () => {
             test.playOpenFrames(3, 0, 0);
@@ -130,17 +130,17 @@ describe("BowlingGame", () => {
             test.playOpenFrames(5, 0, 0);
             // debugs.fip00(`after test.game.throws===${test.game.throws}`);
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
-            expect(test.game.score()).to.be.equal(expectedScore);
+            expect(test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a strike in frame 10", () => {
             test.playOpenFrames(9, 0, 0);
             test.game.bowlTenthFrame(10, 10, 10);
-            expect(test.game.score()).to.be.equal(30);
+            expect(test.game.score()).to.equal(30);
         });
         it("player bowls perfect game", () => {
             test.playMultipleFrames(9, (g: BowlingGame) => g.strike());
             test.game.bowlTenthFrame(10, 10, 10);
-            expect(test.game.score()).to.be.equal(300);
+            expect(test.game.score()).to.equal(300);
         });
     });
 
@@ -305,11 +305,6 @@ describe("BowlingGame", () => {
                 debugs.fip00(`...END GAME`);
             });
 
-            it("regression test end-game score", () => {
-                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
-                expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
-            });
-
             calculatorScores.forEach((score, i) => {
                 if (i <= 0) {
                     return;
@@ -345,11 +340,6 @@ describe("BowlingGame", () => {
                 // debugs.fip01(`...END GAME`);
             });
 
-            it("regression test end-game score", () => {
-                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
-                expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
-            });
-
             calculatorScores.forEach((score, i) => {
                 if (i <= 0) {
                     return;
@@ -379,11 +369,6 @@ describe("BowlingGame", () => {
                 test.game.strike();
                 test.game.bowlTenthFrame(10, 10, 10);
                 // debugs.fip01(`...END GAME`);
-            });
-
-            it("regression test end-game score", () => {
-                expect(test.game.scoreNthFrame(10)).to.equal(calculatorScores[10]);
-                expect(test.game.scoreNthFrame(10)).to.equal(test.game.score());
             });
 
             calculatorScores.forEach((score, i) => {

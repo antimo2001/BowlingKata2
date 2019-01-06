@@ -97,10 +97,10 @@ export class BowlingGame {
             if (frame instanceof StrikeFrame) {
                 let next2 = frames[i+2];
                 let bonus2 = !!next2? next2.getBaseThrows(): [];
-                bonus = [...bonus1, ...bonus2].slice(0, 2);
+                bonus = [...bonus1, ...bonus2];
             }
             else if (frame instanceof SpareFrame) {
-                bonus = bonus1.slice(0, 1);
+                bonus = bonus1;
             }
             frame.setBonusThrows(...bonus);
         });
