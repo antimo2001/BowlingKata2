@@ -1,6 +1,6 @@
 {
   "name": "bowlingkata2",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "practice typescript with mocha tests",
   "main": "index.js",
   "dependencies": {
@@ -17,17 +17,22 @@
   },
   "scripts": {
     "pre-build": "mkdir out",
-    "build": "npm run tsc-build > out/build01.log  &&  npm test > out/build02.log",
+    "build": "npm run build-default",
+    "build-default": "npm run tsc-build > out/build01.log  &&  npm run test-default > out/build02.log",
     "mocha-help": "mocha --help > out/mocha-help.out",
+    "mocha-reporters": "mocha --reporters > out/mocha-reporters.out",
     "tsc-repl": "ts-node",
     "tsc": "tsc",
     "tsc-build": "tsc --build tsconfig.json",
+    "test": "npm run test-watch",
     "test-fip": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/**/*.test.ts",
     "test0": "mocha -r ts-node/register test/hello-world.test.ts",
-    "test1": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/OpenFrame.test.ts",
-    "test-watch": "mocha  -w  -r ts-node/register  test/**/*.test.ts",
-    "test-report": "mocha -r ts-node/register  test/**/*.test.ts  --reporter spec",
-    "test": "mocha -r ts-node/register  test/**/*.test.ts"
+    "test1": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/BowlingGame.test.ts",
+    "test-report": "mocha -r ts-node/register test/**/*.test.ts --reporter dot",
+    "test-report1": "mocha -r ts-node/register test/**/*.test.ts --reporter progress",
+    "test-report2": "mocha -r ts-node/register test/**/*.test.ts --reporter landing",
+    "test-watch": "mocha -w -r ts-node/register test/**/*.test.ts --reporter min",
+    "test-default": "mocha -r ts-node/register test/**/*.test.ts --reporter dot"
   },
   "author": "",
   "license": "ISC"
