@@ -51,15 +51,17 @@ export class Frame implements Scoreable {
         return this.base;
     }
     /**
-     * Sets the bonusThrows
+     * Sets the bonusThrows. It's recommended that sub classes override this
+     * method.
      * @param bonusThrows this rest args contains the array of bonus throws
      */
     public setBonusThrows(...bonusThrows: number[]): Frame {
         this.bonusThrows = [];
         return this;
     }
-
-    /** Gets the score */
+    /**
+     * Gets the score for this frame.
+     */
     public getScore(): number {
         if (this.isScored) {
             debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
@@ -70,12 +72,16 @@ export class Frame implements Scoreable {
     }
 
     /**
-     * Returns true iff this frame has enough throws to be scored
+     * Returns true iff this frame has enough throws to be scored. It's
+     * recommended that sub classes override this method.
      */
     protected canScore(): boolean {
         return true;
     }
-    /** Sets the score based on throws array */
+    /**
+     * Sets the score for this frame. It's recommended that sub classes override
+     * this method.
+     */
     protected setScore(): Frame {
         if (!this.canScore()) {
             debugFip(`didnt set the score`);
@@ -89,5 +95,4 @@ export class Frame implements Scoreable {
         this.isScored = true;
         return this;
     }
-
 }

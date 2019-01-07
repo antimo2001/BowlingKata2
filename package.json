@@ -4,6 +4,7 @@
   "description": "practice typescript with mocha tests",
   "main": "index.js",
   "dependencies": {
+    "debug": "^4.1.0",
     "typescript": "^3.2.2"
   },
   "devDependencies": {
@@ -11,7 +12,6 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
     "chai": "^4.2.0",
-    "debug": "^4.1.0",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1"
   },
@@ -25,9 +25,9 @@
     "tsc": "tsc",
     "tsc-build": "tsc --build tsconfig.json",
     "test": "npm run test-watch",
-    "test-fip": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/**/*.test.ts",
+    "test-fip": "SET DEBUG=fip01:* &&  mocha -w -r ts-node/register test/**/*.test.ts --reporter spec",
     "test0": "mocha -r ts-node/register test/hello-world.test.ts",
-    "test1": "SET DEBUG=fip01:*  &&  mocha -w -r ts-node/register test/BowlingGame.test.ts",
+    "test1": "SET DEBUG=fip01:* &&  mocha -w -r ts-node/register test/BowlingGame.test.ts",
     "test-report": "mocha -r ts-node/register test/**/*.test.ts --reporter dot",
     "test-report1": "mocha -r ts-node/register test/**/*.test.ts --reporter progress",
     "test-report2": "mocha -r ts-node/register test/**/*.test.ts --reporter landing",

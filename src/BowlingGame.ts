@@ -11,7 +11,7 @@ export class BowlingGame {
     /**
      * Represents all frames for a bowling game
      */
-    private frames: Frame[];
+    public frames: Frame[];
     /**
      * Represents the accumlated scores for each frame of the game
      */
