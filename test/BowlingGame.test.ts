@@ -380,6 +380,60 @@ describe("BowlingGame", () => {
                 });
             });
         });
+
+        describe("bowls frames in specific sequence 4: strike/open/spare", () => {
+            /**
+             * This is Nth based (instead of N-1); that's why NaN is the 0th value
+             */
+            const calculatorScores = [NaN, 18, 26, 46, 64, 72, 92, 110, 118, 138, 156];
+
+            beforeEach(() => {
+                test.game.strike();
+                test.game.open(4, 4);
+                test.game.spare(5);
+                test.game.strike();
+                test.game.open(4, 4);
+                test.game.spare(5);
+                test.game.strike();
+                test.game.open(4, 4);
+                test.game.spare(5);
+                test.game.bowlTenthFrame(10, 4, 4);
+            });
+
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            });
+        });
+
+        describe("bowls frames in specific sequence 5: strike/gutter", () => {
+            /**
+             * This is Nth based (instead of N-1); that's why NaN is the 0th value
+             */
+            const calculatorScores = [NaN, 10, 10, 20, 20, 30, 30, 40, 40, 50, 50];
+
+            beforeEach(() => {
+                test.playMultipleFrames(4, (game: BowlingGame) => {
+                    game.strike();
+                    game.open(0, 0);
+                });
+                test.game.strike();
+                test.game.bowlTenthFrame(0, 0);
+            });
+
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            });
+        });
     });
 
     describe("Edge Tests", () => {
