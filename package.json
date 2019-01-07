@@ -18,7 +18,7 @@
   "scripts": {
     "pre-build": "mkdir out",
     "build": "npm run build-default",
-    "build-default": "npm run tsc-build > out/build01.log  &&  npm run test-default > out/build02.log",
+    "build-default": "npm run tsc-build > out/build.log &&  npm run test-default >> out/build.log",
     "mocha-help": "mocha --help > out/mocha-help.out",
     "mocha-reporters": "mocha --reporters > out/mocha-reporters.out",
     "tsc-repl": "ts-node",

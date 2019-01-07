@@ -11,12 +11,18 @@ export class BowlingGame {
     /**
      * Represents all frames for a bowling game
      */
-    frames: Frame[];
+    private frames: Frame[];
     /**
-     * Represents the accumlated scores for each frame of the game.
+     * Represents the accumlated scores for each frame of the game
      */
-    scores: number[];
+    private scores: number[];
+    /**
+     * Represents the maximum number of pins in one frame
+     */
     private static MAX_PINS = 10;
+    /**
+     * Prefix string for bowling game errors
+     */
     private static BOWLING_ERROR = "BowlingGameError";
 
     constructor() {
@@ -39,8 +45,10 @@ export class BowlingGame {
         this.frames.push(frame);
         this.updateScoresPerFrame();
     }
-
-    /** Method for a player bowling a spare frame */
+    /**
+     * Method for a player bowling a spare frame
+     * @param firstThrow the first throw in the frame
+     */
     public spare(firstThrow: number): void {
         if (firstThrow >= BowlingGame.MAX_PINS) {
             let msg = `${BowlingGame.BOWLING_ERROR}: first throw of a spare cannot exceed ${BowlingGame.MAX_PINS} pins`;
@@ -51,21 +59,32 @@ export class BowlingGame {
         this.frames.push(frame);
         this.updateScoresPerFrame();
     }
-    
-    /** Method for a player bowling a strike */
+    /**
+     * Method for a player bowling a strike
+     */
     public strike(): void {
         let frame = new StrikeFrame();
         this.frames.push(frame);
         this.updateScoresPerFrame();
     }
-    
-    /** Method for a player bowling the extra throws in the 10th frame */
-    public bowlTenthFrame(throw1: number, throw2: number, throw3: number = 0): void {
-        this.frames.push(new TenthFrame(throw1, throw2, throw3));
+    /**
+     * Method for a player bowling the extra throws in the 10th frame
+     * @param throw1 the first throw in the frame
+     * @param throw2 the 2nd throw in the frame
+     * @param throw3 the 3rd throw in the frame (optional)
+     */
+    public bowlTenthFrame(throw1: number, throw2: number, throw3?: number): void {
+        let throws = [throw1, throw2];
+        //Only concat throw3 if it is defined
+        throws = throw3!==undefined? [...throws, throw3]: throws;
+        this.frames.push(new TenthFrame(...throws));
         this.updateScoresPerFrame();
     }
-
-    /** Calculates score prior to the 10th frame */
+    /**
+     * Gets the score for any frame of the game (ranges from 1 to 10). Throws
+     * exception if game doesn't have an existing nthFrame.
+     * @param nthFrame the frame number to fetch the score
+     */
     public scoreNthFrame(nthFrame: number): number {
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth===undefined || scoreNth===null) {
@@ -75,25 +94,27 @@ export class BowlingGame {
         }
         return scoreNth;
     }
-
-    /** Gets the total score for the game */
+    /**
+     * Gets the total score for the game
+     */
     public score(): number {
         return this.scores[this.scores.length - 1];
     }
-
-    /** Update the scores only when the frame can be scored */
+    /**
+     * Update the accumlated scores for this game
+     */
     private updateScoresPerFrame() {
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
             return;
         }
-        //Iterate thru any unscored frames to set each bonus
+
+        //Set the bonus for each frame (especially unscored frames)
         const unscored = this.frames.filter(f => !f.doneScoring());
         unscored.forEach((frame, i, frames) => {
             let next1 = frames[i+1];
             let bonus1 = !!next1? next1.getBaseThrows(): [];
             let bonus: number[] = [];
-            
             if (frame instanceof StrikeFrame) {
                 let next2 = frames[i+2];
                 let bonus2 = !!next2? next2.getBaseThrows(): [];
@@ -114,18 +135,20 @@ export class BowlingGame {
         debugFip(`cumulatives===${cumulatives}`);
         this.scores = cumulatives;
     }
-
+    /**
+     * Returns true iff this game cannot be scored yet.
+     * Game cannot be scored if these:
+     * (1) the 1st frame is a strike or spare
+     * (2) only 2 frames and both are strikes
+     */
     private cannotScoreYet(): boolean {
-        //Game cannot be scored if these:
-        //only 1 frame and is a strike or spare
-        //only 2 frames and both are strikes
         const f = this.frames;
+        const fc = this.frames.length;
         const violations = [
-            f.length === 2 && f[0] instanceof StrikeFrame && f[1] instanceof StrikeFrame,
-            f.length === 1 && f[0] instanceof StrikeFrame,
-            f.length === 1 && f[0] instanceof SpareFrame,
+            fc === 2 && f[0] instanceof StrikeFrame && f[1] instanceof StrikeFrame,
+            fc === 1 && f[0] instanceof StrikeFrame,
+            fc === 1 && f[0] instanceof SpareFrame,
         ];
-        const foundViolations = violations.filter(r => !!r).length > 0;
-        return foundViolations;
+        return violations.some(v => !!v);
     }
 }
