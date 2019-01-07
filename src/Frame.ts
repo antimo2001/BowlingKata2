@@ -76,7 +76,7 @@ export class Frame implements Scoreable {
      * recommended that sub classes override this method.
      */
     protected canScore(): boolean {
-        return true;
+        return this.base.length > 1;
     }
     /**
      * Sets the score for this frame. It's recommended that sub classes override
