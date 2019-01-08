@@ -7,9 +7,19 @@ import { TenthFrame } from './TenthFrame';
 
 const debugFip = debug("src:BowlingGame");
 
+/** Class represents a BowlingGame exception */
 export class BowlingGameError extends Error {
+    constructor(message: string) {
+        super(message);
+        //Practicing subclasses of Typescript's Error class see the following
+        //potential issue; https://stackoverflow.com/questions/41102060/typescript-extending-error-class
+
+        // Set the prototype explicitly.
+        // Object.setPrototypeOf(this, BowlingGameError.prototype);
+    }
 }
 
+/** Class represents a BowlingGame exception */
 export class BowlingGame {
     /**
      * Represents all frames for a bowling game
@@ -160,7 +170,7 @@ export class BowlingGame {
      * Throw BowlingGame error with the given message
      * @param message the error message
      */
-    private failWithError(message?: string) {
+    private failWithError(message: string) {
         // const msg = `BowlingGameError: ${message}`;
         debugFip(message);
         throw new BowlingGameError(message);

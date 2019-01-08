@@ -254,19 +254,23 @@ describe("BowlingGame", () => {
 
             it("expect error; part 0", () => {
                 let testFn = createFn(test, 0);
-                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throw(/array index out of bounds/);
+                expect(testFn).to.throw(BowlingGameError);
             });
             it("expect error; part 1", () => {
                 let testFn = createFn(test, 9);
-                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throw(/array index out of bounds/);
+                expect(testFn).to.throw(BowlingGameError);
             });
             it("expect error; part 2", () => {
                 let testFn = createFn(test, -22);
-                expect(testFn).to.throws(/array index out of bounds/);
+                expect(testFn).to.throw(/array index out of bounds/);
+                expect(testFn).to.throw(BowlingGameError);
             });
             it("clean; no errors", () => {
                 let cleanfunc = createFn(test, 1);
-                expect(cleanfunc).to.not.throws(/array index out of bounds/);
+                expect(cleanfunc).to.not.throw(/array index out of bounds/);
+                expect(cleanfunc).to.not.throw(BowlingGameError);
             });
         });
 
@@ -430,6 +434,49 @@ describe("BowlingGame", () => {
                 });
             });
         });
+
+        describe("bowls frames in specific sequence 6: spare/open/strike", () => {
+            const calculatorScores = [NaN, 14, 22, 42, 56, 64, 84, 98, 106, 126, 140];
+
+            beforeEach(() => {
+                test.playMultipleFrames(3, (game: BowlingGame) => {
+                    game.spare(5);
+                    game.open(4, 4);
+                    game.strike();
+                });
+                test.game.bowlTenthFrame(5, 5, 4);
+            });
+
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            });
+        });
+        describe("bowls frames in specific sequence 7: open/strike/spare", () => {
+            const calculatorScores = [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134];
+
+            beforeEach(() => {
+                test.playMultipleFrames(3, (game: BowlingGame) => {
+                    game.open(4, 4);
+                    game.strike();
+                    game.spare(5);
+                });
+                test.game.bowlTenthFrame(4, 4);
+            });
+
+            calculatorScores.forEach((score, i) => {
+                if (i <= 0) {
+                    return;
+                }
+                it(`verify calculator score at frame: ${i}`, () => {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            });
+        });
     });
 
     describe("Edge Tests", () => {
@@ -456,6 +503,7 @@ describe("BowlingGame", () => {
                     test.game.open(2, 22);
                 }
                 expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
+                expect(evilfunc).to.throw(BowlingGameError);
             });
             it("when 99 frames", () => {
                 const LOTSA_FRAMES = 99;
@@ -464,16 +512,14 @@ describe("BowlingGame", () => {
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
             });
             it("fails with error when open frame and negative pins", () => {
-                let evilfunc = () => {
-                    test.game.open(1, -3);
-                }
+                let evilfunc = () => test.game.open(1, -3);
                 expect(evilfunc).to.throw(/throw cannot be negative/);
+                expect(evilfunc).to.throw(BowlingGameError);
             });
             it("fails with error when spare frame and negative pins", () => {
-                let evilfunc = () => {
-                    test.game.spare(-2);
-                }
+                let evilfunc = () => test.game.spare(-2);
                 expect(evilfunc).to.throw(/throw cannot be negative/);
+                expect(evilfunc).to.throw(BowlingGameError);
             });
             it("fails with error when 10th frame and negative pins", () => {
                 let evilfunc = () => {
@@ -481,6 +527,7 @@ describe("BowlingGame", () => {
                     test.game.bowlTenthFrame(1, -9);
                 }
                 expect(evilfunc).to.throw(/throw cannot be negative/);
+                expect(evilfunc).to.throw(BowlingGameError);
             });
         });
 
@@ -518,10 +565,9 @@ describe("BowlingGame", () => {
             });
 
             it("spares with throws of 11+ pins", () => {
-                let evilfunc = () => {
-                    test.game.spare(11);
-                }
+                let evilfunc = () => test.game.spare(11);
                 expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
+                expect(evilfunc).to.throw(BowlingGameError);
             });
         });
     });
