@@ -38,12 +38,10 @@ export class StrikeFrame extends Frame {
             return this;
         }
         if (this.isScored) {
-            // debugFip(`already done scoring; keep score as is: ${this.score}`);
+            debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        const concats = [...this.base, ...this.bonusThrows];
-        // debugFip(`is baseScore still just 10? ${this.base[0]===10? 'yes': 'OMG NO'}`);
-        this.score = Frame.sum(...concats);
+        this.score = Frame.sumApply([...this.base, ...this.bonusThrows]);
         this.isScored = true;
         return this;
     }

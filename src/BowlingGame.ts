@@ -115,40 +115,29 @@ export class BowlingGame {
     public score(): number {
         return this.scores[this.scores.length - 1];
     }
+
+    /**
+     * Throw BowlingGame error with the given message
+     * @param message the error message
+     */
+    private failWithError(message: string) {
+        debugFip(message);
+        throw new BowlingGameError(message);
+    }
     /**
      * Update the accumlated scores for this game
      */
-    private updateScoresPerFrame() {
+    private updateScoresPerFrame(): void {
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
             return;
         }
 
-        //Set the bonus for each frame (especially unscored frames)
-        const unscored = this.frames.filter(f => !f.doneScoring());
-        unscored.forEach((frame, i, frames) => {
-            let next1 = frames[i+1];
-            let bonus1 = !!next1? next1.getBaseThrows(): [];
-            let bonus: number[] = [];
-            if (frame instanceof StrikeFrame) {
-                let next2 = frames[i+2];
-                let bonus2 = !!next2? next2.getBaseThrows(): [];
-                bonus = [...bonus1, ...bonus2];
-            }
-            else if (frame instanceof SpareFrame) {
-                bonus = bonus1;
-            }
-            frame.setBonusThrows(...bonus);
-        });
+        //Set the bonus for each frame
+        this.setBonusThrowsPerFrame();
 
-        //Iterate thru all frames to calculate the total for the game
-        let total: number = 0;
-        const cumulatives = this.frames.map(frame => {
-            total += frame.getScore();
-            return total;
-        });
-        debugFip(`cumulatives===${cumulatives}`);
-        this.scores = cumulatives;
+        //Calculate the cumulative scores
+        this.scores = this.addCumulativeScores();
     }
     /**
      * Returns true iff this game cannot be scored yet.
@@ -167,12 +156,38 @@ export class BowlingGame {
         return violations.some(v => !!v);
     }
     /**
-     * Throw BowlingGame error with the given message
-     * @param message the error message
+     * Set the bonusThrows for each frame
      */
-    private failWithError(message: string) {
-        // const msg = `BowlingGameError: ${message}`;
-        debugFip(message);
-        throw new BowlingGameError(message);
+    private setBonusThrowsPerFrame(): void {
+        const getBaseThrowsOrEmpty = (frame: Frame): number[] => {
+            return !!frame ? frame.getBaseThrows() : [];
+        }
+        //Set the bonus for each frame (especially unscored frames)
+        const unscored = this.frames.filter(f => !f.doneScoring());
+        unscored.forEach((frame, i, frames) => {
+            let bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+            let bonus: number[] = [];
+            if (frame instanceof StrikeFrame) {
+                let bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
+                bonus = [...bonus1, ...bonus2];
+            }
+            else if (frame instanceof SpareFrame) {
+                bonus = bonus1;
+            }
+            frame.setBonusThrows(...bonus);
+        });
     }
+    /**
+     * Calculate the accumulated scores per frame
+     */
+    private addCumulativeScores(): number[] {
+        let total: number = 0;
+        const cumulatives = this.frames.map(frame => {
+            total += frame.getScore();
+            return total;
+        });
+        debugFip(`cumulatives===${cumulatives}`);
+        return cumulatives;
+    }
+
 }
