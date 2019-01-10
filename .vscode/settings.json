@@ -1,3 +1,12 @@
 {
-    "triggerTaskOnSave.selectedTask": "test-watch"
+  "triggerTaskOnSave.on": true,
+  "triggerTaskOnSave.tasks": {
+    "build": [
+      "**/**"
+    ],
+    "test": [
+      "**/**"
+    ],
+  },
+  "triggerTaskOnSave.selectedTask": "test"
 }

@@ -8,7 +8,6 @@ import { BowlingGame, BowlingGameError } from '../src/BowlingGame';
 const debugs = {
     fip00: debug("fip00:test:BowlingGame"),
     fip01: debug("fip01:test:BowlingGame"),
-    fip02: debug("fip02:test:BowlingGame"),
     //FYI: FIP stands for fix in-progress
 };
 
@@ -20,17 +19,25 @@ class TestSubject {
     constructor() {
         this.game = new BowlingGame();
     }
-    /** Helper function is used to execute multiple open-frames for a game */
-    playOpenFrames(frameTotalCount: number, firstThrow: number, secondThrow: number): void {
+    /**
+     * Helper function is used to execute multiple open-frames for a game
+     * @param frameTotalCount number of loops
+     * @param throw1 number of pins knocked down in the 1st throw
+     * @param throw2 number of pins knocked down in the 2nd throw
+     */
+    playOpenFrames(frameTotalCount: number, throw1: number, throw2: number): void {
         for (let i = 0; i < frameTotalCount; i++) {
-            this.game.open(firstThrow, secondThrow);
+            this.game.open(throw1, throw2);
         }
     }
-    /** Helper function is for invoking multiple frames (of any type) for a game */
-    playMultipleFrames(loopCount: number, iterator: Function): void {
-        let cb = (iterator===undefined? () => {} : iterator);
+    /**
+     * Helper function is for invoking multiple frames (of any type) for a game
+     * @param loopCount the number of times to iterate
+     * @param iterator the callback function to repeatedly invoke
+     */
+    playMultipleFrames(loopCount: number, iterator: (game: BowlingGame) => void): void {
         for (let i = 0; i < loopCount; i++) {
-            cb.call(this, this.game);
+            iterator.call(this, this.game);
         }
     }
 }
@@ -479,7 +486,14 @@ describe("BowlingGame", () => {
         });
     });
 
-    describe("Edge Tests", () => {
+    describe("Edge Tests", function() {
+        //WARN: using arrow functions is **discouraged** because the test-suite
+        //context is not properly binded anymore
+        //Thus, using `this.slow` or `this.timeout` causes errors in typescript!
+        //See details online: https://github.com/mochajs/mocha/issues/2018
+        // const suite: Mocha.Suite = this;
+        // suite.timeout(2000);
+
         describe("when game is only open frames", () => {
             it("throws of 1-10 pins", () => {
                 test.game.open(1, 1);
@@ -511,13 +525,17 @@ describe("BowlingGame", () => {
                 expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
             });
+            it("when 5999 frames", function(done) {
+                //Disable the timeout for this slow test
+                this.timeout(0);
+                const LOTSA_FRAMES = 5999;
+                test.playOpenFrames(LOTSA_FRAMES, 0, 1);
+                expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
+                expect(test.game.score()).to.equal(LOTSA_FRAMES);
+                setTimeout(done, 50);
+            });
             it("fails with error when open frame and negative pins", () => {
                 let evilfunc = () => test.game.open(1, -3);
-                expect(evilfunc).to.throw(/throw cannot be negative/);
-                expect(evilfunc).to.throw(BowlingGameError);
-            });
-            it("fails with error when spare frame and negative pins", () => {
-                let evilfunc = () => test.game.spare(-2);
                 expect(evilfunc).to.throw(/throw cannot be negative/);
                 expect(evilfunc).to.throw(BowlingGameError);
             });
@@ -567,6 +585,11 @@ describe("BowlingGame", () => {
             it("spares with throws of 11+ pins", () => {
                 let evilfunc = () => test.game.spare(11);
                 expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
+                expect(evilfunc).to.throw(BowlingGameError);
+            });
+            it("fails with error when spare frame and negative pins", () => {
+                let evilfunc = () => test.game.spare(-2);
+                expect(evilfunc).to.throw(/throw cannot be negative/);
                 expect(evilfunc).to.throw(BowlingGameError);
             });
         });

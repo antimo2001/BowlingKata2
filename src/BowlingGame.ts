@@ -89,7 +89,7 @@ export class BowlingGame {
      */
     public bowlTenthFrame(throw1: number, throw2: number, throw3?: number): void {
         let throws = [throw1, throw2];
-        //Only concat throw3 if it is defined
+        //Concat throw3 if it is defined
         throws = throw3!==undefined? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
             this.failWithError(`throw cannot be negative`);
@@ -140,7 +140,7 @@ export class BowlingGame {
         this.scores = this.addCumulativeScores();
     }
     /**
-     * Returns true iff this game cannot be scored yet.
+     * Returns true if this game cannot be scored yet.
      * Game cannot be scored if these:
      * (1) the 1st frame is a strike or spare
      * (2) only 2 frames and both are strikes
