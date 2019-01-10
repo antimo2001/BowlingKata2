@@ -42,27 +42,27 @@ class TestSubject {
     }
 }
 
-describe("BowlingGame", () => {
+describe("BowlingGame", function() {
     let test: TestSubject;
 
-    beforeEach(() => {
+    beforeEach(function() {
         test = new TestSubject();
     });
 
-    describe("#openFrame", () => {
-        it("single frame", () => {
+    describe("#openFrame", function() {
+        it("single frame", function() {
             test.game.open(1, 2);
             expect(test.game.score()).to.equal(3);
         });
 
-        it("multiple frames", () => {
+        it("multiple frames", function() {
             test.game.open(1, 2);
             test.game.open(3, 4);
             const expectedScore = sumReduce(1, 2, 3, 4);
             expect(test.game.score()).to.equal(expectedScore);
         });
 
-        it("up to 5 frames", () => {
+        it("up to 5 frames", function() {
             test.game.open(1, 2);
             test.game.open(3, 4);
             test.game.open(1, 1);
@@ -71,25 +71,25 @@ describe("BowlingGame", () => {
             let expectedScore = sumReduce(3, 7, 2, 4, 6);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player throws all gutterballs", () => {
+        it("player throws all gutterballs", function() {
             test.playOpenFrames(10, 0, 0);
             expect(test.game.score()).to.equal(0);
         });
-        it("player bowls 3 pins per throw", () => {
+        it("player bowls 3 pins per throw", function() {
             test.playOpenFrames(10, 3, 3);
             expect(test.game.score()).to.equal(60);
         });
     });
 
-    describe("#spare", () => {
-        it("player bowls a spare in frame 1", () => {
+    describe("#spare", function() {
+        it("player bowls a spare in frame 1", function() {
             test.game.spare(4);
             test.game.open(8, 1);
             test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 8, 8, 1);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a spare in frame 8", () => {
+        it("player bowls a spare in frame 8", function() {
             test.playOpenFrames(7, 0, 0);
             test.game.spare(4);
             test.game.open(4, 5);
@@ -97,14 +97,14 @@ describe("BowlingGame", () => {
             const expectedScore = sumReduce(10, 4, 4, 5);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a spare in frame 10", () => {
+        it("player bowls a spare in frame 10", function() {
             test.playOpenFrames(8, 0, 0);
             test.game.open(4, 5);
             test.game.bowlTenthFrame(4, 6, 3);
             const expectedScore = sumReduce(9, 10, 3);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many spares", () => {
+        it("player bowls many spares", function() {
             test.game.spare(7);
             test.game.spare(8);
             test.game.open(3, 4);
@@ -112,7 +112,7 @@ describe("BowlingGame", () => {
             const expectedScore = sumReduce(10, 8, 10, 3, 7);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many spares with bonus", () => {
+        it("player bowls many spares with bonus", function() {
             test.playOpenFrames(8, 0, 0);
             test.game.spare(4);
             test.game.bowlTenthFrame(5, 5, 3);
@@ -121,15 +121,15 @@ describe("BowlingGame", () => {
         });
     });
 
-    describe("#strike", () => {
-        it("player bowls a strike in frame 1", () => {
+    describe("#strike", function() {
+        it("player bowls a strike in frame 1", function() {
             test.game.strike();
             test.game.open(1, 6);
             test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 1, 6, 1, 6);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a strike in frame 4", () => {
+        it("player bowls a strike in frame 4", function() {
             test.playOpenFrames(3, 0, 0);
             // debugs.fip00(`before test.game.throws===${test.game.throws}`);
             test.game.strike();
@@ -139,20 +139,20 @@ describe("BowlingGame", () => {
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a strike in frame 10", () => {
+        it("player bowls a strike in frame 10", function() {
             test.playOpenFrames(9, 0, 0);
             test.game.bowlTenthFrame(10, 10, 10);
             expect(test.game.score()).to.equal(30);
         });
-        it("player bowls perfect game", () => {
+        it("player bowls perfect game", function() {
             test.playMultipleFrames(9, (g: BowlingGame) => g.strike());
             test.game.bowlTenthFrame(10, 10, 10);
             expect(test.game.score()).to.equal(300);
         });
     });
 
-    describe("#mixture of frames", () => {
-        it("player bowls alternating strikes & spares", () => {
+    describe("#mixture of frames", function() {
+        it("player bowls alternating strikes & spares", function() {
             //Simulate a game where a player alternates between strike/spare
             test.playMultipleFrames(4, (game: BowlingGame) => {
                 game.strike();
@@ -162,7 +162,7 @@ describe("BowlingGame", () => {
             test.game.bowlTenthFrame(5, 5, 10);
             expect(test.game.score()).to.equal(200);
         });
-        it("player bowls alternating spares & strikes", () => {
+        it("player bowls alternating spares & strikes", function() {
             //Simulate a game where a player alternates between spares/strikes
             test.playMultipleFrames(4, (game: BowlingGame) => {
                 game.spare(8);
@@ -172,7 +172,7 @@ describe("BowlingGame", () => {
             test.game.bowlTenthFrame(10, 5, 5);
             expect(test.game.score()).to.equal(200);
         });
-        it("player bowls 1 strike and 1 spare, no bonus", () => {
+        it("player bowls 1 strike and 1 spare, no bonus", function() {
             test.playOpenFrames(3, 1, 1);
             test.game.strike();
             test.game.spare(4);
@@ -183,7 +183,7 @@ describe("BowlingGame", () => {
             let expectedScore = sumReduce(firstFrames, lastFrames, middleFrames);
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many strikes and spares, no bonus", () => {
+        it("player bowls many strikes and spares, no bonus", function() {
             test.playOpenFrames(3, 2, 0);
             test.game.strike();
             test.game.strike();
@@ -209,7 +209,7 @@ describe("BowlingGame", () => {
             }
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many strikes and spares, yes bonus", () => {
+        it("player bowls many strikes and spares, yes bonus", function() {
             test.playOpenFrames(6, 2, 0);
             test.game.strike();
             test.game.spare(4);
@@ -229,7 +229,7 @@ describe("BowlingGame", () => {
             }
             expect(test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls alternating frames of strike/spare/open", () => {
+        it("player bowls alternating frames of strike/spare/open", function() {
             test.playMultipleFrames(3, (game: BowlingGame) => {
                 game.strike();
                 game.spare(9);
@@ -246,11 +246,11 @@ describe("BowlingGame", () => {
         });
     });
 
-    describe("#scoreNthFrame", () => {
-        describe("when it fails", () => {
+    describe("#scoreNthFrame", function() {
+        describe("when it fails", function() {
             /** Helper function that constructs functions for testing errors */
             let createFn: Function;
-            beforeEach(() => {
+            beforeEach(function() {
                 createFn = (test: TestSubject, nth: number) => {
                     return function() {
                         test.game.open(1, 1);
@@ -259,29 +259,29 @@ describe("BowlingGame", () => {
                 }
             });
 
-            it("expect error; part 0", () => {
+            it("expect error; part 0", function() {
                 let testFn = createFn(test, 0);
                 expect(testFn).to.throw(/array index out of bounds/);
                 expect(testFn).to.throw(BowlingGameError);
             });
-            it("expect error; part 1", () => {
+            it("expect error; part 1", function() {
                 let testFn = createFn(test, 9);
                 expect(testFn).to.throw(/array index out of bounds/);
                 expect(testFn).to.throw(BowlingGameError);
             });
-            it("expect error; part 2", () => {
+            it("expect error; part 2", function() {
                 let testFn = createFn(test, -22);
                 expect(testFn).to.throw(/array index out of bounds/);
                 expect(testFn).to.throw(BowlingGameError);
             });
-            it("clean; no errors", () => {
+            it("clean; no errors", function() {
                 let cleanfunc = createFn(test, 1);
                 expect(cleanfunc).to.not.throw(/array index out of bounds/);
                 expect(cleanfunc).to.not.throw(BowlingGameError);
             });
         });
 
-        describe("bowls frames in specific sequence strike/spare/open", () => {
+        describe("bowls frames in specific sequence strike/spare/open", function() {
             /**
              * Define a constant array representing scores for a specifc game.
              * The bowling game will be in this sequence of frames:
@@ -291,7 +291,7 @@ describe("BowlingGame", () => {
              */
             const calculatorScores = [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128];
             
-            beforeEach(() => {
+            beforeEach(function() {
                 // debugs.fip00(`...begin game`);
                 test.game.strike();
                 test.game.spare(9);
@@ -316,13 +316,13 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator (${score}) at frame: ${i}`, () => {
+                it(`verify calculator (${score}) at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
 
-        describe("bowls frames in specific sequence 2: spare/strike/open", () => {
+        describe("bowls frames in specific sequence 2: spare/strike/open", function() {
             /**
              * Define a constant array representing scores for a specifc game.
              * Note: this is Nth based array (instead of based on N-1); that's why
@@ -330,7 +330,7 @@ describe("BowlingGame", () => {
              */
             const calculatorScores = [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 // debugs.fip01(`...begin game`);
                 test.game.spare(9);
                 test.game.strike();
@@ -351,19 +351,19 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
 
-        describe("bowls frames in specific sequence 3: open/spare/strike", () => {
+        describe("bowls frames in specific sequence 3: open/spare/strike", function() {
             /**
              * This is Nth based (instead of N-1); that's why NaN is the 0th value
              */
             const calculatorScores = [NaN, 8, 28, 46, 54, 74, 92, 100, 120, 150, 180];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 // debugs.fip01(`...begin game`);
                 test.game.open(4, 4);
                 test.game.spare(9);
@@ -382,19 +382,19 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
 
-        describe("bowls frames in specific sequence 4: strike/open/spare", () => {
+        describe("bowls frames in specific sequence 4: strike/open/spare", function() {
             /**
              * This is Nth based (instead of N-1); that's why NaN is the 0th value
              */
             const calculatorScores = [NaN, 18, 26, 46, 64, 72, 92, 110, 118, 138, 156];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 test.game.strike();
                 test.game.open(4, 4);
                 test.game.spare(5);
@@ -411,19 +411,19 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
 
-        describe("bowls frames in specific sequence 5: strike/gutter", () => {
+        describe("bowls frames in specific sequence 5: strike/gutter", function() {
             /**
              * This is Nth based (instead of N-1); that's why NaN is the 0th value
              */
             const calculatorScores = [NaN, 10, 10, 20, 20, 30, 30, 40, 40, 50, 50];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 test.playMultipleFrames(4, (game: BowlingGame) => {
                     game.strike();
                     game.open(0, 0);
@@ -436,16 +436,16 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
 
-        describe("bowls frames in specific sequence 6: spare/open/strike", () => {
+        describe("bowls frames in specific sequence 6: spare/open/strike", function() {
             const calculatorScores = [NaN, 14, 22, 42, 56, 64, 84, 98, 106, 126, 140];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 test.playMultipleFrames(3, (game: BowlingGame) => {
                     game.spare(5);
                     game.open(4, 4);
@@ -458,15 +458,15 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
         });
-        describe("bowls frames in specific sequence 7: open/strike/spare", () => {
+        describe("bowls frames in specific sequence 7: open/strike/spare", function() {
             const calculatorScores = [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134];
 
-            beforeEach(() => {
+            beforeEach(function() {
                 test.playMultipleFrames(3, (game: BowlingGame) => {
                     game.open(4, 4);
                     game.strike();
@@ -479,7 +479,7 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`verify calculator score at frame: ${i}`, () => {
+                it(`verify calculator score at frame: ${i}`, function() {
                     expect(test.game.scoreNthFrame(i)).to.equal(score);
                 });
             });
@@ -494,8 +494,8 @@ describe("BowlingGame", () => {
         // const suite: Mocha.Suite = this;
         // suite.timeout(2000);
 
-        describe("when game is only open frames", () => {
-            it("throws of 1-10 pins", () => {
+        describe("when game is only open frames", function() {
+            it("throws of 1-10 pins", function() {
                 test.game.open(1, 1);
                 test.game.open(1, 2);
                 test.game.open(1, 3);
@@ -511,15 +511,15 @@ describe("BowlingGame", () => {
                 expect(test.game.score()).to.equal(expectedScore);
                 expect(test.game.scoreNthFrame(8)).to.equal(expectedScore);
             });
-            it("fails with error when 11+ pins", () => {
-                let evilfunc = () => {
+            it("fails with error when 11+ pins", function() {
+                let evilfunc = function() {
                     test.game.open(1, 11);
                     test.game.open(2, 22);
                 }
                 expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
                 expect(evilfunc).to.throw(BowlingGameError);
             });
-            it("when 99 frames", () => {
+            it("when 99 frames", function() {
                 const LOTSA_FRAMES = 99;
                 test.playOpenFrames(LOTSA_FRAMES, 0, 1);
                 expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
@@ -534,13 +534,13 @@ describe("BowlingGame", () => {
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
                 setTimeout(done, 50);
             });
-            it("fails with error when open frame and negative pins", () => {
+            it("fails with error when open frame and negative pins", function() {
                 let evilfunc = () => test.game.open(1, -3);
                 expect(evilfunc).to.throw(/throw cannot be negative/);
                 expect(evilfunc).to.throw(BowlingGameError);
             });
-            it("fails with error when 10th frame and negative pins", () => {
-                let evilfunc = () => {
+            it("fails with error when 10th frame and negative pins", function() {
+                let evilfunc = function() {
                     test.game.spare(3);
                     test.game.bowlTenthFrame(1, -9);
                 }
@@ -549,7 +549,7 @@ describe("BowlingGame", () => {
             });
         });
 
-        describe("only spare frames", () => {
+        describe("only spare frames", function() {
             const calculatorGames = {
                 part1: [NaN, 15, 30, 45, 55, 55],
                 part2: [NaN, 15, 30, 45, 60, 75, 90, 105, 120, 130, 130],
@@ -559,7 +559,7 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`part 1-${i}: when 4 spares and gutter balls`, () => {
+                it(`part 1-${i}: when 4 spares and gutter balls`, function() {
                     test.game.spare(5);
                     test.game.spare(5);
                     test.game.spare(5);
@@ -573,7 +573,7 @@ describe("BowlingGame", () => {
                 if (i <= 0) {
                     return;
                 }
-                it(`part 2-${i}: when 9 spares and gutter balls`, () => {
+                it(`part 2-${i}: when 9 spares and gutter balls`, function() {
                     test.playMultipleFrames(9, (game: BowlingGame) => {
                         game.spare(5);
                     });
@@ -582,12 +582,12 @@ describe("BowlingGame", () => {
                 });
             });
 
-            it("spares with throws of 11+ pins", () => {
+            it("spares with throws of 11+ pins", function() {
                 let evilfunc = () => test.game.spare(11);
                 expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
                 expect(evilfunc).to.throw(BowlingGameError);
             });
-            it("fails with error when spare frame and negative pins", () => {
+            it("fails with error when spare frame and negative pins", function() {
                 let evilfunc = () => test.game.spare(-2);
                 expect(evilfunc).to.throw(/throw cannot be negative/);
                 expect(evilfunc).to.throw(BowlingGameError);
