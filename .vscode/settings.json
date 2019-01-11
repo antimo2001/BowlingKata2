@@ -1,5 +1,5 @@
 {
-  "triggerTaskOnSave.on": true,
+  "triggerTaskOnSave.on": false,
   "triggerTaskOnSave.tasks": {
     "build": [
       "**/**"
@@ -7,6 +7,5 @@
     "test": [
       "**/**"
     ],
-  },
-  "triggerTaskOnSave.selectedTask": "test"
+  }
 }

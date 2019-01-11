@@ -191,7 +191,7 @@ describe("BowlingGame", function() {
             test.game.spare(7);
             test.game.open(1, 1);
             test.game.open(5, 0);
-            test.game.open(5, 0);
+            test.game.bowlTenthFrame(5, 0);
             let expectedScore: number;
             {
                 //Show all the math for 100% confidence in the total
@@ -235,7 +235,7 @@ describe("BowlingGame", function() {
                 game.spare(9);
                 game.open(4, 4);
             });
-            test.game.open(4, 5);
+            test.game.bowlTenthFrame(4, 5);
             //Show all the math for 100% confidence in the total
             let expectedScore = sumReduce(10, 9, 1);
             expectedScore += sumReduce(9, 1, 4);
@@ -247,50 +247,35 @@ describe("BowlingGame", function() {
     });
 
     describe("#scoreNthFrame", function() {
-        describe("when it fails", function() {
-            /** Helper function that constructs functions for testing errors */
-            let createFn: Function;
-            beforeEach(function() {
-                createFn = (test: TestSubject, nth: number) => {
-                    return function() {
-                        test.game.open(1, 1);
-                        test.game.scoreNthFrame(nth);
-                    }
-                }
+        /**
+         * Function is the iterator for scoreNthFrame testing
+         */
+        const handleTestCaseForScoreNth = (score: number, i: number) => {
+            if (i <= 0 || score===NaN) {
+                return;
+            }
+            it(`verify calculator score at frame: ${i}`, function () {
+                expect(test.game.scoreNthFrame(i)).to.equal(score);
             });
-
-            it("expect error; part 0", function() {
-                let testFn = createFn(test, 0);
-                expect(testFn).to.throw(/array index out of bounds/);
-                expect(testFn).to.throw(BowlingGameError);
-            });
-            it("expect error; part 1", function() {
-                let testFn = createFn(test, 9);
-                expect(testFn).to.throw(/array index out of bounds/);
-                expect(testFn).to.throw(BowlingGameError);
-            });
-            it("expect error; part 2", function() {
-                let testFn = createFn(test, -22);
-                expect(testFn).to.throw(/array index out of bounds/);
-                expect(testFn).to.throw(BowlingGameError);
-            });
-            it("clean; no errors", function() {
-                let cleanfunc = createFn(test, 1);
-                expect(cleanfunc).to.not.throw(/array index out of bounds/);
-                expect(cleanfunc).to.not.throw(BowlingGameError);
-            });
-        });
+        }
+        /**
+         * Define a constant array representing scores for a specifc game.
+         * The bowling game will be in this sequence of frames:
+         * strike, spare, open-frame, strike, spare, open-frame, open-frame.
+         * Note: this is Nth based array (instead of based on N-1); that's why
+         * the 0th value is NaN!
+         */
+        const CALCULATOR_SCORES = {
+            strikeSpareOpen: [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128],
+            spareStrikeOpen: [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158],
+            openSpareStrike: [NaN, 8, 28, 46, 54, 74, 92, 100, 120, 150, 180],
+            strikeOpenSpare: [NaN, 18, 26, 46, 64, 72, 92, 110, 118, 138, 156],
+            strikeGutter: [NaN, 10, 10, 20, 20, 30, 30, 40, 40, 50, 50],
+            spareOpenStrike: [NaN, 14, 22, 42, 56, 64, 84, 98, 106, 126, 140],
+            openStrikeSpare: [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134],
+        }
 
         describe("bowls frames in specific sequence strike/spare/open", function() {
-            /**
-             * Define a constant array representing scores for a specifc game.
-             * The bowling game will be in this sequence of frames:
-             * strike, spare, open-frame, strike, spare, open-frame, open-frame.
-             * Note: this is Nth based array (instead of based on N-1); that's why
-             * the 0th value is NaN!
-             */
-            const calculatorScores = [NaN, 20, 34, 42, 62, 76, 84, 104, 118, 126, 128];
-            
             beforeEach(function() {
                 // debugs.fip00(`...begin game`);
                 test.game.strike();
@@ -311,25 +296,10 @@ describe("BowlingGame", function() {
                 test.game.open(1, 1);
                 debugs.fip00(`...END GAME`);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator (${score}) at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.strikeSpareOpen.forEach(handleTestCaseForScoreNth);
         });
 
         describe("bowls frames in specific sequence 2: spare/strike/open", function() {
-            /**
-             * Define a constant array representing scores for a specifc game.
-             * Note: this is Nth based array (instead of based on N-1); that's why
-             * the 0th value is NaN!
-             */
-            const calculatorScores = [NaN, 20, 38, 46, 66, 84, 92, 112, 130, 138, 158];
-
             beforeEach(function() {
                 // debugs.fip01(`...begin game`);
                 test.game.spare(9);
@@ -346,23 +316,10 @@ describe("BowlingGame", function() {
                 test.game.bowlTenthFrame(5, 5, 10);
                 // debugs.fip01(`...END GAME`);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.spareStrikeOpen.forEach(handleTestCaseForScoreNth);
         });
-
+        
         describe("bowls frames in specific sequence 3: open/spare/strike", function() {
-            /**
-             * This is Nth based (instead of N-1); that's why NaN is the 0th value
-             */
-            const calculatorScores = [NaN, 8, 28, 46, 54, 74, 92, 100, 120, 150, 180];
-
             beforeEach(function() {
                 // debugs.fip01(`...begin game`);
                 test.game.open(4, 4);
@@ -377,23 +334,10 @@ describe("BowlingGame", function() {
                 test.game.bowlTenthFrame(10, 10, 10);
                 // debugs.fip01(`...END GAME`);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.openSpareStrike.forEach(handleTestCaseForScoreNth);
         });
-
+        
         describe("bowls frames in specific sequence 4: strike/open/spare", function() {
-            /**
-             * This is Nth based (instead of N-1); that's why NaN is the 0th value
-             */
-            const calculatorScores = [NaN, 18, 26, 46, 64, 72, 92, 110, 118, 138, 156];
-
             beforeEach(function() {
                 test.game.strike();
                 test.game.open(4, 4);
@@ -406,23 +350,10 @@ describe("BowlingGame", function() {
                 test.game.spare(5);
                 test.game.bowlTenthFrame(10, 4, 4);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.strikeOpenSpare.forEach(handleTestCaseForScoreNth);
         });
 
         describe("bowls frames in specific sequence 5: strike/gutter", function() {
-            /**
-             * This is Nth based (instead of N-1); that's why NaN is the 0th value
-             */
-            const calculatorScores = [NaN, 10, 10, 20, 20, 30, 30, 40, 40, 50, 50];
-
             beforeEach(function() {
                 test.playMultipleFrames(4, (game: BowlingGame) => {
                     game.strike();
@@ -431,20 +362,10 @@ describe("BowlingGame", function() {
                 test.game.strike();
                 test.game.bowlTenthFrame(0, 0);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.strikeGutter.forEach(handleTestCaseForScoreNth);
         });
 
         describe("bowls frames in specific sequence 6: spare/open/strike", function() {
-            const calculatorScores = [NaN, 14, 22, 42, 56, 64, 84, 98, 106, 126, 140];
-
             beforeEach(function() {
                 test.playMultipleFrames(3, (game: BowlingGame) => {
                     game.spare(5);
@@ -453,19 +374,9 @@ describe("BowlingGame", function() {
                 });
                 test.game.bowlTenthFrame(5, 5, 4);
             });
-
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
-                }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            CALCULATOR_SCORES.spareOpenStrike.forEach(handleTestCaseForScoreNth);
         });
         describe("bowls frames in specific sequence 7: open/strike/spare", function() {
-            const calculatorScores = [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134];
-
             beforeEach(function() {
                 test.playMultipleFrames(3, (game: BowlingGame) => {
                     game.open(4, 4);
@@ -474,15 +385,41 @@ describe("BowlingGame", function() {
                 });
                 test.game.bowlTenthFrame(4, 4);
             });
+            CALCULATOR_SCORES.openStrikeSpare.forEach(handleTestCaseForScoreNth);
+        });
+    });
 
-            calculatorScores.forEach((score, i) => {
-                if (i <= 0) {
-                    return;
+    describe("#scoreNthFrame - error handling", function () {
+        /** Helper function that constructs functions for testing errors */
+        let createFn: Function;
+        beforeEach(function () {
+            createFn = (test: TestSubject, nth: number) => {
+                return function () {
+                    test.game.open(1, 1);
+                    test.game.scoreNthFrame(nth);
                 }
-                it(`verify calculator score at frame: ${i}`, function() {
-                    expect(test.game.scoreNthFrame(i)).to.equal(score);
-                });
-            });
+            }
+        });
+
+        it("expect error; part 0", function () {
+            let testFn = createFn(test, 0);
+            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(BowlingGameError);
+        });
+        it("expect error; part 1", function () {
+            let testFn = createFn(test, 9);
+            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(BowlingGameError);
+        });
+        it("expect error; part 2", function () {
+            let testFn = createFn(test, -22);
+            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(BowlingGameError);
+        });
+        it("clean; no errors", function () {
+            let cleanfunc = createFn(test, 1);
+            expect(cleanfunc).to.not.throw(/array index out of bounds/);
+            expect(cleanfunc).to.not.throw(BowlingGameError);
         });
     });
 
