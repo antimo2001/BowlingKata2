@@ -50,6 +50,15 @@ To create a git tag, simply create a release at github.com and it prompts you to
     git push -u origin master
     ```
 
+### VSCode extension: Trigger On Save
+
+My Review of the VSCode Extension: TriggerTaskOnSave
+
+3 stars
+This does successfully execute my tasks. However, it'd be helpful if the fileglob configuration was more intuitive. I have a simple typescript build/test workflow, but it took me some time to realize that the task was failing to trigger because I needed to configure the fileglobs. My package.json defines the fileglobs just fine. I had to configure it with a very generic glob: `**/**`. Also, I had an issue with disabling the trigger; sometimes I wouldn't want the trigger to execute because I'm still typing code. I would use the command-palette command to disable the trigger, but it still executes. Then I tried the toggle command (it still ran!). Then I tried clearing the selected task (but...it...still...triggered...) I had to go the workspace settings and modify the fileglob config (since I learned the hard way that definitely stops the trigger from firing).
+
+TL;DR ...2 major issues ...fileglob config fails to be simple (or is poorly documented) ...disabling the trigger fails to consistently disable the trigger (even removing the selected task still caused it to trigger)
+
 ## But I'm still confused about
 
 - how do I use VSCode debugger with its config file launch.json; why it fails to stop at a certain breakpoint when i press F5?
