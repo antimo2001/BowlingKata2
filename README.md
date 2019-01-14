@@ -70,6 +70,7 @@ TL;DR ...2 major issues ...fileglob config fails to be simple (or is poorly docu
 - [x] redesign the method `TestSubject.playOpenFrame()` so that it takes a callback param? ~~and so that the method can be a standalone function~~
 - [x] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
 - [x] refactor classes for 2 goals; new interface: `Scorable` that represents a `score` and so that the BowlingGame only has 10 instances of Frame class ...the prior design could have 10 frames with 2 BonusFrame instances, so up to 12 frames per game ...which is weird and doesn't represent a real bowling game of 10 frames
+- [ ] refactor so that all of BowlingGame class's methods are async!
 - [ ] user-interface? maybe look at [www.bowlinggenius.com](http://www.bowlinggenius.com) for ideas to improve upon
 
 ### Future Exploration
