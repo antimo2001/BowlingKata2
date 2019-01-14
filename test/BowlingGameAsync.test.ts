@@ -55,7 +55,7 @@ describe("BowlingGameAsync", function() {
         test = new TestSubject();
     });
 
-    describe.only("#openFrame", function() {
+    xdescribe("#openFrame", function() {
         it("single frame", async function() {
             await test.game.open(1, 2);
             const actual = await test.game.score();
@@ -85,7 +85,7 @@ describe("BowlingGameAsync", function() {
             const actual = await test.game.score();
             expect(actual).to.equal(0);
         });
-        it.skip("player bowls 3 pins per throw", async function() {
+        it("player bowls 3 pins per throw", async function() {
             await test.playOpenFrames(10, 3, 3);
             const actual = await test.game.score();
             expect(actual).to.equal(60);
