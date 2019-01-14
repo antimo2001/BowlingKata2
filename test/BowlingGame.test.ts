@@ -2,7 +2,8 @@ import 'mocha';
 import debug from 'debug';
 import { expect } from 'chai';
 import { Frame } from '../src/Frame';
-import { BowlingGame, BowlingGameError } from '../src/BowlingGame';
+import { BowlingGame } from '../src/BowlingGame';
+import { BowlingGameError } from '../src/BowlingGameError';
 
 /** Helper functions for debugging other fixes in-progress */
 const debugs = {

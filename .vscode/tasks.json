@@ -41,6 +41,13 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "test-watch",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
