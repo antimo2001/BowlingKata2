@@ -22,7 +22,7 @@
     "build-default": "npm run tsc-build &&  npm run test-default",
     "mocha-help": "mocha --help > out/mocha-help.out",
     "mocha-reporters": "mocha --reporters > out/mocha-reporters.out",
-    "ts-node-solo1": "SET DEBUG=fip00:* &&  ts-node src/prac-for-await.ts",
+    "ts-node-solo1": "SET DEBUG=src:prac-for-await &&  ts-node src/prac-for-await.ts",
     "tsc-repl": "ts-node",
     "tsc-repl-help": "ts-node --help",
     "tsc": "tsc",
