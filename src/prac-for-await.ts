@@ -23,7 +23,8 @@ async function debugLogAsync(message: string, delay = 3000): Promise<void> {
     //Wrap the sync function debugFip around a function that creates a Promise
     return await stall(delay).then(() => {
         debugCount += 1;
-        debugFip(`${debugCount}: ${message}`);
+        // debugFip(`${debugCount}: ${message}`);
+        console.log(`${debugCount}: ${message}`);
     });
 }
 
@@ -33,17 +34,23 @@ async function debugLogAsync(message: string, delay = 3000): Promise<void> {
 const epicWebService = {
     fetchUser: async (message: string): Promise<string> => {
         return debugLogAsync(message, 100).then(() => {
-            return 'done';
+            return 'done fetchUser()';
         });
     },
-    createUser: async (message: string) => {
-        return debugLogAsync(message, 200);
+    createUser: async (message: string): Promise<string> => {
+        return debugLogAsync(message, 200).then(() => {
+            return 'done createUser()';
+        });
     },
-    deleteUser: async (message: string) => {
-        return debugLogAsync(message, 333);
+    deleteUser: async (message: string): Promise<string> => {
+        return debugLogAsync(message, 300).then(() => {
+            return 'done deleteUser()';
+        });
     },
-    fetchAll: async (message: string) => {
-        return debugLogAsync(message, 444);
+    fetchAll: async (message: string): Promise<string> => {
+        return debugLogAsync(message, 400).then(() => {
+            return 'done fetchAll()';
+        });
     }
 };
 
@@ -88,19 +95,42 @@ async function funcForAwaitInSeries(arr: number[] | string[]) {
     console.log(`02: END loop to do for-await!`);
 }
 
+async function funcForAwaitParallel(arr: number[] | string[]) {
+    console.log(`03: begin loop to do for-await in parallel!`);
+    for await (let n3 of arr) {
+        const allUsers = epicWebService.fetchAll(`loop2: fetchAll(${n3})(444)`);
+        const user = epicWebService.fetchUser(`loop2: fetchUser(${n3})(100)`);
+        //Use Promise.all() to execute promises concurrently!
+        const concurrentPromises = Promise.all([
+            allUsers.then(console.log),
+            user.then(console.log)
+        ]);
+        await concurrentPromises.then(async () => {
+            console.log(`done Promise.map()`);
+            const newuser = epicWebService.createUser(`loop2: createUser(${n3})(200)`);
+            await newuser.then(console.log);
+        });
+        console.log(`loop3: console: value: ${n3}`);
+    }
+    console.log(`03: END loop to do for-await!`);
+}
+
 /**
  * ----------------------------------- MAIN -----------------------------------
  */
 (async function main() {
-    const PRACTICE: string = 'practice2';
+    const PRACTICE_TOGGLE: string = 'practice2';
     const arr = ['one', 'two2'];
 
-    switch (PRACTICE) {
+    switch (PRACTICE_TOGGLE) {
         case 'practice1':
             funcNoAwait(arr);
             break;
         case 'practice2':
             await funcForAwaitInSeries(arr);
+            break;
+        case 'practice3':
+            await funcForAwaitParallel(arr);
             break;
         default:
             break;
@@ -115,7 +145,7 @@ async function funcForAwaitInSeries(arr: number[] | string[]) {
     *    order of the iteration occurs in a stable way!!
     * 4. Note that carelessly using `await` on everything is poor practice! It is
     *    best practice to learn when to use your promise library; specifically
-    *    learn about Promise.all(), Promise.race()
+    *    learn about Promise.all(), Promise.race(), Promise.map(), etc.
     */
 
 }());
