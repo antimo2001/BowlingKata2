@@ -45,7 +45,7 @@ export class BowlingGameAsync {
         }
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
-        return this.updateScoresPerFrame();
+        this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling a spare frame
@@ -60,7 +60,7 @@ export class BowlingGameAsync {
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
-        return this.updateScoresPerFrame();
+        this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling a strike
@@ -68,7 +68,7 @@ export class BowlingGameAsync {
     public async strike(): Promise<void> {
         let frame = new StrikeFrame();
         this.frames.push(frame);
-        return this.updateScoresPerFrame();
+        this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling the extra throws in the 10th frame
@@ -84,7 +84,7 @@ export class BowlingGameAsync {
             this.failWithError(`throw cannot be negative`);
         }
         this.frames.push(new TenthFrame(...throws));
-        return this.updateScoresPerFrame();
+        this.updateScoresPerFrame();
     }
     /**
      * Gets the score for any frame of the game (ranges from 1 to 10). Throws
@@ -94,9 +94,7 @@ export class BowlingGameAsync {
     public async scoreNthFrame(nthFrame: number): Promise<number> {
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth===undefined || scoreNth===null) {
-            let msg = `array index out of bounds; nthFrame===${nthFrame}`;
-            this.failWithError(msg);
-            // return Promise.reject(msg);
+            this.failWithError(`array index out of bounds; nthFrame===${nthFrame}`);
         }
         return scoreNth;
     }
@@ -104,7 +102,7 @@ export class BowlingGameAsync {
      * Gets the total score for the game
      */
     public async score(): Promise<number> {
-        return Promise.resolve(this.scores[this.scores.length - 1]);
+        return this.scores[this.scores.length - 1];
     }
 
     /**
@@ -114,7 +112,7 @@ export class BowlingGameAsync {
      */
     private failWithError(message: string, err?: any) {
         debugFip(message);
-        if (err !==undefined) {
+        if (err !== undefined) {
             throw err;
         } else {
             throw new BowlingGameError(message);

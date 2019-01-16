@@ -64,10 +64,11 @@ const epicWebService = {
 function funcNoAwait(arr: number[] | string[]) {
     console.log(`01: begin loop (no await)`);
     for (let n of arr) {
+        console.log(`loop1: begin iteration ${n}`);
         epicWebService.fetchUser(`loop1: fetchUser(${n})(100)`);
         epicWebService.fetchAll(`loop1: fetchAll(${n})(400)`);
         epicWebService.createUser(`loop1: createUser(${n})(200)`);
-        console.log(`loop1: console: value: ${n}`);
+        console.log(`loop1: END iteration ${n}`);
     }
     console.log(`01: END loop (no await)`);
 }
@@ -116,21 +117,49 @@ async function funcForAwaitParallel(arr: number[] | string[]) {
 }
 
 /**
+ * This practice function iterates using the for-await construct.
+ * This is an example of how to iterate async operations in parallel and using
+ * more awaits as opposed to using Promise chains. So, this should output the same
+ * console logs as the function above in the exact same order.
+ * @param arr array of numbers or array of strings
+ */
+async function funcForAwaitParallelAgain(arr: number[] | string[]) {
+    console.log(`04: begin loop to do for-await in parallel!`);
+    for await (let n4 of arr) {
+        console.log(`loop4: begin iteration ${n4}`);
+        const fetchAll = Promise.all([
+            epicWebService.fetchAll(`loop4: fetchAll(${n4})(400)`),
+            epicWebService.fetchUser(`loop4: fetchUser(${n4})(100)`)
+        ]);
+        //Fetch the user data concurrently and destruct the results
+        const [all, user] = await fetchAll;
+        console.log(`results: [${all}, ${user}]`);
+        console.log(`done Promise.all()`);
+        const newuser = await epicWebService.createUser(`loop4: createUser(${n4})(200)`);
+        console.log(`loop4: END iteration ${n4}`);
+    }
+    console.log(`04: END loop to do for-await!`);
+}
+
+/**
  * ----------------------------------- MAIN -----------------------------------
  */
 ;(async function main() {
-    const PRACTICE_TOGGLE: string = 'practice3';
+    const PRACTICE_TOGGLE: string = 'practice4';
     const arr = ['one', 'two2'];
 
     switch (PRACTICE_TOGGLE) {
-        case 'practice1':
-            funcNoAwait(arr);
+        case 'practice4':
+            await funcForAwaitParallelAgain(arr);
+            break;
+        case 'practice3':
+            await funcForAwaitParallel(arr);
             break;
         case 'practice2':
             await funcForAwaitInSeries(arr);
             break;
-        case 'practice3':
-            await funcForAwaitParallel(arr);
+        case 'practice1':
+            funcNoAwait(arr);
             break;
         default:
             break;
