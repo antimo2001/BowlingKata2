@@ -19,4 +19,13 @@ export class Utility {
         debugFip(`range is: ${r}`);
         return r;
     }
+
+    /**
+     * Delay some async operation (useful for simulating slow async functions)
+     * @param delay amount of time in milliseconds to delay; defaults to 3000
+     */
+    public static async stall(delay: number = 3000): Promise<void> {
+        return await new Promise(resolve => setTimeout(resolve, delay));
+    }
+
 }

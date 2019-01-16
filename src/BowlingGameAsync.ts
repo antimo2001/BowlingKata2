@@ -5,8 +5,9 @@ import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
 import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
+import { Utility } from './Utility';
 
-const debugFip = debug("src:BowlingGameAsync");
+const debugFip = debug("fip01:src:BowlingGameAsync");
 
 /** Class represents a BowlingGame exception */
 export class BowlingGameAsync {
@@ -84,6 +85,8 @@ export class BowlingGameAsync {
             this.failWithError(`throw cannot be negative`);
         }
         this.frames.push(new TenthFrame(...throws));
+        //Simulate a slow async operation
+        // await Utility.stall(999);
         this.updateScoresPerFrame();
     }
     /**

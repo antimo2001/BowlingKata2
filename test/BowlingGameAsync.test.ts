@@ -23,27 +23,26 @@ class TestSubject {
     }
     /**
      * Helper function is used to execute multiple open-frames for a game
-     * @param frameTotalCount number of loops
+     * @param loopCount number of loops
      * @param throw1 number of pins knocked down in the 1st throw
      * @param throw2 number of pins knocked down in the 2nd throw
      */
-    async playOpenFrames(frameTotalCount: number, throw1: number, throw2: number): Promise<void> {
-        // throw "notyetimplemented";
-        const range = Utility.range(1, frameTotalCount + 1);
-        for await (let i of range) {
-            this.game.open(throw1, throw2);
-        }
+    async playOpenFrames(loopCount: number, throw1: number, throw2: number): Promise<void> {
+        await this.playMultipleFrames(loopCount, () => {
+            return this.game.open(throw1, throw2);
+        });
     }
     /**
      * Helper function is for invoking multiple frames (of any type) for a game
      * @param loopCount the number of times to iterate
-     * @param iterator the callback function to repeatedly invoke
+     * @param iterator the callback that creates the Promise to be iterated over
      */
-    async playMultipleFrames(loopCount: number, iterator: (game: BowlingGameAsync) => void): Promise<void> {
-        // throw "notyetimplemented";
+    async playMultipleFrames(loopCount: number, iterator: () => Promise<void>): Promise<void> {
         const range = Utility.range(1, loopCount + 1);
+        debugs.fip01(`playMultipleFrames: range===${range}`);
         for await (let i of range) {
-            iterator.call(this, this.game);
+            // debugs.fip01(`range[${i}]`);
+            await iterator.call(this);
         }
     }
 }
@@ -55,19 +54,17 @@ describe("BowlingGameAsync", function() {
         test = new TestSubject();
     });
 
-    xdescribe("#openFrame", function() {
+    describe("#openFrame", function() {
         it("single frame", async function() {
             await test.game.open(1, 2);
-            const actual = await test.game.score();
-            expect(actual).to.equal(3);
+            expect(await test.game.score()).to.equal(3);
         });
         
         it("multiple frames", async function() {
             await test.game.open(1, 2);
             await test.game.open(3, 4);
             const expectedScore = sumReduce(1, 2, 3, 4);
-            const actual = await test.game.score();
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
 
         it("up to 5 frames", async function() {
@@ -77,74 +74,65 @@ describe("BowlingGameAsync", function() {
             await test.game.open(2, 2);
             await test.game.open(3, 3);
             let expectedScore = sumReduce(3, 7, 2, 4, 6);
-            const actual = await test.game.score();
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player throws all gutterballs", async function() {
             await test.playOpenFrames(10, 0, 0);
-            const actual = await test.game.score();
-            expect(actual).to.equal(0);
+            expect(await test.game.score()).to.equal(0);
         });
         it("player bowls 3 pins per throw", async function() {
             await test.playOpenFrames(10, 3, 3);
-            const actual = await test.game.score();
-            expect(actual).to.equal(60);
+            expect(await test.game.score()).to.equal(60);
         });
     });
 
-    xdescribe("#spare", function() {
+    describe("#spare", function() {
         it("player bowls a spare in frame 1", async function() {
             await test.game.spare(4);
             await test.game.open(8, 1);
             await test.playOpenFrames(8, 0, 0);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(10, 8, 8, 1);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a spare in frame 8", async function() {
             await test.playOpenFrames(7, 0, 0);
             await test.game.spare(4);
             await test.game.open(4, 5);
             await test.game.open(0, 0);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(10, 4, 4, 5);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a spare in frame 10", async function() {
             await test.playOpenFrames(8, 0, 0);
             await test.game.open(4, 5);
             await test.game.bowlTenthFrame(4, 6, 3);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(9, 10, 3);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls many spares", async function() {
             await test.game.spare(7);
             await test.game.spare(8);
             await test.game.open(3, 4);
             await test.playOpenFrames(7, 0, 0);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(10, 8, 10, 3, 7);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls many spares with bonus", async function() {
             await test.playOpenFrames(8, 0, 0);
             await test.game.spare(4);
             await test.game.bowlTenthFrame(5, 5, 3);
             const expectedScore = sumReduce(10, 5, 10, 3);
-            const actual = await test.game.score();
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
     });
 
-    xdescribe("#strike", function() {
+    describe("#strike", function() {
         it("player bowls a strike in frame 1", async function() {
             await test.game.strike();
             await test.game.open(1, 6);
             await test.playOpenFrames(8, 0, 0);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(10, 1, 6, 1, 6);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a strike in frame 4", async function() {
             await test.playOpenFrames(3, 0, 0);
@@ -153,33 +141,30 @@ describe("BowlingGameAsync", function() {
             await test.game.open(4, 2);
             await test.playOpenFrames(5, 0, 0);
             // debugs.fip00(`after test.game.throws===${test.game.throws}`);
-            const actual = await test.game.score();
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
-            expect(actual).to.equal(expectedScore);
+            expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player bowls a strike in frame 10", async function() {
             await test.playOpenFrames(9, 0, 0);
-            test.game.bowlTenthFrame(10, 10, 10);
-            const actual = await test.game.score();
-            expect(actual).to.equal(30);
+            await test.game.bowlTenthFrame(10, 10, 10);
+            expect(await test.game.score()).to.equal(30);
         });
         it("player bowls perfect game", async function() {
-            await test.playMultipleFrames(9, (g: BowlingGameAsync) => g.strike());
-            test.game.bowlTenthFrame(10, 10, 10);
-            const actual = await test.game.score();
-            expect(actual).to.equal(300);
+            await test.playMultipleFrames(9, () => test.game.strike());
+            await test.game.bowlTenthFrame(10, 10, 10);
+            expect(await test.game.score()).to.equal(300);
         });
     });
 
-    xdescribe("#scoreNthFrame", function() {
+    describe("#scoreNthFrame", function() {
         /**
          * Function is the iterator for scoreNthFrame testing
          */
-        const handleTestCaseForScoreNth = (score: number, i: number) => {
+        const handleTestCaseForScoreNth = async (score: number, i: number) => {
             if (i <= 0 || score===NaN) {
                 return;
             }
-            it(`verify calculator score at frame: ${i}`, async function () {
+            it(`verify calculator score at frame: ${i}`, async function() {
                 const actual = await test.game.scoreNthFrame(i);
                 expect(actual).to.equal(score);
             });
@@ -200,26 +185,43 @@ describe("BowlingGameAsync", function() {
             spareOpenStrike: [NaN, 14, 22, 42, 56, 64, 84, 98, 106, 126, 140],
             openStrikeSpare: [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134],
         }
-
-        describe("bowls frames in specific sequence strike/spare/open", function() {
-            beforeEach(async function() {
-                // debugs.fip00(`...begin game`);
-                await test.game.strike();
-                await test.game.spare(9);
-                await test.game.open(4, 4);
-                await test.game.strike();
-                await test.game.spare(9);
-                await test.game.open(4, 4);
-                await test.game.strike();
-                await test.game.spare(9);
-                await test.game.open(4, 4);
-                await test.game.open(1, 1);
-                debugs.fip00(`...END GAME`);
+FAILCOMPILE
+        describe("TODO: bowls frames in specific sequence strike/spare/open", function() {
+            let chain: Promise<void>[];
+            beforeEach(function() {
+                // debugs.fip01(`...begin game`);
+                chain = [
+                    test.game.strike(),
+                    test.game.spare(9),
+                    test.game.open(4, 4),
+                    test.game.strike(),
+                    test.game.spare(9),
+                    test.game.open(4, 4),
+                    test.game.strike(),
+                    test.game.spare(9),
+                    test.game.open(4, 4),
+                    test.game.open(1, 1),
+                ];
+                // debugs.fip01(`...END GAME`);
             });
-            CALCULATOR_SCORES.strikeSpareOpen.forEach(handleTestCaseForScoreNth);
+            let i = 0;
+            for (let score of CALCULATOR_SCORES.strikeSpareOpen) {
+                if (i <= 0 || score === NaN) {
+                    continue;
+                }
+                it(`verify calculator score at frame: ${i}`, function(done) {
+                    Promise.all(chain).then(() => {
+                        return test.game.scoreNthFrame(i);
+                    }).then((actual) => {
+                        expect(actual).to.equal(score);
+                        done();
+                    });
+                });
+                i += 1;
+            }
         });
 
-        describe("bowls frames in specific sequence 2: spare/strike/open", function() {
+        xdescribe("bowls frames in specific sequence 2: spare/strike/open", function() {
             beforeEach(async function() {
                 // debugs.fip01(`...begin game`);
                 await test.game.spare(9);
@@ -237,7 +239,7 @@ describe("BowlingGameAsync", function() {
             CALCULATOR_SCORES.spareStrikeOpen.forEach(handleTestCaseForScoreNth);
         });
         
-        describe("bowls frames in specific sequence 3: open/spare/strike", function() {
+        xdescribe("bowls frames in specific sequence 3: open/spare/strike", function() {
             beforeEach(async function() {
                 // debugs.fip01(`...begin game`);
                 await test.game.open(4, 4);
@@ -255,7 +257,7 @@ describe("BowlingGameAsync", function() {
             CALCULATOR_SCORES.openSpareStrike.forEach(handleTestCaseForScoreNth);
         });
         
-        describe("bowls frames in specific sequence 4: strike/open/spare", function() {
+        xdescribe("bowls frames in specific sequence 4: strike/open/spare", function() {
             beforeEach(async function() {
                 await test.game.strike();
                 await test.game.open(4, 4);
@@ -271,11 +273,11 @@ describe("BowlingGameAsync", function() {
             CALCULATOR_SCORES.strikeOpenSpare.forEach(handleTestCaseForScoreNth);
         });
 
-        describe("bowls frames in specific sequence 5: strike/gutter", function() {
+        xdescribe("bowls frames in specific sequence 5: strike/gutter", function() {
             beforeEach(async function() {
-                await test.playMultipleFrames(4, async (game: BowlingGameAsync) => {
-                    await game.strike();
-                    await game.open(0, 0);
+                await test.playMultipleFrames(4, async () => {
+                    await test.game.strike();
+                    await test.game.open(0, 0);
                 });
                 await test.game.strike();
                 await test.game.bowlTenthFrame(0, 0);
@@ -283,23 +285,23 @@ describe("BowlingGameAsync", function() {
             CALCULATOR_SCORES.strikeGutter.forEach(handleTestCaseForScoreNth);
         });
 
-        describe("bowls frames in specific sequence 6: spare/open/strike", function() {
+        xdescribe("bowls frames in specific sequence 6: spare/open/strike", function() {
             beforeEach(async function() {
-                await test.playMultipleFrames(3, async (game: BowlingGameAsync) => {
-                    await game.spare(5);
-                    await game.open(4, 4);
-                    await game.strike();
+                await test.playMultipleFrames(3, async () => {
+                    await test.game.spare(5);
+                    await test.game.open(4, 4);
+                    await test.game.strike();
                 });
                 await test.game.bowlTenthFrame(5, 5, 4);
             });
             CALCULATOR_SCORES.spareOpenStrike.forEach(handleTestCaseForScoreNth);
         });
-        describe("bowls frames in specific sequence 7: open/strike/spare", function() {
+        xdescribe("bowls frames in specific sequence 7: open/strike/spare", function() {
             beforeEach(async function() {
-                await test.playMultipleFrames(3, async (game: BowlingGameAsync) => {
-                    await game.open(4, 4);
-                    await game.strike();
-                    await game.spare(5);
+                await test.playMultipleFrames(3, async () => {
+                    await test.game.open(4, 4);
+                    await test.game.strike();
+                    await test.game.spare(5);
                 });
                 await test.game.bowlTenthFrame(4, 4);
             });
