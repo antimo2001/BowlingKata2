@@ -98,7 +98,7 @@ export class BowlingGameAsync {
             this.failWithError(msg);
             // return Promise.reject(msg);
         }
-        return Promise.resolve(scoreNth);
+        return scoreNth;
     }
     /**
      * Gets the total score for the game
@@ -110,10 +110,15 @@ export class BowlingGameAsync {
     /**
      * Throw BowlingGame error with the given message
      * @param message the error message
+     * @param err the error to rethrow; throws new BowlingGameError if undefined
      */
-    private failWithError(message: string) {
+    private failWithError(message: string, err?: any) {
         debugFip(message);
-        throw new BowlingGameError(message);
+        if (err !==undefined) {
+            throw err;
+        } else {
+            throw new BowlingGameError(message);
+        }
     }
     /**
      * Update the accumlated scores for this game
@@ -121,25 +126,21 @@ export class BowlingGameAsync {
     private async updateScoresPerFrame(): Promise<void> {
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
-            return Promise.resolve();
+            return;
         }
-
-        const game = this;
-        return new Promise(function(resolve, reject) {
-            try {
-                //Set the bonus for each frame
-                game.setBonusThrowsPerFrame();
-
-                //Calculate the cumulative scores
-                game.scores = game.addCumulativeScores();
-
-                resolve();
-            }
-            catch (ex) {
-                reject(ex);
-                // throw ex;
-            }
-        });
+        //Use of the `await` keyword inside an async function is OPTIONAL
+        try {
+            //If the setBonusThrowsPerFrame was async, then await makes sense
+            this.setBonusThrowsPerFrame();
+        } catch(err) {
+            this.failWithError(`***setBonusThrowsPerFrame: ${err}`, err);
+        }
+        try {
+            //If the addCumulativeScores was async, then await makes sense here
+            this.scores = this.addCumulativeScores();
+        } catch(err) {
+            this.failWithError(`***addCumulativeScores: ${err}`, err);
+        }
     }
     /**
      * Returns true if this game cannot be scored yet.
@@ -191,5 +192,4 @@ export class BowlingGameAsync {
         debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
-
 }

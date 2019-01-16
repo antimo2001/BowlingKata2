@@ -62,13 +62,10 @@ const epicWebService = {
  * @param arr array of numbers or array of strings
  */
 function funcNoAwait(arr: number[] | string[]) {
-    /*
-    * Without the for-await, I expect to see the console.logs first? Yes.
-    */
     console.log(`01: begin loop (no await)`);
     for (let n of arr) {
         epicWebService.fetchUser(`loop1: fetchUser(${n})(100)`);
-        epicWebService.fetchAll(`loop1: fetchAll(${n})(444)`);
+        epicWebService.fetchAll(`loop1: fetchAll(${n})(400)`);
         epicWebService.createUser(`loop1: createUser(${n})(200)`);
         console.log(`loop1: console: value: ${n}`);
     }
@@ -78,39 +75,42 @@ function funcNoAwait(arr: number[] | string[]) {
 /**
  * This practice function iterates using the for-await construct.
  * This is an example of how to iterate async operations in a series.
- * NTS: how would I do async operations in parallel? Just NOT use the await?
  * @param arr array of numbers or array of strings
  */
 async function funcForAwaitInSeries(arr: number[] | string[]) {
-    /*
-    * Using the for-await, I expect to see the console.logs interweaved with async logs? NOPE
-    */
     console.log(`02: begin loop to do for-await!`);
     for await (let n2 of arr) {
+        console.log(`loop2: begin iteration ${n2}`);
         await epicWebService.fetchUser(`loop2: fetchUser(${n2})(100)`);
-        await epicWebService.fetchAll(`loop2: fetchAll(${n2})(444)`);
+        await epicWebService.fetchAll(`loop2: fetchAll(${n2})(400)`);
         await epicWebService.createUser(`loop2: createUser(${n2})(200)`);
-        console.log(`loop2: console: value: ${n2}`);
+        console.log(`loop2: END iteration ${n2}`);
     }
     console.log(`02: END loop to do for-await!`);
 }
 
+/**
+ * This practice function iterates using the for-await construct.
+ * This is an example of how to iterate async operations in parallel.
+ * @param arr array of numbers or array of strings
+ */
 async function funcForAwaitParallel(arr: number[] | string[]) {
     console.log(`03: begin loop to do for-await in parallel!`);
     for await (let n3 of arr) {
-        const allUsers = epicWebService.fetchAll(`loop2: fetchAll(${n3})(444)`);
-        const user = epicWebService.fetchUser(`loop2: fetchUser(${n3})(100)`);
-        //Use Promise.all() to execute promises concurrently!
-        const fetchAll = Promise.all([allUsers, user]);
-        const promiseChain = fetchAll.then((results) => {
+        console.log(`loop3: begin iteration ${n3}`);
+        //Use Promise.all() to execute promises concurrently
+        const fetchAllThenCreate = Promise.all([
+            epicWebService.fetchAll(`loop3: fetchAll(${n3})(400)`),
+            epicWebService.fetchUser(`loop3: fetchUser(${n3})(100)`)
+        ]).then((results) => {
             const [au, ur] = results;
             console.log(`results: [${au}, ${ur}]`);
             console.log(`done Promise.all()`);
         }).then(() => {
-            return epicWebService.createUser(`loop2: createUser(${n3})(200)`);
+            return epicWebService.createUser(`loop3: createUser(${n3})(200)`);
         });
-        await promiseChain;
-        console.log(`loop3: console: value: ${n3}`);
+        await fetchAllThenCreate;
+        console.log(`loop3: END iteration ${n3}`);
     }
     console.log(`03: END loop to do for-await!`);
 }
@@ -146,6 +146,10 @@ async function funcForAwaitParallel(arr: number[] | string[]) {
     * 4. Note that carelessly using `await` on everything is poor practice! It is
     *    best practice to learn when to use your promise library; specifically
     *    learn about Promise.all(), Promise.race(), Promise.map(), etc.
+    * 5. Lots of lessons learned with this online source: https://javascript.info/async-await
+    * 6. The async keyword before a function has two effects: (1) Makes the
+    *    function always return a promise. (2) Allows to use await in it.
+    * 7. Use of the `await` keyword inside an async function is OPTIONAL.
     */
 
 }());
