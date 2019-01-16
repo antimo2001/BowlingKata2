@@ -101,15 +101,15 @@ async function funcForAwaitParallel(arr: number[] | string[]) {
         const allUsers = epicWebService.fetchAll(`loop2: fetchAll(${n3})(444)`);
         const user = epicWebService.fetchUser(`loop2: fetchUser(${n3})(100)`);
         //Use Promise.all() to execute promises concurrently!
-        const concurrentPromises = Promise.all([
-            allUsers.then(console.log),
-            user.then(console.log)
-        ]);
-        await concurrentPromises.then(async () => {
-            console.log(`done Promise.map()`);
-            const newuser = epicWebService.createUser(`loop2: createUser(${n3})(200)`);
-            await newuser.then(console.log);
+        const fetchAll = Promise.all([allUsers, user]);
+        const promiseChain = fetchAll.then((results) => {
+            const [au, ur] = results;
+            console.log(`results: [${au}, ${ur}]`);
+            console.log(`done Promise.all()`);
+        }).then(() => {
+            return epicWebService.createUser(`loop2: createUser(${n3})(200)`);
         });
+        await promiseChain;
         console.log(`loop3: console: value: ${n3}`);
     }
     console.log(`03: END loop to do for-await!`);
@@ -118,8 +118,8 @@ async function funcForAwaitParallel(arr: number[] | string[]) {
 /**
  * ----------------------------------- MAIN -----------------------------------
  */
-(async function main() {
-    const PRACTICE_TOGGLE: string = 'practice2';
+;(async function main() {
+    const PRACTICE_TOGGLE: string = 'practice3';
     const arr = ['one', 'two2'];
 
     switch (PRACTICE_TOGGLE) {
@@ -139,10 +139,10 @@ async function funcForAwaitParallel(arr: number[] | string[]) {
     /*
     * Learning lessons:
     * 1. I had an older version of Nodejs installed(v8.12); I got a TypeError;
-    *    so I had to install Nodejs v10 + to fix that TypeError.
-    * 2. It seems like all of the awaits are put in to the Nodejs callback - queue.
-    * 3. When inside of the for-await loop, and I use await debugLogAsync(), then the
-    *    order of the iteration occurs in a stable way!!
+    *    so I had to install Nodejs v10+ to fix that TypeError.
+    * 2. It seems like all of the awaits are put in to the Nodejs callback queue.
+    * 3. When inside of the for-await loop, and I use await debugLogAsync(), then
+    *    the order of the iteration occurs in a stable way!!
     * 4. Note that carelessly using `await` on everything is poor practice! It is
     *    best practice to learn when to use your promise library; specifically
     *    learn about Promise.all(), Promise.race(), Promise.map(), etc.
