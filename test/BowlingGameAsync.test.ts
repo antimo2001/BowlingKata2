@@ -1,17 +1,18 @@
 import 'mocha';
+import chai, { expect } from 'chai';
+import chaiAsPromise from 'chai-as-promised';
 import debug from 'debug';
-import { expect } from 'chai';
+import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
 import { BowlingGameAsync } from '../src/BowlingGameAsync';
 import { BowlingGameError } from '../src/BowlingGameError';
-import { Utility } from '../src/Utility';
 
-/** Helper functions for debugging other fixes in-progress */
-const debugs = {
-    fip00: debug("fip00:test:BowlingGameAsync"),
-    fip01: debug("fip01:test:BowlingGameAsync"),
-    //FYI: FIP stands for fix in-progress
-};
+//Register the chai-as-promised library
+//Note that chaiAsPromise should be the very last registerd plugin
+chai.use(chaiAsPromise);
+
+const debugFip = debug("fip01:test:BowlingGameAsync");
+//FIP stands for fix in-progress
 
 /** Helper function for calculating the sum */
 const sumReduce = Frame.sum;
@@ -39,9 +40,9 @@ class TestSubject {
      */
     async playMultipleFrames(loopCount: number, iterator: () => Promise<void>): Promise<void> {
         const range = Utility.range(1, loopCount + 1);
-        debugs.fip01(`playMultipleFrames: range===${range}`);
+        debugFip(`playMultipleFrames: range===${range}`);
         for await (let i of range) {
-            // debugs.fip01(`range[${i}]`);
+            // debugFip(`range[${i}]`);
             await iterator.call(this);
         }
     }
@@ -199,9 +200,9 @@ describe("BowlingGameAsync", function() {
                 it(`verify calculator score at frame: ${i}`, async function() {
                     //Resolve each promise in order
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
-                    // debugs.fip01(`...index is ok? (i > 0?)===${i > 0}`);
-                    // debugs.fip01(`...index is ok? (i < 11?)===${i < 11}`);
+                    debugFip(`(score,i)===(${score},${i})`);
+                    // debugFip(`...index is ok? (i > 0?)===${i > 0}`);
+                    // debugFip(`...index is ok? (i < 11?)===${i < 11}`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -232,7 +233,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -263,7 +264,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -294,7 +295,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -325,7 +326,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -356,7 +357,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -386,7 +387,7 @@ describe("BowlingGameAsync", function() {
                 }
                 it(`verify calculator score at frame: ${i}`, async function () {
                     framesChain.forEach(async (frame) => await frame);
-                    debugs.fip01(`(score,i)===(${score},${i})`);
+                    debugFip(`(score,i)===(${score},${i})`);
                     const actual = await test.game.scoreNthFrame(i);
                     expect(actual).to.equal(score);
                 });
@@ -394,37 +395,53 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    xdescribe("#scoreNthFrame - error handling", function () {
-        /** Helper function that constructs functions for testing errors */
-        let createFn: Function;
-        beforeEach(function () {
-            createFn = (test: TestSubject, nth: number) => {
-                return async function () {
-                    await test.game.open(1, 1);
-                    await test.game.scoreNthFrame(nth);
-                }
-            }
+    describe("#scoreNthFrame - error handling", function () {
+        it("expect error; part 0", function (done) {
+            const NTH_FRAME = 0;
+            test.game.open(1, 1).then(() => {
+                test.game.scoreNthFrame(NTH_FRAME).catch(err => {
+                    expect(err).to.matches(/array index out of bounds/);
+                    expect(err).to.instanceOf(Error);
+                });
+            }).catch(err => {
+                throw `***Unexpected error: ${err}`;
+            }).finally(done);
+            /*
+            This line works but it seems like ts-node receives the error
+            expect(test.game.scoreNthFrame(0)).to.eventually.throw(/array index out of bounds/);
+            */
         });
-
-        it("expect error; part 0", function () {
-            let testFn = createFn(test, 0);
-            expect(testFn).to.throw(/array index out of bounds/);
-            expect(testFn).to.throw(BowlingGameError);
+        it("expect error; part 1", function (done) {
+            const NTH_FRAME = 9;
+            test.game.open(1, 1).then(() => {
+                test.game.scoreNthFrame(NTH_FRAME).catch(err => {
+                    expect(err).to.matches(/array index out of bounds/);
+                    expect(err).to.instanceOf(BowlingGameError);
+                });
+            }).catch(err => {
+                throw `***Unexpected error: ${err}`;
+            }).finally(done);
         });
-        it("expect error; part 1", function () {
-            let testFn = createFn(test, 9);
-            expect(testFn).to.throw(/array index out of bounds/);
-            expect(testFn).to.throw(BowlingGameError);
+        it("expect error; part 2", function (done) {
+            const NTH_FRAME = -22;
+            test.game.open(1, 1).then(() => {
+                test.game.scoreNthFrame(NTH_FRAME).catch(err => {
+                    expect(err).to.matches(/array index out of bounds/);
+                    expect(err).to.instanceOf(BowlingGameError);
+                });
+            }).catch(err => {
+                throw `***Unexpected error: ${err}`;
+            }).finally(done);
         });
-        it("expect error; part 2", function () {
-            let testFn = createFn(test, -22);
-            expect(testFn).to.throw(/array index out of bounds/);
-            expect(testFn).to.throw(BowlingGameError);
-        });
-        it("clean; no errors", function () {
-            let cleanfunc = createFn(test, 1);
-            expect(cleanfunc).to.not.throw(/array index out of bounds/);
-            expect(cleanfunc).to.not.throw(BowlingGameError);
+        it("clean; no errors", function (done) {
+            test.game.open(1, 1).then(() => {
+                test.game.scoreNthFrame(1).then(score => {
+                    expect(score).to.not.matches(/array index out of bounds/);
+                    expect(score).to.not.instanceOf(BowlingGameError);
+                });
+            }).catch(err => {
+                throw `***Unexpected error: ${err}`;
+            }).finally(done);
         });
     });
 
