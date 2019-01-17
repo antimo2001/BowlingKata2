@@ -7,8 +7,8 @@ import { BowlingGameError } from '../src/BowlingGameError';
 
 /** Helper functions for debugging other fixes in-progress */
 const debugs = {
-    fip00: debug("fip00:test:BowlingGame"),
-    fip01: debug("fip01:test:BowlingGame"),
+    fip00: debug("OFF:fip00:test:BowlingGame"),
+    fip01: debug("OFF:fip01:test:BowlingGame"),
     //FYI: FIP stands for fix in-progress
 };
 

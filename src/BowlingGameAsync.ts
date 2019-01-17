@@ -7,7 +7,7 @@ import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
 import { Utility } from './Utility';
 
-const debugFip = debug("fip01:src:BowlingGameAsync");
+const debugFip = debug("src:BowlingGameAsync");
 
 /** Class represents a BowlingGame exception */
 export class BowlingGameAsync {
