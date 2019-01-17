@@ -433,6 +433,37 @@ describe("BowlingGameAsync", function() {
                 throw `***Unexpected error: ${err}`;
             }).finally(done);
         });
+        it("expect error; part 3", async function () {
+            //Retry using async and without using the done callback
+            const NTH_FRAME = 333;
+            await test.game.open(1, 1).catch(err => {
+                debugFip(`!!!Unexpected error in unit test BowlingGameAsync.test!!! ${err}`);
+                throw err;
+            });
+            try {
+                await test.game.scoreNthFrame(NTH_FRAME);
+            }
+            catch (err) {
+                if (err) {
+                    expect(err).to.matches(/array index out of bounds/);
+                    expect(err).instanceOf(BowlingGameError);
+                }
+                else {
+                    debugFip(`!!!Unexpected error in unit test BowlingGameAsync.test!!! ${err}`);
+                    throw err;
+                }
+            }
+
+            ///NTS: on 2nd thought, the above code is uglier than below code...
+            // test.game.open(1, 1).then(() => {
+            //     test.game.scoreNthFrame(NTH_FRAME).catch(err => {
+            //         expect(err).to.matches(/array index out of bounds/);
+            //         expect(err).to.instanceOf(BowlingGameError);
+            //     });
+            // }).catch(err => {
+            //     throw `***Unexpected error: ${err}`;
+            // }).finally(done);
+        });
         it("clean; no errors", function (done) {
             test.game.open(1, 1).then(() => {
                 test.game.scoreNthFrame(1).then(score => {
