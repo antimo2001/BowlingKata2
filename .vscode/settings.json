@@ -1,4 +1,6 @@
 {
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "block",
   "triggerTaskOnSave.on": false,
   "triggerTaskOnSave.tasks": {
     "build": [
@@ -6,6 +8,6 @@
     ],
     "test": [
       "**/**"
-    ],
+    ]
   }
 }
