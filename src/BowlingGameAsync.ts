@@ -86,7 +86,7 @@ export class BowlingGameAsync {
         }
         this.frames.push(new TenthFrame(...throws));
         //Simulate a slow async operation
-        // await Utility.stall(999);
+        // await Utility.stall(2);
         this.updateScoresPerFrame();
     }
     /**
@@ -99,6 +99,7 @@ export class BowlingGameAsync {
         if (scoreNth===undefined || scoreNth===null) {
             this.failWithError(`array index out of bounds; nthFrame===${nthFrame}`);
         }
+        // await Utility.stall(3);
         return scoreNth;
     }
     /**
@@ -129,16 +130,13 @@ export class BowlingGameAsync {
             debugFip(`cannot score this game yet`);
             return;
         }
-        //Use of the `await` keyword inside an async function is OPTIONAL
         try {
-            //If the setBonusThrowsPerFrame was async, then await makes sense
-            this.setBonusThrowsPerFrame();
+            await this.setBonusThrowsPerFrame();
         } catch(err) {
             this.failWithError(`***setBonusThrowsPerFrame: ${err}`, err);
         }
         try {
-            //If the addCumulativeScores was async, then await makes sense here
-            this.scores = this.addCumulativeScores();
+            this.scores = await this.addCumulativeScores();
         } catch(err) {
             this.failWithError(`***addCumulativeScores: ${err}`, err);
         }
