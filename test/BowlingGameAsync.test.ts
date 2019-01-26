@@ -247,7 +247,7 @@ describe("BowlingGameAsync", function() {
 
         xdescribe("bowls frames in specific sequence strike/spare/open", async function() {
             const {strikeSpareOpen} = CALCULATOR_SCORES;
-            const nums = Utility.range(1, 2);
+            const nums = Utility.range(1, 11);
             for await (let i of nums) {
                 let score = strikeSpareOpen[i];
                 it(`verify calculator score at frame: ${i}`, async function() {
@@ -269,172 +269,12 @@ describe("BowlingGameAsync", function() {
             }
         });
 
-        xdescribe("bowls frames in specific sequence 2: spare/strike/open", function() {
-            const { spareStrikeOpen } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.bowlTenthFrame(5, 5, 10)
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = spareStrikeOpen[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
-        
-        xdescribe("bowls frames in specific sequence 3: open/spare/strike", function() {
-            const { openSpareStrike } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.open(4, 4),
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(9),
-                    test.game.strike(),
-                    test.game.bowlTenthFrame(10, 10, 10),
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = openSpareStrike[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
-        
-        xdescribe("bowls frames in specific sequence 4: strike/open/spare", function() {
-            const { strikeOpenSpare } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(5),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(5),
-                    test.game.strike(),
-                    test.game.open(4, 4),
-                    test.game.spare(5),
-                    test.game.bowlTenthFrame(10, 4, 4),
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = strikeOpenSpare[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
-
-        xdescribe("bowls frames in specific sequence 5: strike/gutter", function() {
-            const { strikeGutter } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.strike(),
-                    test.game.open(0, 0),
-                    test.game.strike(),
-                    test.game.open(0, 0),
-                    test.game.strike(),
-                    test.game.open(0, 0),
-                    test.game.strike(),
-                    test.game.open(0, 0),
-                    test.game.strike(),
-                    test.game.bowlTenthFrame(0, 0),
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = strikeGutter[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
-
-        xdescribe("bowls frames in specific sequence 6: spare/open/strike", function() {
-            const { spareOpenStrike } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.spare(5),
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.spare(5),
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.spare(5),
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.bowlTenthFrame(5, 5, 4),
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = spareOpenStrike[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
-        xdescribe("bowls frames in specific sequence 7: open/strike/spare", function() {
-            const { openStrikeSpare } = CALCULATOR_SCORES;
-            let framesChain: Promise<void>[];
-            beforeEach(function () {
-                //Initialize array of promises (but don't resolve yet)
-                framesChain = [
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.spare(5),
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.spare(5),
-                    test.game.open(4, 4),
-                    test.game.strike(),
-                    test.game.spare(5),
-                    test.game.bowlTenthFrame(4, 4),
-                ];
-            });
-            for (let i = 1; i <= 10; i++) {
-                let score = openStrikeSpare[i];
-                it(`verify calculator score at frame: ${i}`, async function () {
-                    framesChain.forEach(f => Promise.resolve(f));
-                    const actual = await test.game.scoreNthFrame(i);
-                    expect(actual).to.equal(score);
-                });
-            }
-        });
+        // xdescribe("bowls frames in specific sequence 2: spare/strike/open", function() {});
+        // xdescribe("bowls frames in specific sequence 3: open/spare/strike", function() {});
+        // xdescribe("bowls frames in specific sequence 4: strike/open/spare", function() {});
+        // xdescribe("bowls frames in specific sequence 5: strike/gutter", function() {});
+        // xdescribe("bowls frames in specific sequence 6: spare/open/strike", function() {});
+        // xdescribe("bowls frames in specific sequence 7: open/strike/spare", function() {});
     });
 
     describe("#scoreNthFrame - error handling", function () {
