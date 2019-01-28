@@ -52,7 +52,7 @@ export class BowlingGameAsync {
         }
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
-        this.updateScoresPerFrame();
+        await this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling a spare frame
@@ -71,7 +71,7 @@ export class BowlingGameAsync {
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
-        this.updateScoresPerFrame();
+        await this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling a strike
@@ -79,7 +79,7 @@ export class BowlingGameAsync {
     public async strike(): Promise<void> {
         let frame = new StrikeFrame();
         this.frames.push(frame);
-        this.updateScoresPerFrame();
+        await this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling the extra throws in the 10th frame
@@ -99,7 +99,7 @@ export class BowlingGameAsync {
         this.frames.push(new TenthFrame(...throws));
         //Simulate a slow async operation
         // await Utility.stall(2);
-        this.updateScoresPerFrame();
+        await this.updateScoresPerFrame();
     }
     /**
      * Gets the score for any frame of the game (ranges from 1 to 10). Throws
@@ -113,7 +113,6 @@ export class BowlingGameAsync {
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        // await Utility.stall(3);
         return scoreNth;
     }
     /**
