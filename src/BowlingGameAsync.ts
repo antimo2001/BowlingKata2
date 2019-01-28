@@ -98,7 +98,6 @@ export class BowlingGameAsync {
         }
         this.frames.push(new TenthFrame(...throws));
         //Simulate a slow async operation
-        // await Utility.stall(2);
         await this.updateScoresPerFrame();
     }
     /**
@@ -142,6 +141,7 @@ export class BowlingGameAsync {
             debugFip(`***addCumulativeScores() failed with error: ${err}`);
             throw err;
         }
+        await Utility.stall(3);
     }
     /**
      * Returns true if this game cannot be scored yet.
