@@ -9,7 +9,7 @@ import { Utility } from './Utility';
 
 const debugFip = debug("src:BowlingGameAsync");
 
-/** Class represents a BowlingGame exception */
+/** Class represents a BowlingGame */
 export class BowlingGameAsync {
     /**
      * Represents all frames for a bowling game
@@ -36,13 +36,19 @@ export class BowlingGameAsync {
      */
     public async open(firstThrow: number, secondThrow: number): Promise<void> {
         if (firstThrow + secondThrow > BowlingGameAsync.MAX_PINS) {
-            this.failWithError(`2 throws cannot exceed ${BowlingGameAsync.MAX_PINS} pins`);
+            const msg = `2 throws cannot exceed ${BowlingGameAsync.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         if (firstThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${firstThrow}`);
+            const msg = `throw cannot be negative: ${firstThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         if (secondThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${secondThrow}`);
+            const msg = `throw cannot be negative: ${secondThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
@@ -54,10 +60,14 @@ export class BowlingGameAsync {
      */
     public async spare(firstThrow: number): Promise<void> {
         if (firstThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${firstThrow}`);
+            const msg = `throw cannot be negative: ${firstThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         if (firstThrow >= BowlingGameAsync.MAX_PINS) {
-            this.failWithError(`first throw of a spare cannot exceed ${BowlingGameAsync.MAX_PINS} pins`);
+            const msg = `first throw of a spare cannot exceed ${BowlingGameAsync.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
@@ -82,7 +92,9 @@ export class BowlingGameAsync {
         //Concat throw3 if it is defined
         throws = throw3!==undefined? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
-            this.failWithError(`throw cannot be negative`);
+            const msg = `throw cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         this.frames.push(new TenthFrame(...throws));
         //Simulate a slow async operation
@@ -97,7 +109,9 @@ export class BowlingGameAsync {
     public async scoreNthFrame(nthFrame: number): Promise<number> {
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth===undefined || scoreNth===null) {
-            this.failWithError(`array index out of bounds; nthFrame===${nthFrame}`);
+            const msg = `array index out of bounds; nthFrame===${nthFrame}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         // await Utility.stall(3);
         return scoreNth;
@@ -110,19 +124,6 @@ export class BowlingGameAsync {
     }
 
     /**
-     * Throw BowlingGame error with the given message
-     * @param message the error message
-     * @param err the error to rethrow; throws new BowlingGameError if undefined
-     */
-    private failWithError(message: string, err?: any) {
-        debugFip(message);
-        if (err !== undefined) {
-            throw err;
-        } else {
-            throw new BowlingGameError(message);
-        }
-    }
-    /**
      * Update the accumlated scores for this game
      */
     private async updateScoresPerFrame(): Promise<void> {
@@ -133,12 +134,14 @@ export class BowlingGameAsync {
         try {
             await this.setBonusThrowsPerFrame();
         } catch(err) {
-            this.failWithError(`***setBonusThrowsPerFrame: ${err}`, err);
+            debugFip(`***setBonusThrowsPerFrame() failed with error: ${err}`);
+            throw err;
         }
         try {
             this.scores = await this.addCumulativeScores();
         } catch(err) {
-            this.failWithError(`***addCumulativeScores: ${err}`, err);
+            debugFip(`***addCumulativeScores() failed with error: ${err}`);
+            throw err;
         }
     }
     /**
