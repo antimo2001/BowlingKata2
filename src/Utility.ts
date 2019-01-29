@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-const debugFip = debug("fip01:src:Utility");
+const debugFip = debug("src:Utility");
 
 /**
  * Utility functions
@@ -8,8 +8,8 @@ const debugFip = debug("fip01:src:Utility");
 export class Utility {
     /**
      * Return array of numbers given the range of integers.
-     * @param start 1st number in range
-     * @param stop last numger
+     * @param start first number in range
+     * @param stop last number (note it is excluded from the result!)
      * @param step interval; defaults to 1
      */
     public static range(start: number, stop: number, step: number = 1): number[] {
