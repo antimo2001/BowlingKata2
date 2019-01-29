@@ -60,21 +60,19 @@ describe("BowlingGameAsync", function() {
             await test.game.open(1, 2);
             expect(await test.game.score()).to.equal(3);
         });
-        
         it("multiple frames", async function() {
             await test.game.open(1, 2);
             await test.game.open(3, 4);
             const expectedScore = sumReduce(1, 2, 3, 4);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-
         it("up to 5 frames", async function() {
             await test.game.open(1, 2);
             await test.game.open(3, 4);
             await test.game.open(1, 1);
             await test.game.open(2, 2);
             await test.game.open(3, 3);
-            let expectedScore = sumReduce(3, 7, 2, 4, 6);
+            const expectedScore = sumReduce(3, 7, 2, 4, 6);
             expect(await test.game.score()).to.equal(expectedScore);
         });
         it("player throws all gutterballs", async function() {
@@ -84,6 +82,35 @@ describe("BowlingGameAsync", function() {
         it("player bowls 3 pins per throw", async function() {
             await test.playOpenFrames(10, 3, 3);
             expect(await test.game.score()).to.equal(60);
+        });
+
+        describe("handles errors", function() {
+            async function assertErrors(test: TestSubject, rxMessage: RegExp, ...throws: number[]) {
+                try {
+                    const [t, u] = throws;
+                    await test.game.open(t, u);
+                    throw new chai.AssertionError('testcase expected error but none found');
+                }
+                catch (err) {
+                    expect(err).to.matches(rxMessage);
+                    expect(err).instanceOf(BowlingGameError);
+                }
+            }
+            it("shows error: 2 throws cannot exceed", async function() {
+                await assertErrors(test, /2 throws cannot exceed/, 11, 1);
+            });
+            it("shows error: 2 throws cannot exceed: part 2", async function() {
+                await assertErrors(test, /2 throws cannot exceed/, 2, 8);
+            });
+            it("shows error: 2 throws cannot exceed: part 3", async function() {
+                await assertErrors(test, /2 throws cannot exceed/, -3, 14);
+            });
+            it("shows error: throw cannot be negative", async function() {
+                await assertErrors(test, /throw cannot be negative/, -1, 3);
+            });
+            it("shows error: throw cannot be negative: part 2", async function() {
+                await assertErrors(test, /throw cannot be negative/, 2, -22);
+            });
         });
     });
 
@@ -263,18 +290,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.open(4, 4);
                 await test.game.bowlTenthFrame(1, 1);
             }
-            it(`verify 10 frames and 10 scores`, async function() {
-                await initializeAllFrames(test);
-                //Loop thru array of 1 to 10
-                const nums = Utility.range(1, 11);
-                for await(let i of nums) {
-                    const score = strikeSpareOpen[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = strikeSpareOpen[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 2: spare/strike/open", function() {
             const { spareStrikeOpen } = CALCULATOR_SCORES;
@@ -290,18 +317,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.open(4, 4);
                 await test.game.bowlTenthFrame(1, 9, 10);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                //Loop thru array of 1 to 10
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = spareStrikeOpen[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = spareStrikeOpen[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 3: open/spare/strike", function() {
             const { openSpareStrike } = CALCULATOR_SCORES;
@@ -317,17 +344,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.strike();
                 await test.game.bowlTenthFrame(10, 10, 10);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = openSpareStrike[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = openSpareStrike[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 4: strike/open/spare", function () {
             const { strikeOpenSpare } = CALCULATOR_SCORES;
@@ -343,17 +371,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.spare(9);
                 await test.game.bowlTenthFrame(10, 4, 4);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = strikeOpenSpare[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = strikeOpenSpare[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 5: strike/gutter", function () {
             const { strikeGutter } = CALCULATOR_SCORES;
@@ -369,17 +398,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.strike();
                 await test.game.bowlTenthFrame(0, 0);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = strikeGutter[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = strikeGutter[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 6: spare/open/strike", function () {
             const { spareOpenStrike } = CALCULATOR_SCORES;
@@ -395,17 +425,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.strike();
                 await test.game.bowlTenthFrame(4, 6, 4);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = spareOpenStrike[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = spareOpenStrike[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
         describe("bowls frames in specific sequence 7: open/strike/spare", function () {
             const { openStrikeSpare } = CALCULATOR_SCORES;
@@ -421,17 +452,18 @@ describe("BowlingGameAsync", function() {
                 await test.game.spare(9);
                 await test.game.bowlTenthFrame(4, 4);
             }
-            it(`verify 10 frames and 10 scores`, async function () {
-                await initializeAllFrames(test);
-                const nums = Utility.range(1, 11);
-                for await (let i of nums) {
-                    const score = openStrikeSpare[i];
-                    debugFip(`(score,i)===(${score},${i})`);
-                    const actual = await test.game.scoreNthFrame(i);
-                    const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
-                    await expect(actual).to.equal(score, msg);
-                }
-            });
+            async function executeAssertions(test: TestSubject, i: number) {
+                const score = openStrikeSpare[i];
+                const actual = await test.game.scoreNthFrame(i);
+                const msg = `At index ${i}, testcase expected ${actual} to equal ${score}`;
+                await expect(actual).to.equal(score, msg);
+            }
+            for (let index = 1; index <= 10; index++) {
+                it(`verify score at nthFrame: ${index}`, async function () {
+                    await initializeAllFrames(test);
+                    await executeAssertions(test, index);
+                });
+            }
         });
     });
 
