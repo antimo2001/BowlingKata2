@@ -164,11 +164,9 @@ describe("BowlingGameAsync", function() {
         });
         it("player bowls a strike in frame 4", async function() {
             await test.playOpenFrames(3, 0, 0);
-            // debugs.fip00(`before test.game.throws===${test.game.throws}`);
             await test.game.strike();
             await test.game.open(4, 2);
             await test.playOpenFrames(5, 0, 0);
-            // debugs.fip00(`after test.game.throws===${test.game.throws}`);
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
             expect(await test.game.score()).to.equal(expectedScore);
         });
