@@ -30,32 +30,31 @@ export class BowlingGameAsync {
     }
 
     /**
-     * This method is for representing a player rolling an open-frame.
+     * This method is for representing a player rolling an open-frame. Throws
+     * errors if the first or second throws are invalid.
      * @param firstThrow the first throw in the frame
      * @param secondThrow the second throw in the frame
      */
     public async open(firstThrow: number, secondThrow: number): Promise<void> {
-        if (firstThrow + secondThrow > BowlingGameAsync.MAX_PINS) {
+        //Throw error if invalid sum of throws
+        if (firstThrow + secondThrow >= BowlingGameAsync.MAX_PINS) {
             const msg = `2 throws cannot exceed ${BowlingGameAsync.MAX_PINS} pins`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        if (firstThrow < 0) {
-            const msg = `throw cannot be negative: ${firstThrow}`;
+        //Throw error if negative values for throws
+        [firstThrow, secondThrow].filter(t => t < 0).forEach(t => {
+            const msg = `throw cannot be negative: ${t}`;
             debugFip(msg);
             throw new BowlingGameError(msg);
-        }
-        if (secondThrow < 0) {
-            const msg = `throw cannot be negative: ${secondThrow}`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
+        });
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
         await this.updateScoresPerFrame();
     }
     /**
-     * Method for a player bowling a spare frame
+     * Method for a player bowling a spare frame. Throws errors if first throw is
+     * negative value or if the value exceeds 10 pins.
      * @param firstThrow the first throw in the frame
      */
     public async spare(firstThrow: number): Promise<void> {
@@ -91,7 +90,7 @@ export class BowlingGameAsync {
     public async bowlTenthFrame(throw1: number, throw2: number, throw3?: number): Promise<void> {
         let throws = [throw1, throw2];
         //Concat throw3 if it is defined
-        throws = throw3!==undefined? [...throws, throw3]: throws;
+        throws = throw3 !== undefined ? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
             const msg = `throw cannot be a negative number`;
             debugFip(msg);
@@ -108,7 +107,7 @@ export class BowlingGameAsync {
     public async scoreNthFrame(nthFrame: number): Promise<number> {
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth===undefined || scoreNth===null) {
-            const msg = `array index out of bounds; nthFrame===${nthFrame}`;
+            const msg = `score is not defined for nthFrame: ${nthFrame}`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
@@ -125,7 +124,8 @@ export class BowlingGameAsync {
      * Update the accumlated scores for this game
      */
     private async updateScoresPerFrame(): Promise<void> {
-        await Utility.stall(7);
+        //Simulate a slow network
+        // await Utility.stall(7);
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
             return;
@@ -167,17 +167,20 @@ export class BowlingGameAsync {
             return !!frame ? frame.getBaseThrows() : [];
         }
         //Set the bonus for each frame (especially unscored frames)
-        const unscored = this.frames.filter(f => !f.doneScoring());
-        unscored.forEach((frame, i, frames) => {
-            let bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+        this.frames.filter(f => !f.doneScoring()).map((...params) => {
+            const [ frame, i, frames ] = params;
+            const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
             let bonus: number[] = [];
             if (frame instanceof StrikeFrame) {
-                let bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
+                const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
                 bonus = [...bonus1, ...bonus2];
             }
             else if (frame instanceof SpareFrame) {
                 bonus = bonus1;
             }
+            return { frame, bonus };
+        }).forEach(fb => {
+            const { frame, bonus } = fb;
             frame.setBonusThrows(...bonus);
         });
     }
