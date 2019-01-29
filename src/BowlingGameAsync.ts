@@ -82,7 +82,8 @@ export class BowlingGameAsync {
         await this.updateScoresPerFrame();
     }
     /**
-     * Method for a player bowling the extra throws in the 10th frame
+     * Method for a player bowling the extra throws in the 10th frame. Throws
+     * error if any inputs are negative numbers.
      * @param throw1 the first throw in the frame
      * @param throw2 the 2nd throw in the frame
      * @param throw3 the 3rd throw in the frame (optional)
@@ -92,12 +93,11 @@ export class BowlingGameAsync {
         //Concat throw3 if it is defined
         throws = throw3!==undefined? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
-            const msg = `throw cannot be negative`;
+            const msg = `throw cannot be a negative number`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
         this.frames.push(new TenthFrame(...throws));
-        //Simulate a slow async operation
         await this.updateScoresPerFrame();
     }
     /**
@@ -125,6 +125,7 @@ export class BowlingGameAsync {
      * Update the accumlated scores for this game
      */
     private async updateScoresPerFrame(): Promise<void> {
+        await Utility.stall(7);
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
             return;
@@ -141,7 +142,6 @@ export class BowlingGameAsync {
             debugFip(`***addCumulativeScores() failed with error: ${err}`);
             throw err;
         }
-        await Utility.stall(3);
     }
     /**
      * Returns true if this game cannot be scored yet.
