@@ -249,17 +249,6 @@ describe("BowlingGame", function() {
 
     describe("#scoreNthFrame", function() {
         /**
-         * Function is the iterator for scoreNthFrame testing
-         */
-        const handleTestCaseForScoreNth = (score: number, i: number) => {
-            if (i <= 0 || score===NaN) {
-                return;
-            }
-            it(`verify calculator score at frame: ${i}`, function () {
-                expect(test.game.scoreNthFrame(i)).to.equal(score);
-            });
-        }
-        /**
          * Define a constant array representing scores for a specifc game.
          * The bowling game will be in this sequence of frames:
          * strike, spare, open-frame, strike, spare, open-frame, open-frame.
@@ -297,7 +286,12 @@ describe("BowlingGame", function() {
                 test.game.open(1, 1);
                 debugs.fip00(`...END GAME`);
             });
-            CALCULATOR_SCORES.strikeSpareOpen.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.strikeSpareOpen[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
 
         describe("bowls frames in specific sequence 2: spare/strike/open", function() {
@@ -317,7 +311,12 @@ describe("BowlingGame", function() {
                 test.game.bowlTenthFrame(5, 5, 10);
                 // debugs.fip01(`...END GAME`);
             });
-            CALCULATOR_SCORES.spareStrikeOpen.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.spareStrikeOpen[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
         
         describe("bowls frames in specific sequence 3: open/spare/strike", function() {
@@ -335,7 +334,12 @@ describe("BowlingGame", function() {
                 test.game.bowlTenthFrame(10, 10, 10);
                 // debugs.fip01(`...END GAME`);
             });
-            CALCULATOR_SCORES.openSpareStrike.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.openSpareStrike[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
         
         describe("bowls frames in specific sequence 4: strike/open/spare", function() {
@@ -351,7 +355,12 @@ describe("BowlingGame", function() {
                 test.game.spare(5);
                 test.game.bowlTenthFrame(10, 4, 4);
             });
-            CALCULATOR_SCORES.strikeOpenSpare.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.strikeOpenSpare[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
 
         describe("bowls frames in specific sequence 5: strike/gutter", function() {
@@ -363,7 +372,12 @@ describe("BowlingGame", function() {
                 test.game.strike();
                 test.game.bowlTenthFrame(0, 0);
             });
-            CALCULATOR_SCORES.strikeGutter.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.strikeGutter[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
 
         describe("bowls frames in specific sequence 6: spare/open/strike", function() {
@@ -375,7 +389,12 @@ describe("BowlingGame", function() {
                 });
                 test.game.bowlTenthFrame(5, 5, 4);
             });
-            CALCULATOR_SCORES.spareOpenStrike.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.spareOpenStrike[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
         describe("bowls frames in specific sequence 7: open/strike/spare", function() {
             beforeEach(function() {
@@ -386,41 +405,43 @@ describe("BowlingGame", function() {
                 });
                 test.game.bowlTenthFrame(4, 4);
             });
-            CALCULATOR_SCORES.openStrikeSpare.forEach(handleTestCaseForScoreNth);
+            for (let i = 1; i <= 10; i++) {
+                const score = CALCULATOR_SCORES.openStrikeSpare[i];
+                it(`verify calculator score at frame: ${i}`, function () {
+                    expect(test.game.scoreNthFrame(i)).to.equal(score);
+                });
+            }
         });
     });
 
     describe("#scoreNthFrame - error handling", function () {
         /** Helper function that constructs functions for testing errors */
-        let createFn: Function;
-        beforeEach(function () {
-            createFn = (test: TestSubject, nth: number) => {
-                return function () {
-                    test.game.open(1, 1);
-                    test.game.scoreNthFrame(nth);
-                }
+        function createFn(test: TestSubject, nth: number) {
+            return function () {
+                test.game.open(1, 1);
+                test.game.scoreNthFrame(nth);
             }
-        });
+        }
 
         it("expect error; part 0", function () {
             let testFn = createFn(test, 0);
-            expect(testFn).to.throw(/array index out of bounds/);
             expect(testFn).to.throw(BowlingGameError);
+            expect(testFn).to.throw(/array index out of bounds/);
         });
         it("expect error; part 1", function () {
             let testFn = createFn(test, 9);
-            expect(testFn).to.throw(/array index out of bounds/);
             expect(testFn).to.throw(BowlingGameError);
+            expect(testFn).to.throw(/array index out of bounds/);
         });
         it("expect error; part 2", function () {
             let testFn = createFn(test, -22);
-            expect(testFn).to.throw(/array index out of bounds/);
             expect(testFn).to.throw(BowlingGameError);
+            expect(testFn).to.throw(/array index out of bounds/);
         });
         it("clean; no errors", function () {
             let cleanfunc = createFn(test, 1);
-            expect(cleanfunc).to.not.throw(/array index out of bounds/);
             expect(cleanfunc).to.not.throw(BowlingGameError);
+            expect(cleanfunc).to.not.throw(/array index out of bounds/);
         });
     });
 
