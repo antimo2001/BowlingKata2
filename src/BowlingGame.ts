@@ -6,7 +6,7 @@ import { OpenFrame } from './OpenFrame';
 import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
 
-const debugFip = debug("src:BowlingGame");
+const debugFip = debug("fip01:src:BowlingGame");
 
 /** Class represents a BowlingGame exception */
 export class BowlingGame {
@@ -181,7 +181,7 @@ export class BowlingGame {
             total += frame.getScore();
             return total;
         });
-        debugFip(`cumulatives===${cumulatives}`);
+        // debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
 
