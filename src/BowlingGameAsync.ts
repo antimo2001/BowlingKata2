@@ -92,7 +92,7 @@ export class BowlingGameAsync {
         //Concat throw3 if it is defined
         throws = throw3 !== undefined ? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
-            const msg = `throw cannot be a negative number`;
+            const msg = `throw cannot be negative`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }

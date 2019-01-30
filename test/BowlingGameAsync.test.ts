@@ -214,7 +214,60 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#scoreNthFrame (simple)", function() {
+    describe("#bowlTenthFrame", function() {
+        it("2 frames", async function() {
+            await test.game.open(0, 0);
+            await test.game.bowlTenthFrame(0, 1);
+            expect(await test.game.score()).to.equal(1);
+        });
+        it("5 frames", async function() {
+            await test.game.open(0, 1);
+            await test.game.open(0, 1);
+            await test.game.open(1, 0);
+            await test.game.open(1, 0);
+            await test.game.bowlTenthFrame(1, 2, 3);
+            expect(await test.game.score()).to.equal(4 + 6);
+        });
+        it("10 frames", async function() {
+            await test.game.open(0, 1);
+            await test.game.open(0, 1);
+            await test.game.open(1, 0);
+            await test.game.open(1, 0);
+            await test.game.strike();
+            await test.game.open(0, 1);
+            await test.game.open(0, 1);
+            await test.game.open(1, 0);
+            await test.game.open(1, 0);
+            await test.game.bowlTenthFrame(8, 2, 1);
+            const expectedScore = sumReduce(4, 10, 1, 4, 11);
+            expect(await test.game.score()).to.equal(expectedScore);
+        });
+    });
+
+    describe("#bowlTenthFrame (error handling)", function () {
+        async function assertError(throw1: number, throw2: number, throw3?: number){
+            await test.game.open(0, 1);
+            try {
+                await test.game.bowlTenthFrame(throw1, throw2, throw3);
+                throw new chai.AssertionError(`testcase expected error but none found`);
+            } catch (err) {
+                expect(err).instanceOf(BowlingGameError);
+                expect(err).to.matches(/throw cannot be negative/);
+            }
+        }
+
+        it("shows error when negative throws", async function() {
+            await assertError(-1, 1);
+        });
+        it("shows error when negative throws (part 2)", async function() {
+            await assertError(2, -2, 0);
+        });
+        it("shows error when negative throws (part 3)", async function() {
+            await assertError(3, 2, -4);
+        });
+    });
+
+    describe("#scoreNthFrame", function() {
         it("2 frames", async function() {
             await test.game.open(1, 0);
             await test.game.open(2, 0);
