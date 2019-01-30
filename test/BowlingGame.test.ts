@@ -125,6 +125,11 @@ describe("BowlingGame", function() {
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
         });
+        it("errors when 11+ pins (part 2)", function () {
+            let evilfunc = () => test.game.open(2, 8);
+            expect(evilfunc).to.throw(BowlingGameError);
+            expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
+        });
         it("errors when negative pins", function () {
             let evilfunc = () => test.game.open(-1, 3);
             expect(evilfunc).to.throw(BowlingGameError);
@@ -209,7 +214,12 @@ describe("BowlingGame", function() {
 
     describe("#spare (error handling)", function () {
         it("errors when 11+ pins", function () {
-            let evilfunc = () => test.game.spare(11);
+            let evilfunc = () => test.game.spare(14);
+            expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
+            expect(evilfunc).to.throw(BowlingGameError);
+        });
+        it("errors when 10 pins", function () {
+            let evilfunc = () => test.game.spare(10);
             expect(evilfunc).to.throw(/first throw of a spare cannot exceed 10/);
             expect(evilfunc).to.throw(BowlingGameError);
         });

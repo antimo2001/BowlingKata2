@@ -182,7 +182,7 @@ describe("BowlingGameAsync", function() {
         });
         it("shows error: first throw cannot exceed (part 2)", async function () {
             const rx = /first throw of a spare cannot exceed \d+ pins/;
-            await assertError(test, rx, 10);
+            await assertError(test, rx, 15);
         });
     });
 
@@ -211,6 +211,24 @@ describe("BowlingGameAsync", function() {
             await test.playMultipleFrames(9, () => test.game.strike());
             await test.game.bowlTenthFrame(10, 10, 10);
             expect(await test.game.score()).to.equal(300);
+        });
+        it("player bowls alternating strikes/spares", async function() {
+            await test.playMultipleFrames(4, async () => {
+                await test.game.strike();
+                await test.game.spare(5);
+            });
+            await test.game.strike();
+            await test.game.bowlTenthFrame(5, 5, 10);
+            expect(await test.game.score()).to.equal(200);
+        });
+        it("player bowls alternating spares/strikes", async function() {
+            await test.playMultipleFrames(4, async () => {
+                await test.game.spare(5);
+                await test.game.strike();
+            });
+            await test.game.spare(5);
+            await test.game.bowlTenthFrame(10, 5, 5);
+            expect(await test.game.score()).to.equal(200);
         });
     });
 
