@@ -426,22 +426,22 @@ describe("BowlingGame", function() {
         it("expect error; part 0", function () {
             let testFn = createFn(test, 0);
             expect(testFn).to.throw(BowlingGameError);
-            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(/score is not defined for nthFrame/);
         });
         it("expect error; part 1", function () {
             let testFn = createFn(test, 9);
             expect(testFn).to.throw(BowlingGameError);
-            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(/score is not defined for nthFrame/);
         });
         it("expect error; part 2", function () {
             let testFn = createFn(test, -22);
             expect(testFn).to.throw(BowlingGameError);
-            expect(testFn).to.throw(/array index out of bounds/);
+            expect(testFn).to.throw(/score is not defined for nthFrame/);
         });
         it("clean; no errors", function () {
             let cleanfunc = createFn(test, 1);
             expect(cleanfunc).to.not.throw(BowlingGameError);
-            expect(cleanfunc).to.not.throw(/array index out of bounds/);
+            expect(cleanfunc).to.not.throw(/score is not defined for nthFrame/);
         });
     });
 
