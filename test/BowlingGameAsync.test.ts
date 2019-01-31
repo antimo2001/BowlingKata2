@@ -581,8 +581,8 @@ describe("BowlingGameAsync", function() {
                 throw new chai.AssertionError(`test suite expected error but none found`);
             }
             catch (err) {
-                expect(err).to.matches(/score is not defined for nthFrame/);
                 expect(err).instanceOf(BowlingGameError);
+                expect(err).to.matches(/score is not defined for nthFrame/);
             }
         }
 

@@ -298,20 +298,17 @@ describe("BowlingGame", function() {
                 test.game.open(1, 1);
                 test.game.open(5, 0);
                 test.game.bowlTenthFrame(5, 0);
-                let expectedScore: number;
-                {
-                    //Show all the math for 100% confidence in the total
-                    let first = 3 * 2;
-                    let strike1 = sumReduce(10, 10, 4);
-                    let strike2 = sumReduce(10, 4, 6);
-                    let spare1 = sumReduce(4, 6, 7);
-                    let spare2 = sumReduce(7, 3, 1);
-                    let mid = sumReduce(strike1, strike2, spare1, spare2, 1, 1);
-                    let last = 2 * 5;
-                    expectedScore = sumReduce(first, mid, last);
-                    //Also tested with online bowling calculator: www.bowlinggenius.com
-                    debugs.fip00(`expectedScore===${expectedScore}`);
-                }
+                //Show all the math for 100% confidence in the total
+                let first = 3 * 2;
+                let strike1 = sumReduce(10, 10, 4);
+                let strike2 = sumReduce(10, 4, 6);
+                let spare1 = sumReduce(4, 6, 7);
+                let spare2 = sumReduce(7, 3, 1);
+                let mid = sumReduce(strike1, strike2, spare1, spare2, 1, 1);
+                let last = 2 * 5;
+                let expectedScore = sumReduce(first, mid, last);
+                //Also tested with online bowling calculator: www.bowlinggenius.com
+                debugs.fip00(`expectedScore===${expectedScore}`);
                 expect(test.game.score()).to.equal(expectedScore);
             });
             it("player bowls many strikes and spares, yes bonus", function () {
@@ -320,17 +317,14 @@ describe("BowlingGame", function() {
                 test.game.spare(4);
                 test.game.spare(7);
                 test.game.bowlTenthFrame(10, 9, 1);
-                let expectedScore: number;
-                {
-                    //Show all the math for 100% confidence in the total
-                    let first = 6 * 2;
-                    let strike1 = sumReduce(10, 4, 6);
-                    let spare1 = sumReduce(4, 6, 7);
-                    let spare2 = sumReduce(7, 3, 10);
-                    let strike2 = sumReduce(10, 9, 1);
-                    expectedScore = sumReduce(first, strike1, spare1, spare2, strike2);
-                    debugs.fip00(`expectedScore===${expectedScore}`);
-                }
+                //Show all the math for 100% confidence in the total
+                let first = 6 * 2;
+                let strike1 = sumReduce(10, 4, 6);
+                let spare1 = sumReduce(4, 6, 7);
+                let spare2 = sumReduce(7, 3, 10);
+                let strike2 = sumReduce(10, 9, 1);
+                let expectedScore = sumReduce(first, strike1, spare1, spare2, strike2);
+                debugs.fip00(`expectedScore===${expectedScore}`);
                 expect(test.game.score()).to.equal(expectedScore);
             });
             it("player bowls alternating frames of strike/spare/open", function () {
@@ -394,7 +388,6 @@ describe("BowlingGame", function() {
 
         describe("bowls frames in specific sequence 2: spare/strike/open", function() {
             beforeEach(function() {
-                // debugs.fip01(`...begin game`);
                 test.game.spare(9);
                 test.game.strike();
                 test.game.open(4, 4);
@@ -405,7 +398,6 @@ describe("BowlingGame", function() {
                 test.game.strike();
                 test.game.open(4, 4);
                 test.game.bowlTenthFrame(5, 5, 10);
-                // debugs.fip01(`...END GAME`);
             });
             for (let i = 1; i <= 10; i++) {
                 const score = CALCULATOR_SCORES.spareStrikeOpen[i];
@@ -417,7 +409,6 @@ describe("BowlingGame", function() {
 
         describe("bowls frames in specific sequence 3: open/spare/strike", function() {
             beforeEach(function() {
-                // debugs.fip01(`...begin game`);
                 test.game.open(4, 4);
                 test.game.spare(9);
                 test.game.strike();
@@ -428,7 +419,6 @@ describe("BowlingGame", function() {
                 test.game.spare(9);
                 test.game.strike();
                 test.game.bowlTenthFrame(10, 10, 10);
-                // debugs.fip01(`...END GAME`);
             });
             for (let i = 1; i <= 10; i++) {
                 const score = CALCULATOR_SCORES.openSpareStrike[i];
