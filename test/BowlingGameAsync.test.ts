@@ -289,8 +289,7 @@ describe("BowlingGameAsync", function() {
         it("2 frames", async function() {
             await test.game.open(1, 0);
             await test.game.open(2, 0);
-            const s = await test.game.scoreNthFrame(2);
-            expect(s).to.equal(3);
+            expect(await test.game.scoreNthFrame(2)).to.equal(3);
         });
         it("5 frames", async function() {
             await test.game.open(1, 0);
@@ -298,8 +297,7 @@ describe("BowlingGameAsync", function() {
             await test.game.open(0, 1);
             await test.game.open(0, 1);
             await test.game.open(0, 5);
-            const s = await test.game.scoreNthFrame(5);
-            expect(s).to.equal(4 + 5);
+            expect(await test.game.scoreNthFrame(5)).to.equal(4 + 5);
         });
         it("9 frames", async function() {
             await test.game.open(1, 0);
@@ -311,8 +309,7 @@ describe("BowlingGameAsync", function() {
             await test.game.open(1, 0);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
-            const s = await test.game.scoreNthFrame(9);
-            expect(s).to.equal(9);
+            expect(await test.game.scoreNthFrame(9)).to.equal(9);
         });
         it("10 frames", async function() {
             await test.game.open(1, 0);
@@ -565,7 +562,7 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#scoreNthFrame (error handling)",  function () {
+    describe("#scoreNthFrame (error handling)", function () {
         /** Initialize the test-subject with only 1 frame in the game */
         async function initializeSingleFrame(test: TestSubject) {
             await test.game.open(1, 1).catch(err => {
@@ -586,21 +583,12 @@ describe("BowlingGameAsync", function() {
             }
         }
 
-        it("expect error; part ", async function () {
-            await initializeSingleFrame(test);
-            await executeAssertions(test, 0);
-        });
-        it("expect error; part 1", async function () {
-            await initializeSingleFrame(test);
-            await executeAssertions(test, 9);
-        });
-        it("expect error; part 2", async function () {
-            await initializeSingleFrame(test);
-            await executeAssertions(test, -22);
-        });
-        it("expect error; part 3", async function () {
-            await initializeSingleFrame(test);
-            await executeAssertions(test, 333);
+        const badValues = [0, 9, -22, 44];
+        badValues.forEach((val, i) => {
+            it(`expect error; part ${i}`, async function () {
+                await initializeSingleFrame(test);
+                await executeAssertions(test, val);
+            });
         });
     });
 

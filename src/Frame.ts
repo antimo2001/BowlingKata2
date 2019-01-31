@@ -15,7 +15,7 @@ export class Frame implements Scoreable {
     /** Represents the calucated score (includes the base and bonus) */
     protected score: number;
     /** Represents that the score is already calculated */
-    protected isScored: boolean;
+    protected hasBeenScored: boolean;
     /** A debugging count */
     protected invokeCount: number;
 
@@ -23,7 +23,7 @@ export class Frame implements Scoreable {
         this.bonusThrows = [];
         this.base = throws.slice(0, 2);
         this.score = 0;
-        this.isScored = false;
+        this.hasBeenScored = false;
         this.invokeCount = 0;
     }
 
@@ -44,7 +44,7 @@ export class Frame implements Scoreable {
 
     /** Returns true iff frame is done scoring */
     public doneScoring(): boolean {
-        return this.isScored;
+        return this.hasBeenScored;
     }
     /** Get the base throws */
     public getBaseThrows(): number[] {
@@ -63,7 +63,7 @@ export class Frame implements Scoreable {
      * Gets the score for this frame.
      */
     public getScore(): number {
-        if (this.isScored) {
+        if (this.hasBeenScored) {
             debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
             return this.score;
         } else {
@@ -87,12 +87,12 @@ export class Frame implements Scoreable {
             debugFip(`didnt set the score`);
             return this;
         }
-        if (this.isScored) {
+        if (this.hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
         this.score = Frame.sum(...this.base);
-        this.isScored = true;
+        this.hasBeenScored = true;
         return this;
     }
 }
