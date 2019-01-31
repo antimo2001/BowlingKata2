@@ -4,20 +4,9 @@ import { StrikeFrame } from './StrikeFrame';
 import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
 import { TenthFrame } from './TenthFrame';
+import { BowlingGameError } from './BowlingGameError';
 
-const debugFip = debug("src:BowlingGame");
-
-/** Class represents a BowlingGame exception */
-export class BowlingGameError extends Error {
-    constructor(message: string) {
-        super(message);
-        //Practicing subclasses of Typescript's Error class see the following
-        //potential issue; https://stackoverflow.com/questions/41102060/typescript-extending-error-class
-
-        // Set the prototype explicitly.
-        // Object.setPrototypeOf(this, BowlingGameError.prototype);
-    }
-}
+const debugFip = debug("fip01:src:BowlingGame");
 
 /** Class represents a BowlingGame exception */
 export class BowlingGame {
@@ -45,15 +34,18 @@ export class BowlingGame {
      * @param secondThrow the second throw in the frame
      */
     public open(firstThrow: number, secondThrow: number): void {
-        if (firstThrow + secondThrow > BowlingGame.MAX_PINS) {
-            this.failWithError(`2 throws cannot exceed ${BowlingGame.MAX_PINS} pins`);
+        //Throw error if invalid sum of throws
+        if (firstThrow + secondThrow >= BowlingGame.MAX_PINS) {
+            const msg = `2 throws cannot exceed ${BowlingGame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
-        if (firstThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${firstThrow}`);
-        }
-        if (secondThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${secondThrow}`);
-        }
+        //Throw error if negative values for throws
+        [firstThrow, secondThrow].filter(t => t < 0).forEach(t => {
+            const msg = `throw cannot be negative: ${t}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        });
         let frame = new OpenFrame(firstThrow, secondThrow);
         this.frames.push(frame);
         this.updateScoresPerFrame();
@@ -64,10 +56,14 @@ export class BowlingGame {
      */
     public spare(firstThrow: number): void {
         if (firstThrow < 0) {
-            this.failWithError(`throw cannot be negative: ${firstThrow}`);
+            const msg = `throw cannot be negative: ${firstThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         if (firstThrow >= BowlingGame.MAX_PINS) {
-            this.failWithError(`first throw of a spare cannot exceed ${BowlingGame.MAX_PINS} pins`);
+            const msg = `first throw of a spare cannot exceed ${BowlingGame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         let frame = new SpareFrame(firstThrow);
         this.frames.push(frame);
@@ -92,7 +88,9 @@ export class BowlingGame {
         //Concat throw3 if it is defined
         throws = throw3!==undefined? [...throws, throw3]: throws;
         if (throws.some(t => t < 0)) {
-            this.failWithError(`throw cannot be negative`);
+            const msg = `throw cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         this.frames.push(new TenthFrame(...throws));
         this.updateScoresPerFrame();
@@ -104,8 +102,10 @@ export class BowlingGame {
      */
     public scoreNthFrame(nthFrame: number): number {
         const scoreNth = this.scores[nthFrame - 1];
-        if (scoreNth===undefined || scoreNth===null) {
-            this.failWithError(`array index out of bounds; nthFrame===${nthFrame}`);
+        if (scoreNth === undefined || scoreNth === null) {
+            const msg = `score is not defined for nthFrame: ${nthFrame}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
         }
         return scoreNth;
     }
@@ -116,14 +116,6 @@ export class BowlingGame {
         return this.scores[this.scores.length - 1];
     }
 
-    /**
-     * Throw BowlingGame error with the given message
-     * @param message the error message
-     */
-    private failWithError(message: string) {
-        debugFip(message);
-        throw new BowlingGameError(message);
-    }
     /**
      * Update the accumlated scores for this game
      */
@@ -163,17 +155,20 @@ export class BowlingGame {
             return !!frame ? frame.getBaseThrows() : [];
         }
         //Set the bonus for each frame (especially unscored frames)
-        const unscored = this.frames.filter(f => !f.doneScoring());
-        unscored.forEach((frame, i, frames) => {
-            let bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+        this.frames.filter(f => !f.doneScoring()).map((...params) => {
+            const [frame, i, frames] = params;
+            const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
             let bonus: number[] = [];
             if (frame instanceof StrikeFrame) {
-                let bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
+                const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
                 bonus = [...bonus1, ...bonus2];
             }
             else if (frame instanceof SpareFrame) {
                 bonus = bonus1;
             }
+            return { frame, bonus };
+        }).forEach(fb => {
+            const { frame, bonus } = fb;
             frame.setBonusThrows(...bonus);
         });
     }
@@ -186,7 +181,7 @@ export class BowlingGame {
             total += frame.getScore();
             return total;
         });
-        debugFip(`cumulatives===${cumulatives}`);
+        // debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
 

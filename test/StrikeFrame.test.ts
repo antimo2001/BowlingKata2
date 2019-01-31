@@ -1,21 +1,18 @@
-import { Frame } from '../src/Frame';
 import { StrikeFrame } from '../src/StrikeFrame';
 import { expect } from 'chai';
 import 'mocha';
 
+const sumReduce = StrikeFrame.sum;
+
 class TestSubject {
-    public frame: StrikeFrame;
-    public expectedScore: number;
+    public strike: StrikeFrame;
     constructor() {
-        //Intialize with the unique gutter-spare
-        this.frame = new StrikeFrame();
-        this.expectedScore = 0;
+        this.strike = new StrikeFrame();
     }
     /** Helper function is used to reset this test's frame */
-    reset(bonus1: number, bonus2: number): void {
-        this.frame = new StrikeFrame();
-        this.frame.setBonusThrows(bonus1, bonus2);
-        this.expectedScore = Frame.sum(10, bonus1, bonus2);
+    resetBonus(bonus1: number, bonus2: number): void {
+        this.strike = new StrikeFrame();
+        this.strike.setBonusThrows(bonus1, bonus2);
     }
 }
 
@@ -25,26 +22,32 @@ describe("StrikeFrame", () => {
         test = new TestSubject();
     });
 
-    it("#constructor", () => {
-        //The score is not yet calculated
-        expect(test.frame.getScore()).to.equal(0);
-        test.frame.setBonusThrows(1, 2);
+    it("#constructor: initial state", () => {
+        //The score is not yet calculated, so it should be zero
+        expect(test.strike.getScore()).to.equal(0);
+    });
+    it("#constructor: setBonusThrows(1, 2)", () => {
+        test.strike.setBonusThrows(1, 2);
         //The score for a strike is calculated after the bonus is set!
-        expect(test.frame.getScore()).to.equal(10 + 3);
+        expect(test.strike.getScore()).to.equal(10 + 3);
     });
 
     describe("#getScore", () => {
-        it("with bonuses of (8, 1)", () => {
-            test.reset(8, 1);
-            expect(test.frame.getScore()).to.equal(test.expectedScore);
+        it("when bonuses are (8, 1)", () => {
+            const bonus = [8, 1];
+            test.resetBonus(bonus[0], bonus[1]);
+            const expected = sumReduce(10, ...bonus);
+            expect(test.strike.getScore()).to.equal(expected);
         });
-        it("with bonuses of (4, 3)", () => {
-            test.reset(4, 3);
-            expect(test.frame.getScore()).to.equal(test.expectedScore);
+        it("when bonuses are (4, 3)", () => {
+            const bonus = [4, 3];
+            test.resetBonus(bonus[0], bonus[1]);
+            const expected = sumReduce(10, ...bonus);
+            expect(test.strike.getScore()).to.equal(expected);
         });
     });
 
-    describe("#getScore - iterate through bonuses", () => {
+    describe("#getScore (iterations)", () => {
         const bonuses = [
             [1, 2], [2, 3],
             [3, 4], [4, 5],
@@ -53,9 +56,27 @@ describe("StrikeFrame", () => {
         ];
         bonuses.forEach((bonus) => {
             const [x, y] = bonus;
+            const expected = sumReduce(10, x, y);
             it(`with bonus of (${x},${y})`, () => {
-                test.reset(x, y);
-                expect(test.frame.getScore()).to.equal(test.expectedScore);
+                test.resetBonus(x, y);
+                expect(test.strike.getScore()).to.equal(expected);
+            });
+        });
+    });
+
+    describe("Edge cases (negative bonuses)", () => {
+        const bonuses = [
+            [-1, 2], [-2, 3],
+            [-3, 4], [-4, 5],
+            [-6, 3], [-7, 2],
+            [-8, 1], [-9, 0],
+        ];
+        bonuses.forEach((bonus) => {
+            const [x, y] = bonus;
+            const expected = sumReduce(10, x, y);
+            it(`with bonus of (${x},${y})`, () => {
+                test.resetBonus(x, y);
+                expect(test.strike.getScore()).to.equal(expected);
             });
         });
     });

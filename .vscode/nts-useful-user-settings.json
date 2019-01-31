@@ -1,0 +1,31 @@
+{
+    "editor.rulers": [80, 100],
+    "gfmpreview.previewUpdateOnChanged":false,
+    "gfmpreview.githubUsername":"antimo2001",
+    "gfmpreview.githubPassword":"nicetrylolz",
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\Sysnative\\cmd.exe",
+    "editor.renderWhitespace": "boundary",
+    "files.autoSave": "afterDelay",
+    "workbench.activityBar.visible": true,
+    "window.zoomLevel": 1,
+    "extensions.ignoreRecommendations": false,
+    "workbench.iconTheme": "vscode-great-icons",
+    //"sublimeTextKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.snippetSuggestions": "top",
+    "editor.formatOnPaste": true,
+    "workbench.colorTheme": "Solarized Light",
+    "editor.fontSize": 14,
+    "diffEditor.ignoreTrimWhitespace": true,
+    "editor.minimap.enabled": true,
+    "breadcrumbs.enabled": true,
+    "files.autoSaveDelay": 3000,
+    "markdownlint.config": {
+        "default": true,
+        // "MD013": false,
+        "MD025": false,
+        "no-hard-tabs": false
+    },
+    "markdown-pdf.executablePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "triggerTaskOnSave.on": false
+}

@@ -13,7 +13,7 @@ export class StrikeFrame extends Frame {
     /**
      * Concats the bonus on to this Strike frame
      * @param bonusThrows the rest args to be used as the bonus throws
-     * @override Frame.setBonusThrows
+     * @overrides Frame.setBonusThrows
      */
     public setBonusThrows(...bonusThrows: number[]): Frame {
         this.bonusThrows = bonusThrows.slice(0, 2);
@@ -22,7 +22,7 @@ export class StrikeFrame extends Frame {
 
     /**
      * Returns true iff this Strike frame has enough bonus throws to be scored
-     * @override Frame.canScore
+     * @overrides Frame.canScore
      */
     protected canScore(): boolean {
         return this.bonusThrows.length >= 2;
@@ -30,19 +30,19 @@ export class StrikeFrame extends Frame {
 
     /**
      * Set the score for this Strike
-     * @override Frame.setScore
+     * @overrides Frame.setScore
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
             // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
-        if (this.isScored) {
+        if (this.hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
         this.score = Frame.sumApply([...this.base, ...this.bonusThrows]);
-        this.isScored = true;
+        this.hasBeenScored = true;
         return this;
     }
 }

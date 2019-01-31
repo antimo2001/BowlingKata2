@@ -4,18 +4,21 @@ import { expect } from 'chai';
 import 'mocha';
 
 class TestSubject {
-    public frame: SpareFrame;
-    public expectedScore: number;
+    public spare: SpareFrame;
+    private expectedScore: number;
     constructor() {
         //Intialize with the unique gutter-spare
-        this.frame = new SpareFrame(0);
+        this.spare = new SpareFrame(0);
         this.expectedScore = 0;
     }
     /** Helper function is used to reset this test's frame */
     reset(baseThrow: number, bonus: number): void {
-        this.frame = new SpareFrame(baseThrow);
-        this.frame.setBonusThrows(bonus);
+        this.spare = new SpareFrame(baseThrow);
+        this.spare.setBonusThrows(bonus);
         this.expectedScore = Frame.sum(10, bonus);
+    }
+    getExpectedScore(): number {
+        return this.expectedScore;
     }
 }
 
@@ -25,34 +28,32 @@ describe("SpareFrame", () => {
         test = new TestSubject();
     });
     it("#constructor", () => {
-        expect(test.frame.getScore()).to.equal(0);
+        expect(test.spare.getScore()).to.equal(0);
         //The score for a spare is not yet calculated until bonus has been set!!
-        test.frame.setBonusThrows(1);
-        expect(test.frame.getScore()).to.equal(10 + 1);
+        test.spare.setBonusThrows(1);
+        expect(test.spare.getScore()).to.equal(10 + 1);
     });
 
     describe("#getScore", () => {
-        it("with bonus of [3]", () => {
-            let base = 9;
-            let bonus = 3;
-            test.reset(base, bonus);
-            expect(test.frame.getScore()).to.equal(test.expectedScore);
+        it("when bonus of 3", () => {
+            test.reset(9, 3);
+            expect(test.spare.getScore()).to.equal(test.getExpectedScore());
         });
-        it("with bonus of [7]", () => {
-            let base = 9;
-            let bonus = 7;
-            test.reset(base, bonus);
-            expect(test.frame.getScore()).to.equal(test.expectedScore);
+        it("when bonus of 7", () => {
+            test.reset(9, 7);
+            expect(test.spare.getScore()).to.equal(test.getExpectedScore());
         });
     });
 
-    describe("#getScore - iterate through bonuses", () => {
+    describe("#getScore (iterations)", () => {
         const baseThrow = 5;
-        const bonuses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const bonuses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 19];
         bonuses.forEach((bonus) => {
-            it(`with bonus of ${bonus}`, () => {
+            it(`has bonus of ${bonus}`, () => {
                 test.reset(baseThrow, bonus);
-                expect(test.frame.getScore()).to.equal(test.expectedScore);
+                const expected = test.getExpectedScore();
+                const actual = test.spare.getScore();
+                expect(actual).to.equal(expected);
             });
         });
     });
