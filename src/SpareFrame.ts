@@ -1,6 +1,7 @@
 import debug from 'debug';
 import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
+import { BowlingGameError } from '../src/BowlingGameError';
 
 const debugFip = debug("src:SpareFrame");
 
@@ -20,6 +21,25 @@ export class SpareFrame extends Frame {
      */
     setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 1);
+    }
+
+    /**
+     * Raise errors if the throws for this spare are invalid.
+     * @param throws numbers for the throws of this spare frame
+     * @overrides Frame.validateThrows
+     */
+    public validateThrows(...throws: number[]): void {
+        const firstThrow = throws[0];
+        if (firstThrow < 0) {
+            const msg = `throw cannot be negative: ${firstThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (firstThrow >= Frame.MAX_PINS) {
+            const msg = `first throw of a spare cannot exceed ${Frame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
     }
 
     /**
@@ -47,4 +67,5 @@ export class SpareFrame extends Frame {
         this.hasBeenScored = true;
         return this;
     }
+
 }

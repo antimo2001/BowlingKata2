@@ -36,19 +36,8 @@ export class BowlingGameAsync {
      * @param secondThrow the second throw in the frame
      */
     public async open(firstThrow: number, secondThrow: number): Promise<void> {
-        //Throw error if invalid sum of throws
-        if (firstThrow + secondThrow >= BowlingGameAsync.MAX_PINS) {
-            const msg = `2 throws cannot exceed ${BowlingGameAsync.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        //Throw error if negative values for throws
-        [firstThrow, secondThrow].filter(t => t < 0).forEach(t => {
-            const msg = `throw cannot be negative: ${t}`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        });
         let frame = new OpenFrame(firstThrow, secondThrow);
+        frame.validateThrows(firstThrow, secondThrow);
         this.frames.push(frame);
         await this.updateScoresPerFrame();
     }
@@ -58,26 +47,17 @@ export class BowlingGameAsync {
      * @param firstThrow the first throw in the frame
      */
     public async spare(firstThrow: number): Promise<void> {
-        if (firstThrow < 0) {
-            const msg = `throw cannot be negative: ${firstThrow}`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (firstThrow >= BowlingGameAsync.MAX_PINS) {
-            const msg = `first throw of a spare cannot exceed ${BowlingGameAsync.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        let frame = new SpareFrame(firstThrow);
-        this.frames.push(frame);
+        let spare = new SpareFrame(firstThrow);
+        spare.validateThrows(firstThrow);
+        this.frames.push(spare);
         await this.updateScoresPerFrame();
     }
     /**
      * Method for a player bowling a strike
      */
     public async strike(): Promise<void> {
-        let frame = new StrikeFrame();
-        this.frames.push(frame);
+        let strike = new StrikeFrame();
+        this.frames.push(strike);
         await this.updateScoresPerFrame();
     }
     /**
@@ -91,12 +71,9 @@ export class BowlingGameAsync {
         let throws = [throw1, throw2];
         //Concat throw3 if it is defined
         throws = throw3 !== undefined ? [...throws, throw3]: throws;
-        if (throws.some(t => t < 0)) {
-            const msg = `throw cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        this.frames.push(new TenthFrame(...throws));
+        let tenth = new TenthFrame(...throws);
+        tenth.validateThrows(...throws);
+        this.frames.push(tenth);
         await this.updateScoresPerFrame();
     }
     /**

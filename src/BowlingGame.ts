@@ -5,6 +5,7 @@ import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
 import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
+import { Utility } from './Utility';
 
 const debugFip = debug("fip01:src:BowlingGame");
 
@@ -34,19 +35,8 @@ export class BowlingGame {
      * @param secondThrow the second throw in the frame
      */
     public open(firstThrow: number, secondThrow: number): void {
-        //Throw error if invalid sum of throws
-        if (firstThrow + secondThrow >= BowlingGame.MAX_PINS) {
-            const msg = `2 throws cannot exceed ${BowlingGame.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        //Throw error if negative values for throws
-        [firstThrow, secondThrow].filter(t => t < 0).forEach(t => {
-            const msg = `throw cannot be negative: ${t}`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        });
         let frame = new OpenFrame(firstThrow, secondThrow);
+        frame.validateThrows(firstThrow, secondThrow);
         this.frames.push(frame);
         this.updateScoresPerFrame();
     }
@@ -55,18 +45,9 @@ export class BowlingGame {
      * @param firstThrow the first throw in the frame
      */
     public spare(firstThrow: number): void {
-        if (firstThrow < 0) {
-            const msg = `throw cannot be negative: ${firstThrow}`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (firstThrow >= BowlingGame.MAX_PINS) {
-            const msg = `first throw of a spare cannot exceed ${BowlingGame.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        let frame = new SpareFrame(firstThrow);
-        this.frames.push(frame);
+        let spare = new SpareFrame(firstThrow);
+        spare.validateThrows(firstThrow);
+        this.frames.push(spare);
         this.updateScoresPerFrame();
     }
     /**
@@ -87,12 +68,9 @@ export class BowlingGame {
         let throws = [throw1, throw2];
         //Concat throw3 if it is defined
         throws = throw3!==undefined? [...throws, throw3]: throws;
-        if (throws.some(t => t < 0)) {
-            const msg = `throw cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        this.frames.push(new TenthFrame(...throws));
+        let tenth = new TenthFrame(...throws);
+        tenth.validateThrows(...throws);
+        this.frames.push(tenth);
         this.updateScoresPerFrame();
     }
     /**
@@ -125,11 +103,19 @@ export class BowlingGame {
             return;
         }
 
-        //Set the bonus for each frame
-        this.setBonusThrowsPerFrame();
-
-        //Calculate the cumulative scores
-        this.scores = this.addCumulativeScores();
+        try {
+            this.setBonusThrowsPerFrame();
+        } catch (err) {
+            debugFip(`***setBonusThrowsPerFrame() failed with error: ${err}`);
+            throw err;
+        }
+        try {
+            //Calculate the cumulative scores
+            this.scores = this.addCumulativeScores();
+        } catch (err) {
+            debugFip(`***addCumulativeScores() failed with error: ${err}`);
+            throw err;
+        }
     }
     /**
      * Returns true if this game cannot be scored yet.
@@ -147,6 +133,7 @@ export class BowlingGame {
         ];
         return violations.some(v => !!v);
     }
+
     /**
      * Set the bonusThrows for each frame
      */
@@ -181,7 +168,7 @@ export class BowlingGame {
             total += frame.getScore();
             return total;
         });
-        // debugFip(`cumulatives===${cumulatives}`);
+        debugFip(`allScores===${cumulatives}`);
         return cumulatives;
     }
 

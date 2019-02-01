@@ -1,10 +1,12 @@
 import debug from 'debug';
 import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
+import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:StrikeFrame");
 
 export class StrikeFrame extends Frame {
+
     constructor(...throws: number[]) {
         super(...throws);
         //A strike is assumed to be 10 pins
@@ -21,6 +23,15 @@ export class StrikeFrame extends Frame {
     }
 
     /**
+     * Raise errors if the throws for this strike are invalid.
+     * @param throws numbers for the throws
+     * @overrides Frame.validateThrows
+     */
+    public validateThrows(...throws: number[]): void {
+        debugFip(`Dont do nothing to validate this strike`);
+    }
+
+    /**
      * Returns true iff this Strike frame has enough bonus throws to be scored
      * @overrides Frame.canScore
      */
@@ -34,7 +45,6 @@ export class StrikeFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
         if (this.hasBeenScored) {

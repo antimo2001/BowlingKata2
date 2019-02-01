@@ -54,11 +54,16 @@ export abstract class Frame implements IFrame {
         return this.base;
     }
 
+    /** Raise errors if the throws for this frame are invalid. */
+    public abstract validateThrows(...throws: number[]): void;
+
     /** Returns true iff this frame has enough throws to be scored. */
     protected abstract canScore(): boolean;
 
     /** Sets the score for this frame. */
     protected abstract setScore(): Frame;
+
+    public static MAX_PINS: number = 10;
 
     /** Property represents the calculated score (includes the base and bonus) */
     protected score: number;
