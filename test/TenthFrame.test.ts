@@ -1,4 +1,4 @@
-import { Frame } from '../src/Frame';
+import { Utility } from '../src/Utility';
 import { TenthFrame } from '../src/TenthFrame';
 import { expect } from 'chai';
 import 'mocha';
@@ -29,7 +29,7 @@ describe("TenthFrame", () => {
 
     it("with params: [1, 1]", () => {
         let throws = [1, 1];
-        const expectedScore = Frame.sum(...throws);
+        const expectedScore = Utility.sum(...throws);
         const actual = test.reset(...throws).getScore();
         expect(actual).not.NaN;
         expect(actual).to.be.equal(expectedScore);
@@ -37,14 +37,14 @@ describe("TenthFrame", () => {
 
     it("with params: [2, 6]", () => {
         let throws = [2, 6];
-        const expectedScore = Frame.sum(...throws);
+        const expectedScore = Utility.sum(...throws);
         const actual = test.reset(...throws).getScore();
         expect(actual).to.be.equal(expectedScore);
     });
 
     it("with params: [3, 4]", () => {
         let throws = [3, 4];
-        const expectedScore = Frame.sum(...throws);
+        const expectedScore = Utility.sum(...throws);
         const actual = test.reset(...throws).getScore();
         expect(actual).to.be.equal(expectedScore);
     });

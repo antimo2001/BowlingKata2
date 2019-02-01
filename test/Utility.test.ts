@@ -5,6 +5,70 @@ import { Utility } from '../src/Utility';
 const debugFip = debug("fip01:test:Utility");
 
 describe("Utility", function() {
+    describe("#sum", () => {
+        it("params: (1, 2)", () => {
+            expect(Utility.sum(1, 2)).to.equal(3);
+        });
+        it("params: (2, 4)", () => {
+            expect(Utility.sum(2, 4)).to.equal(6);
+        });
+        it("params: (-3, 4)", () => {
+            expect(Utility.sum(-3, 4)).to.equal(1);
+        });
+        it("params: (4, -8)", () => {
+            expect(Utility.sum(4, -8)).to.equal(-4);
+        });
+        it("params: (1, 3, 5)", () => {
+            expect(Utility.sum(1, 3, 5)).to.equal(9);
+        });
+    });
+    describe("#sumApply", () => {
+        it("params: (1, 2)", () => {
+            expect(Utility.sumApply([1, 2])).to.equal(3);
+        });
+        it("params: (2, 4)", () => {
+            expect(Utility.sumApply([2, 4])).to.equal(6);
+        });
+        it("params: (-3, 4)", () => {
+            expect(Utility.sumApply([-3, 4])).to.equal(1);
+        });
+        it("params: (4, -8)", () => {
+            expect(Utility.sumApply([4, -8])).to.equal(-4);
+        });
+        it("params: (4, 4, -8)", () => {
+            expect(Utility.sumApply([4, 4, -8])).to.equal(0);
+        });
+    });
+    describe("#sum, #sumApply (iterations)", () => {
+        const iterations = [{
+            nums: [1, 2],
+            sum: 3,
+        }, {
+            nums: [11, 22],
+            sum: 33,
+        }, {
+            nums: [1, 2, 3, 4],
+            sum: 10,
+        }, {
+            nums: [10, 20, 30, 40],
+            sum: 100,
+        }, {
+            nums: [-1, 5, 3, -7],
+            sum: 0,
+        }, {
+            nums: [10, 3, -5, -6],
+            sum: 2,
+        }];
+        iterations.forEach((item) => {
+            const { nums, sum } = item;
+            it(`#sum (${sum})===[${nums}]`, () => {
+                expect(Utility.sum(...nums)).to.equal(sum);
+            });
+            it(`#sumApply (${sum})===[${nums}]`, () => {
+                expect(Utility.sumApply(nums)).to.equal(sum);
+            });
+        });
+    });
     describe("#range", function() {
         it("simple params", function() {
             const actual = Utility.range(1, 5);

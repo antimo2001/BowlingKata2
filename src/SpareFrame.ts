@@ -1,4 +1,5 @@
 import debug from 'debug';
+import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
 
 const debugFip = debug("src:SpareFrame");
@@ -41,7 +42,7 @@ export class SpareFrame extends Frame {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        this.score = Frame.sumApply([...this.base, ...this.bonusThrows]);
+        this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
         this.hasBeenScored = true;
         return this;
     }

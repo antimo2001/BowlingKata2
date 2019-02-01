@@ -1,8 +1,9 @@
+import { Utility } from '../src/Utility';
 import { StrikeFrame } from '../src/StrikeFrame';
 import { expect } from 'chai';
 import 'mocha';
 
-const sumReduce = StrikeFrame.sum;
+const sumReduce = Utility.sum;
 
 class TestSubject {
     public strike: StrikeFrame;

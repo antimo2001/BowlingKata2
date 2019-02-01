@@ -6,6 +6,23 @@ const debugFip = debug("src:Utility");
  * Utility functions
  */
 export class Utility {
+
+    /**
+     * Method to easily add array of numbers together
+     * @param numbers this rest param contains the numbers to sum
+     */
+    public static sum(...numbers: number[]) {
+        return numbers.reduce((p, c) => p + c, 0);
+    }
+
+    /**
+     * Overload method to easily add array of numbers together
+     * @param numbers array contains the numbers to sum
+     */
+    public static sumApply(numbers: number[]) {
+        return Utility.sum(...numbers);
+    }
+
     /**
      * Return array of numbers given the range of integers.
      * @param start first number in range

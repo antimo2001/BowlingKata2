@@ -15,7 +15,7 @@ const debugFip = debug("fip01:test:BowlingGameAsync");
 //FIP stands for fix in-progress
 
 /** Helper function for calculating the sum */
-const sumReduce = Frame.sum;
+const sumReduce = Utility.sum;
 
 class TestSubject {
     public game: BowlingGameAsync;

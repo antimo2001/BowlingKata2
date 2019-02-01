@@ -1,45 +1,32 @@
 import debug from "debug";
+import { Utility } from "../src/Utility";
 const debugFip = debug("src:Frame");
 
 /** Represents something with a score */
-interface Scoreable {
+interface IFrame {
     getScore(): number;
 }
 
 /** Represents a frame in a bowling game */
-export class Frame implements Scoreable {
+export class Frame implements IFrame {
     /** Represents the bonus throws */
     protected bonusThrows: number[];
+
     /** Represents the base throws */
     protected base: number[];
+
     /** Represents the calucated score (includes the base and bonus) */
     protected score: number;
+
     /** Represents that the score is already calculated */
     protected hasBeenScored: boolean;
-    /** A debugging count */
-    protected invokeCount: number;
 
     constructor(...throws: number[]) {
         this.bonusThrows = [];
         this.base = throws.slice(0, 2);
         this.score = 0;
         this.hasBeenScored = false;
-        this.invokeCount = 0;
-    }
-
-    /**
-     * Method to easily add array of numbers together
-     * @param numbers this rest param contains the numbers to sum
-     */
-    public static sum(...numbers: number[]) {
-        return numbers.reduce((p, c) => p + c, 0);
-    }
-    /**
-     * Overload method to easily add array of numbers together
-     * @param numbers array contains the numbers to sum
-     */
-    public static sumApply(numbers: number[]) {
-        return Frame.sum(...numbers);
+        // this.invokeCount = 0;
     }
 
     /** Returns true iff frame is done scoring */
@@ -64,7 +51,7 @@ export class Frame implements Scoreable {
      */
     public getScore(): number {
         if (this.hasBeenScored) {
-            debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
+            // debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
             return this.score;
         } else {
             return this.setScore().score;
@@ -91,7 +78,7 @@ export class Frame implements Scoreable {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        this.score = Frame.sum(...this.base);
+        this.score = Utility.sum(...this.base);
         this.hasBeenScored = true;
         return this;
     }

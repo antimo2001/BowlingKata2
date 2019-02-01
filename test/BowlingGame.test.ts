@@ -1,6 +1,7 @@
 import 'mocha';
 import debug from 'debug';
 import { expect } from 'chai';
+import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
 import { BowlingGame } from '../src/BowlingGame';
 import { BowlingGameError } from '../src/BowlingGameError';
@@ -13,7 +14,7 @@ const debugs = {
 };
 
 /** Helper function for calculating the sum */
-const sumReduce = Frame.sum;
+const sumReduce = Utility.sum;
 
 class TestSubject {
     public game: BowlingGame;
