@@ -1,85 +1,74 @@
 import debug from "debug";
-import { Utility } from "../src/Utility";
 const debugFip = debug("src:Frame");
 
-/** Represents something with a score */
+/** This interface represents a frame in a bowling game. */
 interface IFrame {
     getScore(): number;
+    setBonusThrows(...bonusThrows: number[]): void;
+    doneScoring(): boolean;
+    getBaseThrows(): number[];
 }
 
 /** Represents a frame in a bowling game */
-export class Frame implements IFrame {
-    /** Represents the bonus throws */
-    protected bonusThrows: number[];
-
-    /** Represents the base throws */
-    protected base: number[];
-
-    /** Represents the calucated score (includes the base and bonus) */
-    protected score: number;
-
-    /** Represents that the score is already calculated */
-    protected hasBeenScored: boolean;
+export abstract class Frame implements IFrame {
 
     constructor(...throws: number[]) {
-        this.bonusThrows = [];
-        this.base = throws.slice(0, 2);
         this.score = 0;
         this.hasBeenScored = false;
-        // this.invokeCount = 0;
+        this.bonusThrows = [];
+        this.base = throws.slice(0, 2);
     }
 
-    /** Returns true iff frame is done scoring */
-    public doneScoring(): boolean {
-        return this.hasBeenScored;
-    }
-    /** Get the base throws */
-    public getBaseThrows(): number[] {
-        return this.base;
-    }
-    /**
-     * Sets the bonusThrows. It's recommended that sub classes override this
-     * method.
-     * @param bonusThrows this rest args contains the array of bonus throws
-     */
-    public setBonusThrows(...bonusThrows: number[]): Frame {
-        this.bonusThrows = [];
-        return this;
-    }
     /**
      * Gets the score for this frame.
+     * @overrides IFrame.getScore
      */
-    public getScore(): number {
+    getScore(): number {
         if (this.hasBeenScored) {
-            // debugFip(`getScore() was invoked ${++this.invokeCount} extra times`);
             return this.score;
         } else {
             return this.setScore().score;
         }
     }
+    /**
+     * Sets the bonusThrows.
+     * @param bonusThrows this rest args contains the array of bonus throws
+     * @overrides IFrame.setBonusThrows
+     */
+    setBonusThrows(...bonusThrows: number[]): void {
+        this.bonusThrows = [];
+    }
 
     /**
-     * Returns true iff this frame has enough throws to be scored. It's
-     * recommended that sub classes override this method.
+     * Returns true iff frame is done scoring
+     * @overrides IFrame.doneScoring
      */
-    protected canScore(): boolean {
-        return this.base.length > 1;
+    doneScoring(): boolean {
+        return this.hasBeenScored;
     }
     /**
-     * Sets the score for this frame. It's recommended that sub classes override
-     * this method.
+     * Get the base throws
+     * @overrides IFrame.getBaseThrows
      */
-    protected setScore(): Frame {
-        if (!this.canScore()) {
-            debugFip(`didnt set the score`);
-            return this;
-        }
-        if (this.hasBeenScored) {
-            debugFip(`already done scoring; keep score as is: ${this.score}`);
-            return this;
-        }
-        this.score = Utility.sum(...this.base);
-        this.hasBeenScored = true;
-        return this;
+    getBaseThrows(): number[] {
+        return this.base;
     }
+
+    /** Returns true iff this frame has enough throws to be scored. */
+    protected abstract canScore(): boolean;
+
+    /** Sets the score for this frame. */
+    protected abstract setScore(): Frame;
+
+    /** Property represents the calculated score (includes the base and bonus) */
+    protected score: number;
+
+    /** Property represents that the score is already calculated */
+    protected hasBeenScored: boolean;
+
+    /** Property represents the bonus throws */
+    protected bonusThrows: number[];
+
+    /** Property represents the base throws */
+    protected base: number[];
 }

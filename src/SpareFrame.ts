@@ -5,10 +5,12 @@ import { Frame } from '../src/Frame';
 const debugFip = debug("src:SpareFrame");
 
 export class SpareFrame extends Frame {
+
     constructor(...throws: number[]) {
         super(...throws);
         //A spare should only use the first throw; the 2nd throw is inferred
-        this.base = [throws[0], 10 - throws[0]];
+        const t = throws[0];
+        this.base = [t, 10 - t];
     }
 
     /**
@@ -16,9 +18,8 @@ export class SpareFrame extends Frame {
      * @param bonusThrows the rest args to be used as the bonus throws
      * @overrides Frame.setBonusThrows
      */
-    public setBonusThrows(...bonusThrows: number[]): Frame {
+    setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 1);
-        return this;
     }
 
     /**

@@ -16,9 +16,8 @@ export class StrikeFrame extends Frame {
      * @param bonusThrows the rest args to be used as the bonus throws
      * @overrides Frame.setBonusThrows
      */
-    public setBonusThrows(...bonusThrows: number[]): Frame {
+    setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 2);
-        return this;
     }
 
     /**
