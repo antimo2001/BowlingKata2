@@ -125,7 +125,7 @@ export class BowlingGameAsync {
      */
     private async updateScoresPerFrame(): Promise<void> {
         //Simulate a slow network
-        await Utility.stall(7);
+        await Utility.stall(5);
         if (this.cannotScoreYet()) {
             debugFip(`cannot score this game yet`);
             return;
