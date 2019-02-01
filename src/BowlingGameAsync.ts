@@ -19,10 +19,6 @@ export class BowlingGameAsync {
      * Represents the accumlated scores for each frame of the game
      */
     private scores: number[];
-    /**
-     * Represents the maximum number of pins in one frame
-     */
-    private static MAX_PINS = 10;
 
     constructor() {
         this.scores = [];

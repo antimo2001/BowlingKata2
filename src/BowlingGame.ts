@@ -19,10 +19,6 @@ export class BowlingGame {
      * Represents the accumlated scores for each frame of the game
      */
     private scores: number[];
-    /**
-     * Represents the maximum number of pins in one frame
-     */
-    private static MAX_PINS = 10;
 
     constructor() {
         this.scores = [];
@@ -143,7 +139,7 @@ export class BowlingGame {
         }
         //Set the bonus for each frame (especially unscored frames)
         this.frames.filter(f => !f.doneScoring()).map((...params) => {
-            const [frame, i, frames] = params;
+            const [ frame, i, frames ] = params;
             const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
             let bonus: number[] = [];
             if (frame instanceof StrikeFrame) {
