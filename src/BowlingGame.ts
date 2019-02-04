@@ -35,7 +35,6 @@ export class BowlingGame {
         const frame = new OpenFrame(firstThrow, secondThrow);
         if (frame.validateThrows()) {
             this.frames.push(frame);
-            this.updateScoresPerFrame();
         }
     }
     /**
@@ -47,7 +46,6 @@ export class BowlingGame {
         const spare = new SpareFrame(firstThrow);
         if (spare.validateThrows()) {
             this.frames.push(spare);
-            this.updateScoresPerFrame();
         }
     }
     /**
@@ -57,7 +55,6 @@ export class BowlingGame {
         const strike = new StrikeFrame();
         if (strike.validateThrows()) {
             this.frames.push(strike);
-            this.updateScoresPerFrame();
         }
     }
     /**
@@ -75,7 +72,6 @@ export class BowlingGame {
         const tenth = new TenthFrame(...all);
         if (tenth.validateThrows()) {
             this.frames.push(tenth);
-            this.updateScoresPerFrame();
         }
     }
     /**
@@ -84,6 +80,7 @@ export class BowlingGame {
      * @param nthFrame the frame number to fetch the score
      */
     public scoreNthFrame(nthFrame: number): number {
+        this.updateScoresPerFrame();
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth === undefined || scoreNth === null) {
             const msg = `score is not defined for nthFrame: ${nthFrame}`;
@@ -96,6 +93,7 @@ export class BowlingGame {
      * Gets the total score for the game
      */
     public score(): number {
+        this.updateScoresPerFrame();
         return this.scores[this.scores.length - 1];
     }
 
@@ -173,7 +171,7 @@ export class BowlingGame {
             total += frame.getScore();
             return total;
         });
-        debugFip(`allScores===${cumulatives}`);
+        debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
 

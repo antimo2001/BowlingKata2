@@ -35,7 +35,6 @@ export class BowlingGameAsync {
         const frame = new OpenFrame(firstThrow, secondThrow);
         if (frame.validateThrows()) {
             this.frames.push(frame);
-            await this.updateScoresPerFrame();
         }
     }
     /**
@@ -47,7 +46,6 @@ export class BowlingGameAsync {
         const spare = new SpareFrame(firstThrow);
         if (spare.validateThrows()) {
             this.frames.push(spare);
-            await this.updateScoresPerFrame();
         }
     }
     /**
@@ -57,7 +55,6 @@ export class BowlingGameAsync {
         const strike = new StrikeFrame();
         if (strike.validateThrows()) {
             this.frames.push(strike);
-            await this.updateScoresPerFrame();
         }
     }
     /**
@@ -75,7 +72,6 @@ export class BowlingGameAsync {
         const tenth = new TenthFrame(...all);
         if (tenth.validateThrows()) {
             this.frames.push(tenth);
-            await this.updateScoresPerFrame();
         }
     }
     /**
@@ -84,6 +80,7 @@ export class BowlingGameAsync {
      * @param nthFrame the frame number to fetch the score
      */
     public async scoreNthFrame(nthFrame: number): Promise<number> {
+        await this.updateScoresPerFrame();
         const scoreNth = this.scores[nthFrame - 1];
         if (scoreNth===undefined || scoreNth===null) {
             const msg = `score is not defined for nthFrame: ${nthFrame}`;
@@ -96,6 +93,7 @@ export class BowlingGameAsync {
      * Gets the total score for the game
      */
     public async score(): Promise<number> {
+        await this.updateScoresPerFrame();
         return this.scores[this.scores.length - 1];
     }
 
