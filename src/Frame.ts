@@ -20,11 +20,12 @@ export abstract class Frame implements IFrame {
     }
 
     /**
-     * Gets the score for this frame.
+     * Gets the score for this frame. This also sets the score if the frame has
+     * not yet been scored, then returns the score.
      * @overrides IFrame.getScore
      */
-    getScore(): number {
-        if (this.hasBeenScored) {
+    public getScore(): number {
+        if (this.doneScoring()) {
             return this.score;
         } else {
             return this.setScore().score;
@@ -35,33 +36,47 @@ export abstract class Frame implements IFrame {
      * @param bonusThrows this rest args contains the array of bonus throws
      * @overrides IFrame.setBonusThrows
      */
-    setBonusThrows(...bonusThrows: number[]): void {
-        this.bonusThrows = [];
+    public setBonusThrows(...bonusThrows: number[]): void {
+        const unscored = !this.doneScoring();
+        if (unscored) {
+            this.bonusThrows = [];
+        } else {
+            debugFip(`system cannot reset the bonus after frame has been scored`);
+        }
     }
 
     /**
      * Returns true iff frame is done scoring
      * @overrides IFrame.doneScoring
      */
-    doneScoring(): boolean {
+    public doneScoring(): boolean {
         return this.hasBeenScored;
     }
     /**
      * Get the base throws
      * @overrides IFrame.getBaseThrows
      */
-    getBaseThrows(): number[] {
+    public getBaseThrows(): number[] {
         return this.base;
     }
 
-    /** Raise errors if the throws for this frame are invalid. */
+    /**
+     * Raise errors if the throws for this frame are invalid. Returns true if no
+     * errors occurred.
+     */
     public abstract validateThrows(): boolean;
 
-    /** Returns true iff this frame has enough throws to be scored. */
+    /**
+     * Returns true iff this frame has enough throws to be scored.
+     */
     protected abstract canScore(): boolean;
 
-    /** Sets the score for this frame. */
+    /**
+     * Sets the score for this frame.
+     */
     protected abstract setScore(): Frame;
+
+    //#region Property Definitions
 
     /** Property represents the maximum pins for a frame */
     public static MAX_PINS: number = 10;
@@ -77,4 +92,6 @@ export abstract class Frame implements IFrame {
 
     /** Property represents the base throws */
     protected base: number[];
+
+    //#endregion Property Definitions
 }

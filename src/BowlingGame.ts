@@ -125,8 +125,8 @@ export class BowlingGame {
     /**
      * Returns true if this game cannot be scored yet.
      * Game cannot be scored if these:
-     * (1) the 1st frame is a strike or spare
-     * (2) only 2 frames and both are strikes
+     * (1) if the 1st frame is a strike or spare
+     * (2) if the game has 2 frames so far and both are strikes
      */
     private cannotScoreYet(): boolean {
         const f = this.frames;
