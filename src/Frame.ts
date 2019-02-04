@@ -55,7 +55,7 @@ export abstract class Frame implements IFrame {
     }
 
     /** Raise errors if the throws for this frame are invalid. */
-    public abstract validateThrows(...throws: number[]): void;
+    public abstract validateThrows(): boolean;
 
     /** Returns true iff this frame has enough throws to be scored. */
     protected abstract canScore(): boolean;

@@ -12,23 +12,24 @@ export class OpenFrame extends Frame {
     }
 
     /**
-     * Raise errors if the throws for this open frame are invalid.
-     * @param throws numbers for the throws
+     * Raise errors if the throws for this open frame are invalid. Returns true
+     * if no errors were raised.
      * @overrides Frame.validateThrows
      */
-    public validateThrows(...throws: number[]): void {
-        const [ firstThrow, secondThrow ] = throws;
-        //Throw error if invalid sum of throws
+    public validateThrows(): boolean {
+        const [ firstThrow, secondThrow ] = this.base;
+
         if (firstThrow + secondThrow >= Frame.MAX_PINS) {
             const msg = `2 throws cannot exceed ${Frame.MAX_PINS} pins`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        if (throws.some(t => t < 0)) {
+        if (this.base.some(t => t < 0)) {
             const msg = `throw cannot be negative`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
+        return true;
     }
 
     /**

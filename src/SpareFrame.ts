@@ -28,8 +28,8 @@ export class SpareFrame extends Frame {
      * @param throws numbers for the throws of this spare frame
      * @overrides Frame.validateThrows
      */
-    public validateThrows(...throws: number[]): void {
-        const firstThrow = throws[0];
+    public validateThrows(): boolean {
+        const firstThrow = this.base[0];
         if (firstThrow < 0) {
             const msg = `throw cannot be negative: ${firstThrow}`;
             debugFip(msg);
@@ -40,6 +40,8 @@ export class SpareFrame extends Frame {
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
+        //No errors so return true
+        return true;
     }
 
     /**

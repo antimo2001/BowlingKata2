@@ -27,8 +27,10 @@ export class StrikeFrame extends Frame {
      * @param throws numbers for the throws
      * @overrides Frame.validateThrows
      */
-    public validateThrows(...throws: number[]): void {
-        debugFip(`Dont do nothing to validate this strike`);
+    public validateThrows(): boolean {
+        debugFip(`All strikes pass validation; dont raise errors`);
+        //No errors so return true
+        return true;
     }
 
     /**

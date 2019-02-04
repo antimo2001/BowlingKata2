@@ -32,10 +32,11 @@ export class BowlingGameAsync {
      * @param secondThrow the second throw in the frame
      */
     public async open(firstThrow: number, secondThrow: number): Promise<void> {
-        let frame = new OpenFrame(firstThrow, secondThrow);
-        frame.validateThrows(firstThrow, secondThrow);
-        this.frames.push(frame);
-        await this.updateScoresPerFrame();
+        const frame = new OpenFrame(firstThrow, secondThrow);
+        if (frame.validateThrows()) {
+            this.frames.push(frame);
+            await this.updateScoresPerFrame();
+        }
     }
     /**
      * Method for a player bowling a spare frame. Throws errors if first throw is
@@ -43,18 +44,21 @@ export class BowlingGameAsync {
      * @param firstThrow the first throw in the frame
      */
     public async spare(firstThrow: number): Promise<void> {
-        let spare = new SpareFrame(firstThrow);
-        spare.validateThrows(firstThrow);
-        this.frames.push(spare);
-        await this.updateScoresPerFrame();
+        const spare = new SpareFrame(firstThrow);
+        if (spare.validateThrows()) {
+            this.frames.push(spare);
+            await this.updateScoresPerFrame();
+        }
     }
     /**
      * Method for a player bowling a strike
      */
     public async strike(): Promise<void> {
-        let strike = new StrikeFrame();
-        this.frames.push(strike);
-        await this.updateScoresPerFrame();
+        const strike = new StrikeFrame();
+        if (strike.validateThrows()) {
+            this.frames.push(strike);
+            await this.updateScoresPerFrame();
+        }
     }
     /**
      * Method for a player bowling the extra throws in the 10th frame. Throws
@@ -64,13 +68,15 @@ export class BowlingGameAsync {
      * @param throw3 the 3rd throw in the frame (optional)
      */
     public async bowlTenthFrame(throw1: number, throw2: number, throw3?: number): Promise<void> {
-        let throws = [throw1, throw2];
-        //Concat throw3 if it is defined
-        throws = throw3 !== undefined ? [...throws, throw3]: throws;
-        let tenth = new TenthFrame(...throws);
-        tenth.validateThrows(...throws);
-        this.frames.push(tenth);
-        await this.updateScoresPerFrame();
+        //Concat the first 2 throws
+        const first = [throw1, throw2];
+        //Concat throw3 only if it is defined
+        const all = throw3 !== undefined ? [...first, throw3] : first;
+        const tenth = new TenthFrame(...all);
+        if (tenth.validateThrows()) {
+            this.frames.push(tenth);
+            await this.updateScoresPerFrame();
+        }
     }
     /**
      * Gets the score for any frame of the game (ranges from 1 to 10). Throws
