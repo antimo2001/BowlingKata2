@@ -166,6 +166,11 @@ export class BowlingGame {
      * Calculate the accumulated scores per frame
      */
     private addCumulativeScores(): number[] {
+        const allFramesAreScored = this.frames.length === this.scores.length;
+        if (this.frames.length > 0 && allFramesAreScored) {
+            debugFip(`found no new frames in this game, so return all scores`);
+            return this.scores;
+        }
         let total: number = 0;
         const cumulatives = this.frames.map(frame => {
             total += frame.getScore();
