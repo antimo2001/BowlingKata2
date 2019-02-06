@@ -29,7 +29,9 @@ export class SpareFrame extends Frame {
      * @overrides Frame.validateThrows
      */
     public validateThrows(): boolean {
+        super.validateThrows();
         const firstThrow = this.base[0];
+
         if (firstThrow < 0) {
             const msg = `throw cannot be negative: ${firstThrow}`;
             debugFip(msg);

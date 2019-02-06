@@ -17,6 +17,7 @@ export class OpenFrame extends Frame {
      * @overrides Frame.validateThrows
      */
     public validateThrows(): boolean {
+        super.validateThrows();
         const [ firstThrow, secondThrow ] = this.base;
 
         if (firstThrow + secondThrow >= Frame.MAX_PINS) {

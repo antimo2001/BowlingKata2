@@ -51,7 +51,7 @@ describe("BowlingGame", function() {
         test = new TestSubject();
     });
 
-    describe("#openFrame", function() {
+    describe("#open", function() {
         it("1 frame", function() {
             test.game.open(1, 2);
             expect(test.game.score()).to.equal(3);
@@ -530,6 +530,11 @@ describe("BowlingGame", function() {
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be negative/);
         }
+        function assertError2(throw1: number, throw2: number, throw3?: number) {
+            let evilfunc = () => test.game.bowlTenthFrame(throw1, throw2, throw3);
+            expect(evilfunc).to.throw(BowlingGameError);
+            expect(evilfunc).to.throw(/the 3rd throw cannot be undefined/);
+        }
         it("errors when negative pins", function () {
             assertError(-1, 2, 3);
         });
@@ -538,6 +543,12 @@ describe("BowlingGame", function() {
         });
         it("errors when negative pins (part 3)", function () {
             assertError(1, 2, -3);
+        });
+        it("errors when 3rd throw is required", function () {
+            assertError2(5, 5);
+        });
+        it("errors when 3rd throw is required (part 2)", function () {
+            assertError2(9, 9);
         });
     });
 

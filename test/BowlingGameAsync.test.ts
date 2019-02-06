@@ -1,6 +1,6 @@
 import 'mocha';
 import chai, { expect } from 'chai';
-import chaiAsPromise from 'chai-as-promised';
+// import chaiAsPromise from 'chai-as-promised';
 import debug from 'debug';
 import { Utility } from '../src/Utility';
 import { BowlingGameAsync } from '../src/BowlingGameAsync';
@@ -8,9 +8,9 @@ import { BowlingGameError } from '../src/BowlingGameError';
 
 //Register the chai-as-promised library
 //Note that chaiAsPromise should be the very last registerd plugin
-chai.use(chaiAsPromise);
+// chai.use(chaiAsPromise);
 
-const debugFip = debug("fip01:test:BowlingGameAsync");
+const debugFip = debug("test:BowlingGameAsync");
 //FIP stands for fix in-progress
 
 const sumReduce = Utility.sum;
@@ -241,8 +241,8 @@ describe("BowlingGameAsync", function() {
             await test.game.open(0, 1);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
-            await test.game.bowlTenthFrame(1, 2, 3);
-            expect(await test.game.score()).to.equal(4 + 6);
+            await test.game.bowlTenthFrame(1, 2);
+            expect(await test.game.score()).to.equal(4 + 3);
         });
         it("10 frames", async function() {
             await test.game.open(0, 1);
