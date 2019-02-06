@@ -9,7 +9,9 @@ class TestSubject {
         //Intialize with the unique gutter-spare
         this.spare = new SpareFrame(0);
     }
-    /** Helper function is used to reset this test's frame */
+    /**
+     * Helper function is used to reset this test's frame
+     */
     reset(baseThrow: number, bonus: number): void {
         this.spare = new SpareFrame(baseThrow);
         this.spare.setBonusThrows(bonus);

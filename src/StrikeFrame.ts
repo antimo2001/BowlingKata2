@@ -1,7 +1,6 @@
 import debug from 'debug';
 import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
-import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:StrikeFrame");
 

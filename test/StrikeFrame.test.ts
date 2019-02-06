@@ -10,7 +10,9 @@ class TestSubject {
     constructor() {
         this.strike = new StrikeFrame();
     }
-    /** Helper function is used to reset this test's frame */
+    /**
+     * Helper function is used to reset this test's frame
+     */
     resetBonus(bonus1: number, bonus2: number): void {
         this.strike = new StrikeFrame();
         this.strike.setBonusThrows(bonus1, bonus2);

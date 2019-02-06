@@ -2,18 +2,18 @@ import 'mocha';
 import debug from 'debug';
 import { expect } from 'chai';
 import { Utility } from '../src/Utility';
-import { Frame } from '../src/Frame';
 import { BowlingGame } from '../src/BowlingGame';
 import { BowlingGameError } from '../src/BowlingGameError';
 
-/** Helper functions for debugging other fixes in-progress */
+/**
+ * Helper functions for debugging other fixes in-progress
+ */
 const debugs = {
     fip00: debug("fip00:test:BowlingGame"),
     fip01: debug("fip01:test:BowlingGame"),
     //FYI: FIP stands for fix in-progress
 };
 
-/** Helper function for calculating the sum */
 const sumReduce = Utility.sum;
 
 class TestSubject {
@@ -105,7 +105,6 @@ describe("BowlingGame", function() {
             it("when 99 frames", function () {
                 const LOTSA_FRAMES = 99;
                 test.playOpenFrames(LOTSA_FRAMES, 0, 1);
-                expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
             });
             it("when 1999 frames", function (done) {
@@ -113,7 +112,6 @@ describe("BowlingGame", function() {
                 this.timeout(0);
                 const LOTSA_FRAMES = 1999;
                 test.playOpenFrames(LOTSA_FRAMES, 0, 1);
-                expect(test.game.frames.length).to.equal(LOTSA_FRAMES);
                 expect(test.game.score()).to.equal(LOTSA_FRAMES);
                 setTimeout(done, 50);
             });
@@ -502,7 +500,9 @@ describe("BowlingGame", function() {
     });
 
     describe("#scoreNthFrame (error handling)", function () {
-        /** Helper function that constructs functions for testing errors */
+        /**
+         * Helper function that constructs functions for testing errors
+         */
         function setupFunc(test: TestSubject, nth: number) {
             return function () {
                 test.game.open(1, 1);

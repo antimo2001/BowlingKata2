@@ -3,7 +3,6 @@ import chai, { expect } from 'chai';
 import chaiAsPromise from 'chai-as-promised';
 import debug from 'debug';
 import { Utility } from '../src/Utility';
-import { Frame } from '../src/Frame';
 import { BowlingGameAsync } from '../src/BowlingGameAsync';
 import { BowlingGameError } from '../src/BowlingGameError';
 
@@ -14,7 +13,6 @@ chai.use(chaiAsPromise);
 const debugFip = debug("fip01:test:BowlingGameAsync");
 //FIP stands for fix in-progress
 
-/** Helper function for calculating the sum */
 const sumReduce = Utility.sum;
 
 class TestSubject {
@@ -563,7 +561,9 @@ describe("BowlingGameAsync", function() {
     });
 
     describe("#scoreNthFrame (error handling)", function () {
-        /** Initialize the test-subject with only 1 frame in the game */
+        /**
+         * Initialize the test-subject with only 1 frame in the game
+         */
         async function initializeSingleFrame(test: TestSubject) {
             await test.game.open(1, 1).catch(err => {
                 debugFip(`test suite found unexpected error: ${err}`);
@@ -571,7 +571,9 @@ describe("BowlingGameAsync", function() {
             });
         }
 
-        /** Execute the expectations and assertions for error-handling */
+        /**
+         * Execute the expectations and assertions for error-handling
+         */
         async function executeAssertions(test: TestSubject, nthFrame: number) {
             try {
                 await test.game.scoreNthFrame(nthFrame);

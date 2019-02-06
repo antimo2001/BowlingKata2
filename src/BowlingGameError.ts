@@ -1,4 +1,6 @@
-/** Class represents a BowlingGame exception */
+/**
+ * Class represents a BowlingGame exception
+ */
 export class BowlingGameError extends Error {
     constructor(message: string) {
         super(message);

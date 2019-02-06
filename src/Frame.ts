@@ -1,15 +1,10 @@
 import debug from "debug";
+import { IFrame } from "./IFrame";
 const debugFip = debug("src:Frame");
 
-/** This interface represents a frame in a bowling game. */
-interface IFrame {
-    getScore(): number;
-    setBonusThrows(...bonusThrows: number[]): void;
-    doneScoring(): boolean;
-    getBaseThrows(): number[];
-}
-
-/** Represents a frame in a bowling game */
+/**
+ * Represents a frame in a bowling game
+ */
 export abstract class Frame implements IFrame {
 
     constructor(...throws: number[]) {
@@ -31,6 +26,7 @@ export abstract class Frame implements IFrame {
             return this.setScore().score;
         }
     }
+
     /**
      * Sets the bonusThrows.
      * @param bonusThrows this rest args contains the array of bonus throws
@@ -52,6 +48,7 @@ export abstract class Frame implements IFrame {
     public doneScoring(): boolean {
         return this.hasBeenScored;
     }
+
     /**
      * Get the base throws
      * @overrides IFrame.getBaseThrows
@@ -78,19 +75,29 @@ export abstract class Frame implements IFrame {
 
     //#region Property Definitions
 
-    /** Property represents the maximum pins for a frame */
+    /**
+     * Property represents the maximum pins for a frame
+     */
     public static MAX_PINS: number = 10;
 
-    /** Property represents the calculated score (includes the base and bonus) */
+    /**
+     * Property represents the calculated score (includes the base and bonus)
+     */
     protected score: number;
 
-    /** Property represents that the score is already calculated */
+    /**
+     * Property represents that the score is already calculated
+     */
     protected hasBeenScored: boolean;
 
-    /** Property represents the bonus throws */
+    /**
+     * Property represents the bonus throws
+     */
     protected bonusThrows: number[];
 
-    /** Property represents the base throws */
+    /**
+     * Property represents the base throws
+     */
     protected base: number[];
 
     //#endregion Property Definitions

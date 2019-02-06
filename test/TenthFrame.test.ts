@@ -8,7 +8,9 @@ class TestSubject {
     constructor() {
         this.frame = new TenthFrame(0);
     }
-    /** Helper function is used to reset this test's frame */
+    /**
+     * Helper function is used to reset this test's frame
+     */
     reset(...throws: number[]): TenthFrame {
         this.frame = new TenthFrame(...throws);
         this.frame.setBonusThrows();
