@@ -56,7 +56,7 @@ describe("OpenFrame", () => {
         });
     });
 
-    describe("#validateFrames", () => {
+    describe("#validateThrows", () => {
         it("errors when throw is NaN", () => {
             frame = new OpenFrame(NaN, 1);
             const evilfunc = () => frame.validateThrows();
@@ -69,25 +69,25 @@ describe("OpenFrame", () => {
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be NaN/);
         });
-        it("errors when 11+ pins", function () {
+        it("errors when 11+ pins", () => {
             frame = new OpenFrame(1, 11);
             let evilfunc = () => frame.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
         });
-        it("errors when 11+ pins (part 2)", function () {
+        it("errors when 11+ pins (part 2)", () => {
             frame = new OpenFrame(2, 8);
             let evilfunc = () => frame.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
         });
-        it("errors when negative pins", function () {
+        it("errors when negative pins", () => {
             frame = new OpenFrame(-1, 3);
             let evilfunc = () => frame.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be negative/);
         });
-        it("errors when negative pins (part 2)", function () {
+        it("errors when negative pins (part 2)", () => {
             frame = new OpenFrame(2, -2);
             let evilfunc = () => frame.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
