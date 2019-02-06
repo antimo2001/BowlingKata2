@@ -17,11 +17,26 @@ export class TenthFrame extends OpenFrame {
      * @overrides Frame.validateThrows
      */
     public validateThrows(): boolean {
-        //TODO; add more validations: "throw3 must be defined if sum is 10"
-        if (this.base.some(t => t < 0)) {
-            const msg = `throw cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
+        const MAX_PINS = OpenFrame.MAX_PINS;
+        const [ t1, t2, t3 ] = this.base;
+        const assertions = [{
+            fails: this.base.some(t => isNaN(t)),
+            message: `throw cannot be NaN`
+        } , {
+            fails: this.base.some(t => t < 0),
+            message: `throw cannot be negative`
+        } , {
+            fails: t1 + t2 >= MAX_PINS && t3 === undefined,
+            message: `the 3rd throw cannot be undefined`
+        } , {
+            fails: t1 + t2 < MAX_PINS && t3 !== undefined,
+            message: `the 3rd throw is not allowed since first throws are too low`
+        }];
+        for (let { fails, message } of assertions) {
+            if (fails) {
+                debugFip(message);
+                throw new BowlingGameError(message);
+            }
         }
         //No errors so return true
         return true;

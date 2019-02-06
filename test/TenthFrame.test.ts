@@ -2,6 +2,7 @@ import { Utility } from '../src/Utility';
 import { TenthFrame } from '../src/TenthFrame';
 import { expect } from 'chai';
 import 'mocha';
+import { BowlingGameError } from '../src/BowlingGameError';
 
 class TestSubject {
     public frame: TenthFrame;
@@ -50,4 +51,38 @@ describe("TenthFrame", () => {
         const actual = test.reset(...throws).getScore();
         expect(actual).to.be.equal(expectedScore);
     });
+
+    describe("#validateThrows", function () {
+        function assertError(rxError: RegExp, ...throws: number[]) {
+            let evilfunc = () => test.reset(...throws).validateThrows();
+            expect(evilfunc).to.throw(BowlingGameError);
+            expect(evilfunc).to.throw(rxError);
+        }
+        it("errors for throw cannot be NaN", () => {
+            assertError(/throw cannot be NaN/, NaN, 1);
+        });
+        it("errors for throw cannot be NaN (part 2)", () => {
+            assertError(/throw cannot be NaN/, 2, NaN);
+        });
+        it("errors when negative pins", () => {
+            assertError(/throw cannot be negative/, -1, 2, 3);
+        });
+        it("errors when negative pins (part 2)", () => {
+            assertError(/throw cannot be negative/, 1, -2, 3);
+        });
+        it("errors when negative pins (part 3)", () => {
+            assertError(/throw cannot be negative/, 1, 2, -3);
+        });
+        it("errors when 3rd throw is undefined", () => {
+            assertError(/the 3rd throw cannot be undefined/, 5, 5);
+        });
+        it("errors when 3rd throw is undefined (part 2)", () => {
+            assertError(/the 3rd throw cannot be undefined/, 9, 9);
+        });
+        it("errors when first throws are too low for a 3rd", () => {
+            const rx = /the 3rd throw is not allowed since first throws are too low/;
+            assertError(rx, 1, 2, 9);
+        });
+    });
+
 });
