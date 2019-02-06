@@ -1,5 +1,6 @@
 import debug from "debug";
 import { IFrame } from "./IFrame";
+import { BowlingGameError } from "./BowlingGameError";
 const debugFip = debug("src:Frame");
 
 /**
@@ -61,7 +62,14 @@ export abstract class Frame implements IFrame {
      * Raise errors if the throws for this frame are invalid. Returns true if no
      * errors occurred.
      */
-    public abstract validateThrows(): boolean;
+    public validateThrows(): boolean {
+        if (this.base.some(t => isNaN(t))) {
+            const msg = `throw cannot be NaN`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        return true;
+    }
 
     /**
      * Returns true iff this frame has enough throws to be scored.

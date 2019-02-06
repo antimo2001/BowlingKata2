@@ -1,28 +1,45 @@
-import { Frame } from '../src/Frame';
-import { expect } from 'chai';
 import 'mocha';
+import { expect } from 'chai';
+import { Frame } from '../src/Frame';
+import { BowlingGameError } from '../src/BowlingGameError';
 
-// New class design (Frame is an abstract class) renders these tests useless!
+class Stub extends Frame {
+    constructor(...throws: number[]) {
+        super(...throws);
+    }
+    protected canScore(): boolean {
+        return true;
+    }
+    protected setScore(): Frame {
+        this.score = 42;
+        this.hasBeenScored = true;
+        return this;
+    }
+}
+
 describe("Frame", () => {
-    describe("when extend Frame class", () => {
-        class Stub extends Frame {
-            public validateThrows(): boolean {
-                throw new Error("Method not implemented.");
-            }
-            protected canScore(): boolean {
-                throw new Error("Method not implemented.");
-            }
-            protected setScore(): Frame {
-                throw new Error("Method not implemented.");
-            }
-        }
+    let stub: Stub;
 
-        it("should exist", () => {
-            expect(Stub).to.exist;
+    beforeEach(() => {
+        stub = new Stub(0, 1);
+        stub.setBonusThrows(1);
+    });
+
+    describe("when Stub extends Frame", () => {
+        it("#getBaseThrows", () => {
+            expect(stub.getBaseThrows().length).to.equal(2);
+            expect(stub.getBaseThrows()).to.have.members([0, 1]);
         });
-        it("#validateThrows method exists", () => {
-            const s = new Stub();
-            expect(s.validateThrows).to.throw(/Method not implemented/);
+        it("#getScore", () => {
+            expect(stub.getScore()).to.equal(42);
+        });
+        it("#doneScoring", () => {
+            expect(stub.getScore()).to.equal(42);
+            expect(stub.doneScoring()).to.be.true;
+        });
+        it("#validateThrows", () => {
+            const cleanfunc = () => stub.validateThrows();
+            expect(cleanfunc).to.not.throw(BowlingGameError);
         });
     });
 });
