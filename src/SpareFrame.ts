@@ -21,6 +21,7 @@ export class SpareFrame extends Frame {
      */
     setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 1);
+        this.validateBonus();
     }
 
     /**
@@ -70,6 +71,29 @@ export class SpareFrame extends Frame {
         this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
         this.hasBeenScored = true;
         return this;
+    }
+
+    /**
+     * Raises errors if the bonusThrows is invalid. Returns true if no errors.
+     */
+    private validateBonus(): boolean {
+        const bonus = this.bonusThrows[0];
+        if (bonus !== 0 && !bonus) {
+            const msg = `bonus of a spare cannot be undefined`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus < 0) {
+            const msg = `bonus cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus > Frame.MAX_PINS) {
+            const msg = `bonus cannot exceed ${Frame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        return true;
     }
 
 }
