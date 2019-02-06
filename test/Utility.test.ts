@@ -2,7 +2,7 @@ import 'mocha';
 import debug from 'debug';
 import { expect } from 'chai';
 import { Utility } from '../src/Utility';
-const debugFip = debug("fip01:test:Utility");
+const debugFip = debug("test:Utility");
 
 describe("Utility", function() {
     describe("#sum", () => {
