@@ -5,16 +5,17 @@ import { SpareFrame } from './SpareFrame';
 import { OpenFrame } from './OpenFrame';
 import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
-import { Utility } from './Utility';
 
-const debugFip = debug("fip01:src:BowlingGame");
+const debugFip = debug("src:BowlingGame");
 
-/** Class represents a BowlingGame exception */
+/**
+ * Class represents a BowlingGame
+ */
 export class BowlingGame {
     /**
      * Represents all frames for a bowling game
      */
-    public frames: Frame[];
+    private frames: Frame[];
     /**
      * Represents the accumlated scores for each frame of the game
      */
@@ -179,5 +180,4 @@ export class BowlingGame {
         debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
-
 }
