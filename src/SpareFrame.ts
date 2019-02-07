@@ -1,7 +1,7 @@
 import debug from 'debug';
-import { Utility } from '../src/Utility';
-import { Frame } from '../src/Frame';
-import { BowlingGameError } from '../src/BowlingGameError';
+import { Utility } from './Utility';
+import { Frame } from './Frame';
+import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:SpareFrame");
 
@@ -61,7 +61,6 @@ export class SpareFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
         if (this.hasBeenScored) {
@@ -78,22 +77,22 @@ export class SpareFrame extends Frame {
      */
     private validateBonus(): boolean {
         const bonus = this.bonusThrows[0];
-        if (bonus !== 0 && !bonus) {
-            const msg = `bonus of a spare cannot be undefined`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (bonus < 0) {
-            const msg = `bonus cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (bonus > Frame.MAX_PINS) {
-            const msg = `bonus cannot exceed ${Frame.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
+        const validations = [{
+            fails: (bonus !== 0 && !bonus),
+            message: `bonus of a spare cannot be undefined`
+        }, {
+            fails: (bonus < 0),
+            message: `bonus cannot be negative`
+        }, {
+            fails: (bonus > Frame.MAX_PINS),
+            message: `bonus cannot exceed ${Frame.MAX_PINS} pins`
+        }];
+        for (let { fails, message } of validations) {
+            if (fails) {
+                debugFip(message);
+                throw new BowlingGameError(message);
+            }
         }
         return true;
     }
-
 }

@@ -1,6 +1,6 @@
 import debug from 'debug';
-import { Utility } from '../src/Utility';
-import { Frame } from '../src/Frame';
+import { Utility } from './Utility';
+import { Frame } from './Frame';
 import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:StrikeFrame");
@@ -64,20 +64,21 @@ export class StrikeFrame extends Frame {
      */
     private validateBonus(): boolean {
         const bonus = this.bonusThrows;
-        if (bonus.some(b => b !== 0 && !b)) {
-            const msg = `bonus of a strike cannot be undefined`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (bonus.some(b => b < 0)) {
-            const msg = `bonus cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (bonus.some(b => b > Frame.MAX_PINS)) {
-            const msg = `bonus cannot exceed ${Frame.MAX_PINS} pins`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
+        const validations = [{
+            fails: (bonus.some(b => b !== 0 && !b)),
+            message: `bonus of a strike cannot be undefined`
+        }, {
+            fails: (bonus.some(b => b < 0)),
+            message: `bonus cannot be negative`
+        }, {
+            fails: (bonus.some(b => b > Frame.MAX_PINS)),
+            message: `bonus cannot exceed ${Frame.MAX_PINS} pins`
+        }];
+        for (let { fails, message } of validations) {
+            if (fails) {
+                debugFip(message);
+                throw new BowlingGameError(message);
+            }
         }
         return true;
     }
