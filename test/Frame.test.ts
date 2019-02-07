@@ -22,24 +22,37 @@ describe("Frame", () => {
 
     beforeEach(() => {
         stub = new Stub(0, 1);
-        stub.setBonusThrows(1);
     });
 
-    describe("when Stub extends Frame", () => {
-        it("#getBaseThrows", () => {
-            expect(stub.getBaseThrows().length).to.equal(2);
-            expect(stub.getBaseThrows()).to.have.members([0, 1]);
-        });
-        it("#getScore", () => {
-            expect(stub.getScore()).to.equal(42);
-        });
-        it("#doneScoring", () => {
-            expect(stub.getScore()).to.equal(42);
-            expect(stub.doneScoring()).to.be.true;
-        });
-        it("#validateThrows", () => {
-            const cleanfunc = () => stub.validateThrows();
-            expect(cleanfunc).to.not.throw(BowlingGameError);
-        });
+    it("#setBonusThrows", () => {
+        const fn = () => stub.setBonusThrows(1);
+        expect(fn).to.not.throw(Error);
+    });
+    it("#getScore", () => {
+        expect(stub.getScore()).to.equal(42);
+    });
+    it("#doneScoring", () => {
+        expect(stub.doneScoring()).to.be.false;
+        stub.getScore();
+        expect(stub.doneScoring()).to.be.true;
+    });
+    it("#getBaseThrows", () => {
+        const base = stub.getBaseThrows();
+        expect(base.length).to.equal(2);
+        expect(base).to.have.members([0, 1]);
+    });
+    it("#validateThrows", () => {
+        const fn = () => stub.validateThrows();
+        expect(fn).to.not.throw(Error);
+    });
+    it("#validateThrows (NaN, 2)", () => {
+        stub = new Stub(NaN, 2);
+        const evilfunc = () => stub.validateThrows();
+        expect(evilfunc).to.throw(BowlingGameError);
+    });
+    it("#validateThrows (3, NaN)", () => {
+        stub = new Stub(3, NaN);
+        const evilfunc = () => stub.validateThrows();
+        expect(evilfunc).to.throw(BowlingGameError);
     });
 });
