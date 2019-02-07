@@ -1,7 +1,7 @@
-import { hello } from '../src/hello-world';
-import { expect } from 'chai';
 import 'mocha';
+import { expect } from 'chai';
 import debug from 'debug';
+import { hello } from '../src/hello-world';
 
 const debugLog = debug('test:hello-world');
 

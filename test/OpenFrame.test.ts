@@ -1,6 +1,6 @@
-import { OpenFrame } from '../src/OpenFrame';
-import { expect } from 'chai';
 import 'mocha';
+import { expect } from 'chai';
+import { OpenFrame } from '../src/OpenFrame';
 import { BowlingGameError } from '../src/BowlingGameError';
 
 describe("OpenFrame", () => {

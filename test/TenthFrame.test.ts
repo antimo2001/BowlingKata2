@@ -1,7 +1,7 @@
+import 'mocha';
+import { expect } from 'chai';
 import { Utility } from '../src/Utility';
 import { TenthFrame } from '../src/TenthFrame';
-import { expect } from 'chai';
-import 'mocha';
 import { BowlingGameError } from '../src/BowlingGameError';
 
 class TestSubject {

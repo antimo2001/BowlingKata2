@@ -1,10 +1,10 @@
 import 'mocha';
-import debug from 'debug';
 import { expect } from 'chai';
+import debug from 'debug';
 import { Utility } from '../src/Utility';
 const debugFip = debug("test:Utility");
 
-describe("Utility", function() {
+describe("Utility", () => {
     describe("#sum", () => {
         it("params: (1, 2)", () => {
             expect(Utility.sum(1, 2)).to.equal(3);
@@ -69,30 +69,30 @@ describe("Utility", function() {
             });
         });
     });
-    describe("#range", function() {
-        it("simple params", function() {
+    describe("#range", () => {
+        it("simple params", () => {
             const actual = Utility.range(1, 5);
             const expectedRange = [1, 2, 3, 4];
             expect(actual).to.have.ordered.members(expectedRange);
         });
-        it("use params: (-1, 11)", function() {
+        it("use params: (-1, 11)", () => {
             const actual = Utility.range(-1, 11);
             const expectedRange = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
             expect(actual).to.have.ordered.members(expectedRange);
         });
-        it("use params: (2, 10, 2)", function() {
+        it("use params: (2, 10, 2)", () => {
             const actual = Utility.range(2, 10, 2);
             const expectedRange = [2, 4, 6, 8];
             expect(actual).to.have.ordered.members(expectedRange);
         });
-        it("use params: (3, 10, 2)", function() {
+        it("use params: (3, 10, 2)", () => {
             const actual = Utility.range(3, 10, 2);
             const expectedRange = [3, 5, 7, 9];
             expect(actual).to.have.ordered.members(expectedRange);
         });
     });
-    describe("#stall", function() {
-        it("stalls in ascending order", async function() {
+    describe("#stall", () => {
+        it("stalls in ascending order", async () => {
             let nums: number[] = [1, 2];
             await Promise.all([
                 Utility.stall(29).then(() => nums.push(9)),
@@ -102,7 +102,7 @@ describe("Utility", function() {
             debugFip(`nums===${nums}`);
             expect(nums).ordered.members([1, 2, 5, 7, 9]);
         });
-        it("stalls in descending order", async function() {
+        it("stalls in descending order", async () => {
             let nums: number[] = [100, 99];
             await Promise.all([
                 Utility.stall(29).then(() => nums.push(69)),
