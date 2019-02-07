@@ -71,7 +71,7 @@ TL;DR ...2 major issues ...fileglob config fails to be simple (or is poorly docu
 - [x] redesign Frame class and subclasses? why should each Frame instance contain a copy of the same throws array that the BowlingGame also has? ...only BowlingGame class should maintain the throws in an array
 - [x] refactor classes for 2 goals; new interface: `Scorable` that represents a `score` and so that the BowlingGame only has 10 instances of Frame class ...the prior design could have 10 frames with 2 BonusFrame instances, so up to 12 frames per game ...which is weird and doesn't represent a real bowling game of 10 frames
 - [x] refactor so that all of BowlingGame class's methods are async!
-- [ ] refactor so that Frame classes utilize Decorator pattern
+- [x] refactor so that Frame classes utilize Decorator pattern ...nvm; just use simple class inheritance (Decorator pattern makes sense for modifying a class without utilizing class inheritance)
 - [ ] user-interface? maybe look at [www.bowlinggenius.com](http://www.bowlinggenius.com) for ideas to improve upon
 
 ### Future Exploration
