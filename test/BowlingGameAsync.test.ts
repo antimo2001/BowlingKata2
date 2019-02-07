@@ -1,21 +1,19 @@
 import 'mocha';
 import chai, { expect } from 'chai';
-import chaiAsPromise from 'chai-as-promised';
+// import chaiAsPromise from 'chai-as-promised';
 import debug from 'debug';
 import { Utility } from '../src/Utility';
-import { Frame } from '../src/Frame';
 import { BowlingGameAsync } from '../src/BowlingGameAsync';
 import { BowlingGameError } from '../src/BowlingGameError';
 
 //Register the chai-as-promised library
 //Note that chaiAsPromise should be the very last registerd plugin
-chai.use(chaiAsPromise);
+// chai.use(chaiAsPromise);
 
-const debugFip = debug("fip01:test:BowlingGameAsync");
+const debugFip = debug("test:BowlingGameAsync");
 //FIP stands for fix in-progress
 
-/** Helper function for calculating the sum */
-const sumReduce = Frame.sum;
+const sumReduce = Utility.sum;
 
 class TestSubject {
     public game: BowlingGameAsync;
@@ -48,25 +46,25 @@ class TestSubject {
     }
 }
 
-describe("BowlingGameAsync", function() {
+describe("BowlingGameAsync", () => {
     let test: TestSubject;
 
-    beforeEach(function() {
+    beforeEach(() => {
         test = new TestSubject();
     });
 
-    describe("#openFrame", function() {
-        it("single frame", async function() {
+    describe("#openFrame", () => {
+        it("single frame", async () => {
             await test.game.open(1, 2);
             expect(await test.game.score()).to.equal(3);
         });
-        it("2 frames", async function() {
+        it("2 frames", async () => {
             await test.game.open(1, 2);
             await test.game.open(3, 4);
             const expectedScore = sumReduce(1, 2, 3, 4);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("5 frames", async function() {
+        it("5 frames", async () => {
             await test.game.open(1, 2);
             await test.game.open(3, 4);
             await test.game.open(1, 1);
@@ -75,21 +73,21 @@ describe("BowlingGameAsync", function() {
             const expectedScore = sumReduce(3, 7, 2, 4, 6);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("all gutterballs", async function() {
+        it("all gutterballs", async () => {
             await test.playOpenFrames(10, 0, 0);
             expect(await test.game.score()).to.equal(0);
         });
-        it("10 frames and 1 pin per throw", async function() {
+        it("10 frames and 1 pin per throw", async () => {
             await test.playOpenFrames(10, 1, 1);
             expect(await test.game.score()).to.equal(20);
         });
-        it("10 frames and 3 pins per throw", async function() {
+        it("10 frames and 3 pins per throw", async () => {
             await test.playOpenFrames(10, 3, 3);
             expect(await test.game.score()).to.equal(60);
         });
     });
 
-    describe("#openFrame (error handling)", function () {
+    describe("#openFrame (error handling)", () => {
         async function assertError(test: TestSubject, rxMessage: RegExp, ...throws: number[]) {
             const [t1, t2] = throws;
             try {
@@ -100,37 +98,37 @@ describe("BowlingGameAsync", function() {
                 expect(error).to.matches(rxMessage);
             }
         }
-        it("shows error: 2 throws cannot exceed", async function () {
+        it("shows error: 2 throws cannot exceed", async () => {
             const rx = /2 throws cannot exceed \d+ pins/;
             await assertError(test, rx, 11, 1);
         });
-        it("shows error: 2 throws cannot exceed (part 2)", async function () {
+        it("shows error: 2 throws cannot exceed (part 2)", async () => {
             const rx = /2 throws cannot exceed \d+ pins/;
             await assertError(test, rx, 2, 8);
         });
-        it("shows error: 2 throws cannot exceed (part 3)", async function () {
+        it("shows error: 2 throws cannot exceed (part 3)", async () => {
             const rx = /2 throws cannot exceed \d+ pins/;
             await assertError(test, rx, -3, 14);
         });
-        it("shows error: throw cannot be negative", async function () {
+        it("shows error: throw cannot be negative", async () => {
             const rx = /throw cannot be negative/;
             await assertError(test, rx, -1, 3);
         });
-        it("shows error: throw cannot be negative (part 2)", async function () {
+        it("shows error: throw cannot be negative (part 2)", async () => {
             const rx = /throw cannot be negative/;
             await assertError(test, rx, 2, -22);
         });
     });
 
-    describe("#spare", function() {
-        it("player bowls a spare in frame 1", async function() {
+    describe("#spare", () => {
+        it("player bowls a spare in frame 1", async () => {
             await test.game.spare(4);
             await test.game.open(8, 1);
             await test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 8, 8, 1);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a spare in frame 8", async function() {
+        it("player bowls a spare in frame 8", async () => {
             await test.playOpenFrames(7, 0, 0);
             await test.game.spare(4);
             await test.game.open(4, 5);
@@ -138,14 +136,14 @@ describe("BowlingGameAsync", function() {
             const expectedScore = sumReduce(10, 4, 4, 5);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a spare in frame 10", async function() {
+        it("player bowls a spare in frame 10", async () => {
             await test.playOpenFrames(8, 0, 0);
             await test.game.open(4, 5);
             await test.game.bowlTenthFrame(4, 6, 3);
             const expectedScore = sumReduce(9, 10, 3);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many spares", async function() {
+        it("player bowls many spares", async () => {
             await test.game.spare(7);
             await test.game.spare(8);
             await test.game.open(3, 4);
@@ -153,7 +151,7 @@ describe("BowlingGameAsync", function() {
             const expectedScore = sumReduce(10, 8, 10, 3, 7);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls many spares with bonus", async function() {
+        it("player bowls many spares with bonus", async () => {
             await test.playOpenFrames(8, 0, 0);
             await test.game.spare(4);
             await test.game.bowlTenthFrame(5, 5, 3);
@@ -162,7 +160,7 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#spare (error handling)", function () {
+    describe("#spare (error handling)", () => {
         async function assertError(test: TestSubject, rxMessage: RegExp, throw1: number) {
             try {
                 await test.game.spare(throw1);
@@ -173,28 +171,28 @@ describe("BowlingGameAsync", function() {
                 expect(err).to.matches(rxMessage);
             }
         }
-        it("shows error: throw cannot be negative", async function () {
+        it("shows error: throw cannot be negative", async () => {
             await assertError(test, /throw cannot be negative/, -1);
         });
-        it("shows error: first throw cannot exceed", async function () {
+        it("shows error: first throw cannot exceed", async () => {
             const rx = /first throw of a spare cannot exceed \d+ pins/;
             await assertError(test, rx, 10);
         });
-        it("shows error: first throw cannot exceed (part 2)", async function () {
+        it("shows error: first throw cannot exceed (part 2)", async () => {
             const rx = /first throw of a spare cannot exceed \d+ pins/;
             await assertError(test, rx, 15);
         });
     });
 
-    describe("#strike", function() {
-        it("player bowls a strike in frame 1", async function() {
+    describe("#strike", () => {
+        it("player bowls a strike in frame 1", async () => {
             await test.game.strike();
             await test.game.open(1, 6);
             await test.playOpenFrames(8, 0, 0);
             const expectedScore = sumReduce(10, 1, 6, 1, 6);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a strike in frame 4", async function() {
+        it("player bowls a strike in frame 4", async () => {
             await test.playOpenFrames(3, 0, 0);
             await test.game.strike();
             await test.game.open(4, 2);
@@ -202,17 +200,17 @@ describe("BowlingGameAsync", function() {
             const expectedScore = sumReduce(10, 4, 2, 4, 2);
             expect(await test.game.score()).to.equal(expectedScore);
         });
-        it("player bowls a strike in frame 10", async function() {
+        it("player bowls a strike in frame 10", async () => {
             await test.playOpenFrames(9, 0, 0);
             await test.game.bowlTenthFrame(10, 10, 10);
             expect(await test.game.score()).to.equal(30);
         });
-        it("player bowls perfect game", async function() {
+        it("player bowls perfect game", async () => {
             await test.playMultipleFrames(9, () => test.game.strike());
             await test.game.bowlTenthFrame(10, 10, 10);
             expect(await test.game.score()).to.equal(300);
         });
-        it("player bowls alternating strikes/spares", async function() {
+        it("player bowls alternating strikes/spares", async () => {
             await test.playMultipleFrames(4, async () => {
                 await test.game.strike();
                 await test.game.spare(5);
@@ -221,7 +219,7 @@ describe("BowlingGameAsync", function() {
             await test.game.bowlTenthFrame(5, 5, 10);
             expect(await test.game.score()).to.equal(200);
         });
-        it("player bowls alternating spares/strikes", async function() {
+        it("player bowls alternating spares/strikes", async () => {
             await test.playMultipleFrames(4, async () => {
                 await test.game.spare(5);
                 await test.game.strike();
@@ -232,21 +230,21 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#bowlTenthFrame", function() {
-        it("2 frames", async function() {
+    describe("#bowlTenthFrame", () => {
+        it("2 frames", async () => {
             await test.game.open(0, 0);
             await test.game.bowlTenthFrame(0, 1);
             expect(await test.game.score()).to.equal(1);
         });
-        it("5 frames", async function() {
+        it("5 frames", async () => {
             await test.game.open(0, 1);
             await test.game.open(0, 1);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
-            await test.game.bowlTenthFrame(1, 2, 3);
-            expect(await test.game.score()).to.equal(4 + 6);
+            await test.game.bowlTenthFrame(1, 2);
+            expect(await test.game.score()).to.equal(4 + 3);
         });
-        it("10 frames", async function() {
+        it("10 frames", async () => {
             await test.game.open(0, 1);
             await test.game.open(0, 1);
             await test.game.open(1, 0);
@@ -262,7 +260,7 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#bowlTenthFrame (error handling)", function () {
+    describe("#bowlTenthFrame (error handling)", () => {
         async function assertError(throw1: number, throw2: number, throw3?: number){
             await test.game.open(0, 1);
             try {
@@ -274,24 +272,24 @@ describe("BowlingGameAsync", function() {
             }
         }
 
-        it("shows error when negative throws", async function() {
+        it("shows error when negative throws", async () => {
             await assertError(-1, 1);
         });
-        it("shows error when negative throws (part 2)", async function() {
+        it("shows error when negative throws (part 2)", async () => {
             await assertError(2, -2, 0);
         });
-        it("shows error when negative throws (part 3)", async function() {
+        it("shows error when negative throws (part 3)", async () => {
             await assertError(3, 2, -4);
         });
     });
 
-    describe("#scoreNthFrame", function() {
-        it("2 frames", async function() {
+    describe("#scoreNthFrame", () => {
+        it("2 frames", async () => {
             await test.game.open(1, 0);
             await test.game.open(2, 0);
             expect(await test.game.scoreNthFrame(2)).to.equal(3);
         });
-        it("5 frames", async function() {
+        it("5 frames", async () => {
             await test.game.open(1, 0);
             await test.game.open(1, 0);
             await test.game.open(0, 1);
@@ -299,7 +297,7 @@ describe("BowlingGameAsync", function() {
             await test.game.open(0, 5);
             expect(await test.game.scoreNthFrame(5)).to.equal(4 + 5);
         });
-        it("9 frames", async function() {
+        it("9 frames", async () => {
             await test.game.open(1, 0);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
@@ -311,7 +309,7 @@ describe("BowlingGameAsync", function() {
             await test.game.open(1, 0);
             expect(await test.game.scoreNthFrame(9)).to.equal(9);
         });
-        it("10 frames", async function() {
+        it("10 frames", async () => {
             await test.game.open(1, 0);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
@@ -325,7 +323,7 @@ describe("BowlingGameAsync", function() {
             expect(await test.game.scoreNthFrame(9)).to.equal(9);
             expect(await test.game.scoreNthFrame(10)).to.equal(9 + 20);
         });
-        it("10 frames: part 2", async function() {
+        it("10 frames: part 2", async () => {
             await test.game.open(1, 0);
             await test.game.open(1, 0);
             await test.game.open(1, 0);
@@ -345,15 +343,15 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#scoreNthFrame (iterations)", function () {
+    describe("#scoreNthFrame (iterations)", () => {
         //All of the tests in this describe block do not properly work
         //I think mocha or chai (or both) cannot handle for-await loops yet
         //or maybe something else in this test code is wrong?
-        //...yes; I confirmed that a for-await loop surrounding an it() block
+        //...yes; I confirmed that a for-await loop surrounding an () => {
         //fails to execute properly (even if the describe block is also async)
         //...so the workaround is to refactor the it block so that the for-await
-        //loop is nested inside the it() block; thus, the dynamic naming of the
-        //it() block is removed, resulting in a decrease in your count of tests!
+        //loop is nested inside the it() block; thus, the dynamic () => {
+        //it() block is removed, resulting in a decrease in your count () => {
 
         /**
          * Define a constant array representing scores for a specifc game.
@@ -371,7 +369,7 @@ describe("BowlingGameAsync", function() {
             openStrikeSpare: [NaN, 8, 28, 42, 50, 70, 84, 92, 112, 126, 134],
         };
 
-        describe("bowls frames in specific sequence strike/spare/open", function() {
+        describe("bowls frames in specific sequence strike/spare/open", () => {
             const { strikeSpareOpen } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.strike();
@@ -392,13 +390,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 2: spare/strike/open", function() {
+        describe("bowls frames in specific sequence 2: spare/strike/open", () => {
             const { spareStrikeOpen } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.spare(9);
@@ -419,13 +417,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 3: open/spare/strike", function() {
+        describe("bowls frames in specific sequence 3: open/spare/strike", () => {
             const { openSpareStrike } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.open(4, 4);
@@ -446,13 +444,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 4: strike/open/spare", function () {
+        describe("bowls frames in specific sequence 4: strike/open/spare", () => {
             const { strikeOpenSpare } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.strike();
@@ -473,13 +471,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 5: strike/gutter", function () {
+        describe("bowls frames in specific sequence 5: strike/gutter", () => {
             const { strikeGutter } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.strike();
@@ -500,13 +498,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 6: spare/open/strike", function () {
+        describe("bowls frames in specific sequence 6: spare/open/strike", () => {
             const { spareOpenStrike } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.spare(9);
@@ -527,13 +525,13 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
             }
         });
-        describe("bowls frames in specific sequence 7: open/strike/spare", function () {
+        describe("bowls frames in specific sequence 7: open/strike/spare", () => {
             const { openStrikeSpare } = CALCULATOR_SCORES;
             async function initializeAllFrames(test: TestSubject) {
                 await test.game.open(4, 4);
@@ -554,7 +552,7 @@ describe("BowlingGameAsync", function() {
                 await expect(actual).to.equal(score, msg);
             }
             for (let index = 1; index <= 10; index++) {
-                it(`verify score at nthFrame: ${index}`, async function () {
+                it(`verify score at nthFrame: ${index}`, async () => {
                     await initializeAllFrames(test);
                     await executeAssertions(test, index);
                 });
@@ -562,8 +560,10 @@ describe("BowlingGameAsync", function() {
         });
     });
 
-    describe("#scoreNthFrame (error handling)", function () {
-        /** Initialize the test-subject with only 1 frame in the game */
+    describe("#scoreNthFrame (error handling)", () => {
+        /**
+         * Initialize the test-subject with only 1 frame in the game
+         */
         async function initializeSingleFrame(test: TestSubject) {
             await test.game.open(1, 1).catch(err => {
                 debugFip(`test suite found unexpected error: ${err}`);
@@ -571,7 +571,9 @@ describe("BowlingGameAsync", function() {
             });
         }
 
-        /** Execute the expectations and assertions for error-handling */
+        /**
+         * Execute the expectations and assertions for error-handling
+         */
         async function executeAssertions(test: TestSubject, nthFrame: number) {
             try {
                 await test.game.scoreNthFrame(nthFrame);
@@ -585,7 +587,7 @@ describe("BowlingGameAsync", function() {
 
         const badValues = [0, 9, -22, 44];
         badValues.forEach((val, i) => {
-            it(`expect error; part ${i}`, async function () {
+            it(`expect error; part ${i}`, async () => {
                 await initializeSingleFrame(test);
                 await executeAssertions(test, val);
             });

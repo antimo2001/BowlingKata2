@@ -1,9 +1,12 @@
 import debug from 'debug';
+import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
+import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:StrikeFrame");
 
 export class StrikeFrame extends Frame {
+
     constructor(...throws: number[]) {
         super(...throws);
         //A strike is assumed to be 10 pins
@@ -15,9 +18,20 @@ export class StrikeFrame extends Frame {
      * @param bonusThrows the rest args to be used as the bonus throws
      * @overrides Frame.setBonusThrows
      */
-    public setBonusThrows(...bonusThrows: number[]): Frame {
+    setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 2);
-        return this;
+        this.validateBonus();
+    }
+
+    /**
+     * Raise errors if the throws for this strike are invalid.
+     * @param throws numbers for the throws
+     * @overrides Frame.validateThrows
+     */
+    public validateThrows(): boolean {
+        super.validateThrows();
+        debugFip(`No other validations, so dont raise errors`);
+        return true;
     }
 
     /**
@@ -34,15 +48,38 @@ export class StrikeFrame extends Frame {
      */
     protected setScore(): Frame {
         if (!this.canScore()) {
-            // debugFip(`didnt set the score: bonusThrows.length===${this.bonusThrows.length}`);
             return this;
         }
         if (this.hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        this.score = Frame.sumApply([...this.base, ...this.bonusThrows]);
+        this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
         this.hasBeenScored = true;
         return this;
     }
+
+    /**
+     * Raises errors if the bonusThrows is invalid. Returns true if no errors.
+     */
+    private validateBonus(): boolean {
+        const bonus = this.bonusThrows;
+        if (bonus.some(b => b !== 0 && !b)) {
+            const msg = `bonus of a strike cannot be undefined`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus.some(b => b < 0)) {
+            const msg = `bonus cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus.some(b => b > Frame.MAX_PINS)) {
+            const msg = `bonus cannot exceed ${Frame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        return true;
+    }
+
 }

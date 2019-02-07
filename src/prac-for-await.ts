@@ -23,7 +23,7 @@ async function debugLogAsync(message: string, delay = 3000): Promise<void> {
     //Wrap the sync function debugFip around a function that creates a Promise
     return await stall(delay).then(() => {
         debugCount += 1;
-        // debugFip(`${debugCount}: ${message}`);
+        debugFip(`${debugCount}: ${message}`);
         console.log(`${debugCount}: ${message}`);
     });
 }
@@ -135,7 +135,7 @@ async function funcForAwaitParallelAgain(arr: number[] | string[]) {
         const [all, user] = await fetchAll;
         console.log(`results: [${all}, ${user}]`);
         console.log(`done Promise.all()`);
-        const newuser = await epicWebService.createUser(`loop4: createUser(${n4})(200)`);
+        await epicWebService.createUser(`loop4: createUser(${n4})(200)`);
         console.log(`loop4: END iteration ${n4}`);
     }
     console.log(`04: END loop to do for-await!`);

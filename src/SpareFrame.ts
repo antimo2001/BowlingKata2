@@ -1,13 +1,17 @@
 import debug from 'debug';
+import { Utility } from '../src/Utility';
 import { Frame } from '../src/Frame';
+import { BowlingGameError } from '../src/BowlingGameError';
 
 const debugFip = debug("src:SpareFrame");
 
 export class SpareFrame extends Frame {
+
     constructor(...throws: number[]) {
         super(...throws);
         //A spare should only use the first throw; the 2nd throw is inferred
-        this.base = [throws[0], 10 - throws[0]];
+        const t = throws[0];
+        this.base = [t, 10 - t];
     }
 
     /**
@@ -15,9 +19,32 @@ export class SpareFrame extends Frame {
      * @param bonusThrows the rest args to be used as the bonus throws
      * @overrides Frame.setBonusThrows
      */
-    public setBonusThrows(...bonusThrows: number[]): Frame {
+    setBonusThrows(...bonusThrows: number[]): void {
         this.bonusThrows = bonusThrows.slice(0, 1);
-        return this;
+        this.validateBonus();
+    }
+
+    /**
+     * Raise errors if the throws for this spare are invalid.
+     * @param throws numbers for the throws of this spare frame
+     * @overrides Frame.validateThrows
+     */
+    public validateThrows(): boolean {
+        super.validateThrows();
+        const firstThrow = this.base[0];
+
+        if (firstThrow < 0) {
+            const msg = `throw cannot be negative: ${firstThrow}`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (firstThrow >= Frame.MAX_PINS) {
+            const msg = `first throw of a spare cannot exceed ${Frame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        //No errors so return true
+        return true;
     }
 
     /**
@@ -41,8 +68,32 @@ export class SpareFrame extends Frame {
             debugFip(`already done scoring; keep score as is: ${this.score}`);
             return this;
         }
-        this.score = Frame.sumApply([...this.base, ...this.bonusThrows]);
+        this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
         this.hasBeenScored = true;
         return this;
     }
+
+    /**
+     * Raises errors if the bonusThrows is invalid. Returns true if no errors.
+     */
+    private validateBonus(): boolean {
+        const bonus = this.bonusThrows[0];
+        if (bonus !== 0 && !bonus) {
+            const msg = `bonus of a spare cannot be undefined`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus < 0) {
+            const msg = `bonus cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (bonus > Frame.MAX_PINS) {
+            const msg = `bonus cannot exceed ${Frame.MAX_PINS} pins`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        return true;
+    }
+
 }
