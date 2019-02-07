@@ -29,7 +29,7 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     ```
 - Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
-### Do you ever want to use a repl of typescript?
+### "Do you ever want to use a repl of typescript?"
 
 See [ts-node](https://www.npmjs.com/package/ts-node).  I also made an npm script to start one in this repo: `npm run tsc-repl`
 
