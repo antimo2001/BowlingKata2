@@ -86,7 +86,7 @@ export abstract class Frame implements IFrame {
     /**
      * Property represents the maximum pins for a frame
      */
-    public static MAX_PINS: number = 10;
+    public static readonly MAX_PINS: number = 10;
 
     /**
      * Property represents the calculated score (includes the base and bonus)
