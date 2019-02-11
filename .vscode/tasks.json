@@ -18,7 +18,10 @@
         {
             "type": "npm",
             "script": "test",
-            "group": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "problemMatcher": [
                 "$tsc"
             ]
@@ -34,10 +37,7 @@
         {
             "type": "npm",
             "script": "test-default",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
+            "group": "test",
             "problemMatcher": [
                 "$tsc"
             ]
@@ -59,6 +59,21 @@
         {
             "type": "npm",
             "script": "ts-node-solo1",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "ts-node-solo2",
             "problemMatcher": [
                 "$tsc"
             ],
