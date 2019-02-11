@@ -1,8 +1,8 @@
 import 'mocha';
 import { expect } from 'chai';
-import { Utility } from '../src/Utility';
-import { TenthFrame } from '../src/TenthFrame';
-import { BowlingGameError } from '../src/BowlingGameError';
+import { Utility } from '../../src/Utility';
+import { TenthFrame } from '../../src/models/TenthFrame';
+import { BowlingGameError } from '../../src/models/BowlingGameError';
 
 class TestSubject {
     public frame: TenthFrame;

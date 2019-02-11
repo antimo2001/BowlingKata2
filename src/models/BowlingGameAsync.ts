@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { BowlingGame } from './BowlingGame';
-import { Utility } from './Utility';
+import { Utility } from '../Utility';
 
 const debugFip = debug("src:BowlingGameAsync");
 

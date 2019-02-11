@@ -2,9 +2,9 @@ import 'mocha';
 import chai, { expect } from 'chai';
 // import chaiAsPromise from 'chai-as-promised';
 import debug from 'debug';
-import { Utility } from '../src/Utility';
-import { BowlingGameAsync } from '../src/BowlingGameAsync';
-import { BowlingGameError } from '../src/BowlingGameError';
+import { Utility } from '../../src/Utility';
+import { BowlingGameAsync } from '../../src/models/BowlingGameAsync';
+import { BowlingGameError } from '../../src/models/BowlingGameError';
 
 //Register the chai-as-promised library
 //Note that chaiAsPromise should be the very last registerd plugin
