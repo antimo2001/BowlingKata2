@@ -10,7 +10,7 @@ export class StrikeFrame extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
         //A strike is assumed to be 10 pins
-        this.base = [10];
+        this.base = [Frame.MAX_PINS];
     }
 
     /**

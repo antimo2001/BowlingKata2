@@ -10,8 +10,9 @@ export class SpareFrame extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
         //A spare should only use the first throw; the 2nd throw is inferred
-        const t = throws[0];
-        this.base = [t, 10 - t];
+        const t1 = throws[0];
+        const t2 = Frame.MAX_PINS - t1;
+        this.base = [t1, t2];
     }
 
     /**
@@ -31,15 +32,14 @@ export class SpareFrame extends Frame {
      */
     public validateThrows(): boolean {
         super.validateThrows();
-        const firstThrow = this.base[0];
 
-        if (firstThrow < 0) {
-            const msg = `throw cannot be negative: ${firstThrow}`;
+        if (this.base[0] >= Frame.MAX_PINS) {
+            const msg = `first throw of a spare cannot exceed ${Frame.MAX_PINS} pins`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        if (firstThrow >= Frame.MAX_PINS) {
-            const msg = `first throw of a spare cannot exceed ${Frame.MAX_PINS} pins`;
+        if (this.base.some(t => t < 0)) {
+            const msg = `throw cannot be negative`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
