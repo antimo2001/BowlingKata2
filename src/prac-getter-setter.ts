@@ -42,6 +42,5 @@ class Greeter {
 {
     const greeter = new Greeter()
     greeter.name = 'Alice'
-    // greeter.name = 9 ////causes compile time error
     debugFip(greeter.hello())
 }
