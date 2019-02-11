@@ -3,6 +3,9 @@ import { expect } from 'chai';
 import { Frame } from '../src/Frame';
 import { BowlingGameError } from '../src/BowlingGameError';
 
+/**
+ * Create a stub class to use for testing the abstract Frame class
+ */
 class Stub extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
@@ -40,6 +43,14 @@ describe("Frame", () => {
         const base = stub.getBaseThrows();
         expect(base.length).to.equal(2);
         expect(base).to.have.members([0, 1]);
+    });
+    it("#getBaseThrows [1, 2, 3]", () => {
+        const baseThrows = [1, 2, 3];
+        stub = new Stub(...baseThrows);
+        const actual = stub.getBaseThrows();
+        const expected = baseThrows.slice(0, 2);
+        expect(actual.length).to.equal(expected.length);
+        expect(actual).to.have.members(expected);
     });
     it("#validateThrows", () => {
         const fn = () => stub.validateThrows();
