@@ -5,6 +5,7 @@ import { BowlingGameError } from '../src/BowlingGameError';
 
 describe("OpenFrame", () => {
     let open: OpenFrame;
+
     it("#constructor", () => {
         open = new OpenFrame(0, 0);
         expect(open.getScore()).to.be.equal(0);
@@ -57,37 +58,37 @@ describe("OpenFrame", () => {
     });
 
     describe("#validateThrows", () => {
-        it("errors when throw is NaN", () => {
+        it("errors when (NaN, 1)", () => {
             open = new OpenFrame(NaN, 1);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be NaN/);
         });
-        it("errors when throw is NaN (part 2)", () => {
+        it("errors when (2, NaN)", () => {
             open = new OpenFrame(2, NaN);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be NaN/);
         });
-        it("errors when 11+ pins", () => {
+        it("errors when (1, 11)", () => {
             open = new OpenFrame(1, 11);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
         });
-        it("errors when 11+ pins (part 2)", () => {
+        it("errors when (2, 8)", () => {
             open = new OpenFrame(2, 8);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/2 throws cannot exceed 10 pins/);
         });
-        it("errors when negative pins", () => {
+        it("errors when (-1, 3)", () => {
             open = new OpenFrame(-1, 3);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
             expect(evilfunc).to.throw(/throw cannot be negative/);
         });
-        it("errors when negative pins (part 2)", () => {
+        it("errors when (2, -2)", () => {
             open = new OpenFrame(2, -2);
             const evilfunc = () => open.validateThrows();
             expect(evilfunc).to.throw(BowlingGameError);
@@ -95,20 +96,4 @@ describe("OpenFrame", () => {
         });
     });
 
-    describe("Edge cases (negative values)", () => {
-        const params = [
-            [-1, 0],
-            [2, -2],
-            [3, -4],
-            [4, -6],
-            [5, -4],
-        ];
-        params.forEach((item) => {
-            const [t1, t2] = item;
-            it(`params (${t1},${t2})`, () => {
-                open = new OpenFrame(t1, t2);
-                expect(open.getScore()).to.equal(t1 + t2);
-            });
-        });
-    });
 });
