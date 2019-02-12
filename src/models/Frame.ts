@@ -20,7 +20,7 @@ export abstract class Frame implements IFrame {
     /**
      * Gets the score for this frame. This also sets the score if the frame has
      * not yet been scored, then returns the score.
-     * @overrides IFrame.getScore
+     * @overrides IFrame.score
      */
     get score(): number {
         if (!this.hasBeenScored) {
@@ -41,7 +41,7 @@ export abstract class Frame implements IFrame {
 
     /**
      * Gets the base throws property
-     * @overrides IFrame.getBaseThrows
+     * @overrides IFrame.baseThrows
      */
     get baseThrows(): number[] {
         return this._base;
