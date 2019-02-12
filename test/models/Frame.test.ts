@@ -32,11 +32,11 @@ describe("Frame", () => {
         expect(fn).to.not.throw(Error);
     });
     it("#getScore", () => {
-        expect(stub.getScore()).to.equal(42);
+        expect(stub.score).to.equal(42);
     });
     it("#hasBeenScored", () => {
         expect(stub.hasBeenScored).to.be.false;
-        stub.getScore();
+        stub.score;
         expect(stub.hasBeenScored).to.be.true;
     });
     it("#getBaseThrows", () => {
@@ -60,10 +60,12 @@ describe("Frame", () => {
         stub = new Stub(NaN, 2);
         const evilfunc = () => stub.validateThrows();
         expect(evilfunc).to.throw(BowlingGameError);
+        expect(evilfunc).to.throw(/throw cannot be NaN/);
     });
     it("#validateThrows (3, NaN)", () => {
         stub = new Stub(3, NaN);
         const evilfunc = () => stub.validateThrows();
         expect(evilfunc).to.throw(BowlingGameError);
+        expect(evilfunc).to.throw(/throw cannot be NaN/);
     });
 });

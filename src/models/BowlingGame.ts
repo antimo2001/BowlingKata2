@@ -174,7 +174,7 @@ export class BowlingGame {
         }
         let total: number = 0;
         const cumulatives = this.frames.map(frame => {
-            total += frame.getScore();
+            total += frame.score;
             return total;
         });
         debugFip(`cumulatives===${cumulatives}`);

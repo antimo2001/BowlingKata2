@@ -16,11 +16,17 @@ export abstract class Frame implements IFrame {
     }
 
     /**
+     * Sets the bonusThrows.
+     * @param bonusThrows this rest args contains the array of bonus throws
+     */
+    abstract setBonusThrows(...bonusThrows: number[]): void;
+
+    /**
      * Gets the score for this frame. This also sets the score if the frame has
      * not yet been scored, then returns the score.
      * @overrides IFrame.getScore
      */
-    public getScore(): number {
+    get score(): number {
         if (!this.hasBeenScored) {
             this.setScore();
             return this._score;
@@ -30,16 +36,10 @@ export abstract class Frame implements IFrame {
     }
 
     /**
-     * Sets the bonusThrows.
-     * @param bonusThrows this rest args contains the array of bonus throws
-     */
-    public abstract setBonusThrows(...bonusThrows: number[]): void;
-
-    /**
      * Gets the hasBeenScored property
      * @overrides IFrame.hasBeenScored
      */
-    public get hasBeenScored(): boolean {
+    get hasBeenScored(): boolean {
         return this._hasBeenScored;
     }
 
@@ -47,15 +47,16 @@ export abstract class Frame implements IFrame {
      * Gets the base throws property
      * @overrides IFrame.getBaseThrows
      */
-    public get baseThrows(): number[] {
+    get baseThrows(): number[] {
         return this._base;
     }
 
     /**
      * Raise errors if the throws for this frame are invalid. Returns true if no
      * errors occurred.
+     * @overrides IFrame.validateThrows
      */
-    public validateThrows(): boolean {
+    validateThrows(): boolean {
         if (this._base.some(t => isNaN(t))) {
             const msg = `throw cannot be NaN`;
             debugFip(msg);

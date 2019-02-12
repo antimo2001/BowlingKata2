@@ -27,13 +27,13 @@ describe("TenthFrame", () => {
 
     it("gutter balls", () => {
         test.reset(0, 0);
-        expect(test.frame.getScore()).to.be.equal(0);
+        expect(test.frame.score).to.be.equal(0);
     });
 
     it("with params: [1, 1]", () => {
         let throws = [1, 1];
         const expectedScore = Utility.sum(...throws);
-        const actual = test.reset(...throws).getScore();
+        const actual = test.reset(...throws).score;
         expect(actual).not.NaN;
         expect(actual).to.be.equal(expectedScore);
     });
@@ -41,14 +41,14 @@ describe("TenthFrame", () => {
     it("with params: [2, 6]", () => {
         let throws = [2, 6];
         const expectedScore = Utility.sum(...throws);
-        const actual = test.reset(...throws).getScore();
+        const actual = test.reset(...throws).score;
         expect(actual).to.be.equal(expectedScore);
     });
 
     it("with params: [3, 4]", () => {
         let throws = [3, 4];
         const expectedScore = Utility.sum(...throws);
-        const actual = test.reset(...throws).getScore();
+        const actual = test.reset(...throws).score;
         expect(actual).to.be.equal(expectedScore);
     });
 

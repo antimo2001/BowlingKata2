@@ -15,12 +15,12 @@ describe("StrikeFrame", () => {
 
     describe("#constructor", () => {
         it("no calculated score yet", () => {
-            expect(strike.getScore()).to.equal(0);
+            expect(strike.score).to.equal(0);
         });
         it("setBonusThrows(1, 2)", () => {
             strike.setBonusThrows(1, 2);
             //The score for a strike is calculated after the bonus is set!
-            expect(strike.getScore()).to.equal(expectedSum(3));
+            expect(strike.score).to.equal(expectedSum(3));
         });
     });
 
@@ -29,19 +29,19 @@ describe("StrikeFrame", () => {
             const bonus = [8, 1];
             const expected = expectedSum(...bonus);
             strike.setBonusThrows(...bonus);
-            expect(strike.getScore()).to.equal(expected);
+            expect(strike.score).to.equal(expected);
         });
         it("bonus: [4, 3]", () => {
             const bonus = [4, 3];
             const expected = expectedSum(...bonus);
             strike.setBonusThrows(...bonus);
-            expect(strike.getScore()).to.equal(expected);
+            expect(strike.score).to.equal(expected);
         });
         it("bonus: [10, 9]", () => {
             const bonus = [10, 9];
             const expected = expectedSum(...bonus);
             strike.setBonusThrows(...bonus);
-            expect(strike.getScore()).to.equal(expected);
+            expect(strike.score).to.equal(expected);
         });
     });
 
@@ -57,7 +57,7 @@ describe("StrikeFrame", () => {
             const expected = expectedSum(x, y);
             it(`with bonus of (${x},${y})`, () => {
                 strike.setBonusThrows(x, y);
-                expect(strike.getScore()).to.equal(expected);
+                expect(strike.score).to.equal(expected);
             });
         });
     });

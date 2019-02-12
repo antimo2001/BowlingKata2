@@ -4,15 +4,15 @@
 export interface IFrame {
 
     /**
-     * Gets the score for this frame.
-     */
-    getScore(): number;
-
-    /**
      * Sets the bonusThrows.
      * @param bonusThrows this rest args contains the array of bonus throws
      */
     setBonusThrows(...bonusThrows: number[]): void;
+
+    /**
+     * Gets the score for this frame.
+     */
+    score: number;
 
     /**
      * Gets the hasBeenScored property
@@ -23,4 +23,11 @@ export interface IFrame {
      * Gets the base throws property
      */
     baseThrows: number[];
+
+    /**
+     * Raise errors if the throws for this frame are invalid. Returns true if no
+     * errors occurred.
+     */
+    validateThrows(): boolean;
+
 }

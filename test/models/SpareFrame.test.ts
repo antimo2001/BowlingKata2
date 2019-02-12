@@ -27,11 +27,11 @@ describe("SpareFrame", () => {
     });
 
     it("#constructor", () => {
-        expect(test.spare.getScore()).to.equal(0);
+        expect(test.spare.score).to.equal(0);
         //The score for a spare is not yet calculated until bonus has been set!
         test.spare.setBonusThrows(1);
         const expected = expectedSum(1);
-        expect(test.spare.getScore()).to.equal(expected);
+        expect(test.spare.score).to.equal(expected);
     });
 
     describe("#getScore", () => {
@@ -39,13 +39,13 @@ describe("SpareFrame", () => {
             const bonus = 3;
             test.reset(9, bonus);
             const expected = expectedSum(bonus);
-            expect(test.spare.getScore()).to.equal(expected);
+            expect(test.spare.score).to.equal(expected);
         });
         it("when bonus of 7", () => {
             const bonus = 7;
             test.reset(9, bonus);
             const expected = expectedSum(bonus);
-            expect(test.spare.getScore()).to.equal(expected);
+            expect(test.spare.score).to.equal(expected);
         });
     });
 
@@ -56,7 +56,7 @@ describe("SpareFrame", () => {
             it(`has bonus of ${bonus}`, () => {
                 test.reset(baseThrow, bonus);
                 const expected = expectedSum(bonus);
-                const actual = test.spare.getScore();
+                const actual = test.spare.score;
                 expect(actual).to.equal(expected);
             });
         });

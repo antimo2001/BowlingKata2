@@ -8,7 +8,7 @@ describe("OpenFrame", () => {
 
     it("#constructor", () => {
         open = new OpenFrame(0, 0);
-        expect(open.getScore()).to.be.equal(0);
+        expect(open.score).to.be.equal(0);
     });
 
     it("#setBonusThrows", () => {
@@ -20,23 +20,23 @@ describe("OpenFrame", () => {
     describe("#score", () => {
         it("for params (1, 1)", () => {
             open = new OpenFrame(1, 1);
-            expect(open.getScore()).to.be.equal(1 + 1);
+            expect(open.score).to.be.equal(1 + 1);
         });
         it("for params (2, 2)", () => {
             open = new OpenFrame(2, 2);
-            expect(open.getScore()).to.be.equal(4);
+            expect(open.score).to.be.equal(4);
         });
         it("for params (7, 2)", () => {
             open = new OpenFrame(7, 2);
-            expect(open.getScore()).to.be.equal(9);
+            expect(open.score).to.be.equal(9);
         });
         it("for params (1, 2, 9)", () => {
             open = new OpenFrame(1, 2, 9);
-            expect(open.getScore()).to.be.equal(3);
+            expect(open.score).to.be.equal(3);
         });
         it("for params (2, 3, 11, 12)", () => {
             open = new OpenFrame(2, 3, 11, 12);
-            expect(open.getScore()).to.be.equal(2 + 3);
+            expect(open.score).to.be.equal(2 + 3);
         });
     });
 
@@ -58,7 +58,7 @@ describe("OpenFrame", () => {
             const [t1, t2] = item;
             it(`params (${t1},${t2})`, () => {
                 open = new OpenFrame(t1, t2);
-                expect(open.getScore()).to.equal(t1 + t2);
+                expect(open.score).to.equal(t1 + t2);
             });
         });
     });
