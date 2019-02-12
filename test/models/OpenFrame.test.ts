@@ -11,6 +11,12 @@ describe("OpenFrame", () => {
         expect(open.getScore()).to.be.equal(0);
     });
 
+    it("#setBonusThrows", () => {
+        open = new OpenFrame(0, 1);
+        const fn = () => open.setBonusThrows();
+        expect(fn).to.not.throw(Error);
+    });
+
     describe("#score", () => {
         it("for params (1, 1)", () => {
             open = new OpenFrame(1, 1);

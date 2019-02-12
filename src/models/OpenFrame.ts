@@ -12,8 +12,7 @@ export class OpenFrame extends Frame {
     }
 
     /**
-     * Sets the bonusThrows, but for open frames, this isn't useful.
-     * @param bonusThrows this rest args is NOT used for open frames
+     * Sets the bonusThrows, but for open frames, this is irrelevent.
      * @overrides Frame.setBonusThrows
      */
     setBonusThrows(): void {

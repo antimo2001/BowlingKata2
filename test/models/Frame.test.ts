@@ -13,9 +13,6 @@ class Stub extends Frame {
     setBonusThrows(...bonusThrows: number[]): void {
         this._bonusThrows = bonusThrows.slice(0, 1);
     }
-    protected canScore(): boolean {
-        return true;
-    }
     protected setScore(): Frame {
         this._score = 42;
         this._hasBeenScored = true;
