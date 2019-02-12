@@ -15,11 +15,7 @@ export abstract class Frame implements IFrame {
         this._base = throws.slice(0, 2);
     }
 
-    /**
-     * Sets the bonusThrows.
-     * @param bonusThrows this rest args contains the array of bonus throws
-     */
-    abstract setBonusThrows(...bonusThrows: number[]): void;
+    // #region Public Methods
 
     /**
      * Gets the score for this frame. This also sets the score if the frame has
@@ -65,12 +61,25 @@ export abstract class Frame implements IFrame {
         return true;
     }
 
+    // #endregion Public Methods
+
+    // #region Abstract Methods
+
+    /**
+     * Sets the bonusThrows.
+     * @param bonusThrows this rest args contains the array of bonus throws
+     * @overrides IFrame.setBonusThrows
+     */
+    public abstract setBonusThrows(...bonusThrows: number[]): void;
+
     /**
      * Sets the score for this frame.
      */
     protected abstract setScore(): void;
 
-    //#region Property Definitions
+    // #endregion Abstract Methods
+
+    // #region Property Definitions
 
     /**
      * Property represents the maximum pins for a frame
@@ -97,5 +106,5 @@ export abstract class Frame implements IFrame {
      */
     protected _base: number[];
 
-    //#endregion Property Definitions
+    // #endregion Property Definitions
 }
