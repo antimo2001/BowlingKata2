@@ -10,7 +10,7 @@ const debugFip = debug('src:prac-getter-setter')
  *
  * Also, see the official typescript docs: http://www.typescriptlang.org/docs/handbook/classes.html
  */
-class Greeter {
+export default class Greeter {
     private _name: string
 
     constructor() {

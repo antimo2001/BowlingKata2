@@ -90,6 +90,11 @@ describe("Utility", () => {
             const expectedRange = [3, 5, 7, 9];
             expect(actual).to.have.ordered.members(expectedRange);
         });
+        it("use params: (-1, -5, -1)", () => {
+            const actual = Utility.range(-1, -5, -1);
+            const expectedRange = [-1, -2, -3, -4];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
     });
     describe("#stall", () => {
         it("stalls in ascending order", async () => {
