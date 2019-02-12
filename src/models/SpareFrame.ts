@@ -9,10 +9,11 @@ export class SpareFrame extends Frame {
 
     constructor(...throws: number[]) {
         super(...throws);
+
         //A spare should only use the first throw; the 2nd throw is inferred
         const t1 = throws[0];
         const t2 = Frame.MAX_PINS - t1;
-        this.base = [t1, t2];
+        this._base = [t1, t2];
     }
 
     /**
@@ -21,7 +22,7 @@ export class SpareFrame extends Frame {
      * @overrides Frame.setBonusThrows
      */
     setBonusThrows(...bonusThrows: number[]): void {
-        this.bonusThrows = bonusThrows.slice(0, 1);
+        this._bonusThrows = bonusThrows.slice(0, 1);
         this.validateBonus();
     }
 
@@ -30,15 +31,15 @@ export class SpareFrame extends Frame {
      * @param throws numbers for the throws of this spare frame
      * @overrides Frame.validateThrows
      */
-    public validateThrows(): boolean {
+    validateThrows(): boolean {
         super.validateThrows();
 
-        if (this.base[0] >= Frame.MAX_PINS) {
+        if (this._base[0] >= Frame.MAX_PINS) {
             const msg = `first throw of a spare cannot exceed ${Frame.MAX_PINS} pins`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        if (this.base.some(t => t < 0)) {
+        if (this._base.some(t => t < 0)) {
             const msg = `throw cannot be negative`;
             debugFip(msg);
             throw new BowlingGameError(msg);
@@ -48,35 +49,27 @@ export class SpareFrame extends Frame {
     }
 
     /**
-     * Returns true iff this Spare frame has enough bonus throws to be scored
-     * @overrides Frame.canScore
-     */
-    protected canScore(): boolean {
-        return this.bonusThrows.length >= 1;
-    }
-
-    /**
      * Set the score for this Spare
      * @overrides Frame.setScore
      */
-    protected setScore(): Frame {
-        if (!this.canScore()) {
-            return this;
+    protected setScore(): void {
+        const canScore = this._bonusThrows.length >= 1;
+        if (!canScore) {
+            return;
         }
-        if (this.hasBeenScored) {
-            debugFip(`already done scoring; keep score as is: ${this.score}`);
-            return this;
+        if (this._hasBeenScored) {
+            debugFip(`already done scoring; keep score as is: ${this._score}`);
+            return;
         }
-        this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
-        this.hasBeenScored = true;
-        return this;
+        this._score = Utility.sumApply([...this._base, ...this._bonusThrows]);
+        this._hasBeenScored = true;
     }
 
     /**
      * Raises errors if the bonusThrows is invalid. Returns true if no errors.
      */
     private validateBonus(): boolean {
-        const bonus = this.bonusThrows[0];
+        const bonus = this._bonusThrows[0];
         const validations = [{
             fails: (bonus !== 0 && !bonus),
             message: `bonus of a spare cannot be undefined`

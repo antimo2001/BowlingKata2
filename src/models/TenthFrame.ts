@@ -8,7 +8,7 @@ export class TenthFrame extends OpenFrame {
         super(...throws);
 
         // The 10th frame is scored in the same way as an open frame
-        this.base = throws.slice(0, 3);
+        this._base = throws.slice(0, 3);
     }
 
     /**
@@ -16,14 +16,14 @@ export class TenthFrame extends OpenFrame {
      * @param throws numbers for the throws
      * @overrides Frame.validateThrows
      */
-    public validateThrows(): boolean {
+    validateThrows(): boolean {
         const MAX_PINS = OpenFrame.MAX_PINS;
-        const [ t1, t2, t3 ] = this.base;
+        const [ t1, t2, t3 ] = this._base;
         const assertions = [{
-            fails: this.base.some(t => isNaN(t)),
+            fails: this._base.some(t => isNaN(t)),
             message: `throw cannot be NaN`
         } , {
-            fails: this.base.some(t => t < 0),
+            fails: this._base.some(t => t < 0),
             message: `throw cannot be negative`
         } , {
             fails: t1 + t2 >= MAX_PINS && t3 === undefined,

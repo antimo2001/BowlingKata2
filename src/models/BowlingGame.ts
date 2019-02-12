@@ -143,10 +143,10 @@ export class BowlingGame {
      */
     private setBonusThrowsPerFrame(): void {
         const getBaseThrowsOrEmpty = (frame: Frame): number[] => {
-            return !!frame ? frame.getBaseThrows() : [];
+            return !!frame ? frame.baseThrows : [];
         }
         //Set the bonus for each frame (especially unscored frames)
-        this.frames.filter(f => !f.doneScoring()).map((...params) => {
+        this.frames.filter(f => !f.hasBeenScored).map((...params) => {
             const [ frame, i, frames ] = params;
             const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
             let bonus: number[] = [];

@@ -10,7 +10,7 @@ export class StrikeFrame extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
         //A strike is assumed to be 10 pins
-        this.base = [Frame.MAX_PINS];
+        this._base = [Frame.MAX_PINS];
     }
 
     /**
@@ -19,7 +19,7 @@ export class StrikeFrame extends Frame {
      * @overrides Frame.setBonusThrows
      */
     setBonusThrows(...bonusThrows: number[]): void {
-        this.bonusThrows = bonusThrows.slice(0, 2);
+        this._bonusThrows = bonusThrows.slice(0, 2);
         this.validateBonus();
     }
 
@@ -28,7 +28,7 @@ export class StrikeFrame extends Frame {
      * @param throws numbers for the throws
      * @overrides Frame.validateThrows
      */
-    public validateThrows(): boolean {
+    validateThrows(): boolean {
         super.validateThrows();
         debugFip(`No other validations, so dont raise errors`);
         return true;
@@ -39,31 +39,30 @@ export class StrikeFrame extends Frame {
      * @overrides Frame.canScore
      */
     protected canScore(): boolean {
-        return this.bonusThrows.length >= 2;
+        return this._bonusThrows.length >= 2;
     }
 
     /**
      * Set the score for this Strike
      * @overrides Frame.setScore
      */
-    protected setScore(): Frame {
+    protected setScore(): void {
         if (!this.canScore()) {
-            return this;
+            return;
         }
-        if (this.hasBeenScored) {
-            debugFip(`already done scoring; keep score as is: ${this.score}`);
-            return this;
+        if (this._hasBeenScored) {
+            debugFip(`already done scoring; keep score as is: ${this._score}`);
+            return;
         }
-        this.score = Utility.sumApply([...this.base, ...this.bonusThrows]);
-        this.hasBeenScored = true;
-        return this;
+        this._score = Utility.sumApply([...this._base, ...this._bonusThrows]);
+        this._hasBeenScored = true;
     }
 
     /**
      * Raises errors if the bonusThrows is invalid. Returns true if no errors.
      */
     private validateBonus(): boolean {
-        const bonus = this.bonusThrows;
+        const bonus = this._bonusThrows;
         const validations = [{
             fails: (bonus.some(b => b !== 0 && !b)),
             message: `bonus of a strike cannot be undefined`

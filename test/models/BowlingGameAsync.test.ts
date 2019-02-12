@@ -40,7 +40,7 @@ class TestSubject {
         const range = Utility.range(1, loopCount + 1);
         debugFip(`playMultipleFrames: range===${range}`);
         for await (let i of range) {
-            // debugFip(`range[${i}]`);
+            debugFip(`range[${i}]`);
             await iterator.call(this);
         }
     }

@@ -8,7 +8,20 @@ export class OpenFrame extends Frame {
 
     constructor(...throws: number[]) {
         super(...throws);
-        this.base = throws.slice(0, 2);
+        this._base = throws.slice(0, 2);
+    }
+
+    /**
+     * Sets the bonusThrows, but for open frames, this isn't useful.
+     * @param bonusThrows this rest args is NOT used for open frames
+     * @overrides Frame.setBonusThrows
+     */
+    setBonusThrows(): void {
+        if (!this.hasBeenScored) {
+            this._bonusThrows = [];
+        } else {
+            debugFip(`system cannot reset the bonus after frame has been scored`);
+        }
     }
 
     /**
@@ -16,16 +29,16 @@ export class OpenFrame extends Frame {
      * if no errors were raised.
      * @overrides Frame.validateThrows
      */
-    public validateThrows(): boolean {
+    validateThrows(): boolean {
         super.validateThrows();
-        const [ firstThrow, secondThrow ] = this.base;
+        const [ firstThrow, secondThrow ] = this._base;
 
         if (firstThrow + secondThrow >= Frame.MAX_PINS) {
             const msg = `2 throws cannot exceed ${Frame.MAX_PINS} pins`;
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
-        if (this.base.some(t => t < 0)) {
+        if (this._base.some(t => t < 0)) {
             const msg = `throw cannot be negative`;
             debugFip(msg);
             throw new BowlingGameError(msg);
@@ -34,27 +47,20 @@ export class OpenFrame extends Frame {
     }
 
     /**
-     * Returns true iff this Open frame has enough base throws to be scored
-     * @overrides Frame.canScore
-     */
-    protected canScore(): boolean {
-        return this.base.length > 1;
-    }
-
-    /**
-     * Set the score for this Spare
+     * Set the score for this open frame
      * @overrides Frame.setScore
      */
-    protected setScore(): Frame {
-        if (!this.canScore()) {
-            return this;
+    protected setScore(): void {
+        const canScore = this._base.length > 1;
+        if (!canScore) {
+            debugFip(`cannot score yet: ${this._base.length}`);
+            return;
         }
-        if (this.hasBeenScored) {
-            debugFip(`already done scoring; keep score as is: ${this.score}`);
-            return this;
+        if (this._hasBeenScored) {
+            debugFip(`already done scoring; keep score as is: ${this._score}`);
+            return;
         }
-        this.score = Utility.sumApply(this.base);
-        this.hasBeenScored = true;
-        return this;
+        this._score = Utility.sumApply(this._base);
+        this._hasBeenScored = true;
     }
 }

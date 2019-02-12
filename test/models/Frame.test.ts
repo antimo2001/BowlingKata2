@@ -10,12 +10,15 @@ class Stub extends Frame {
     constructor(...throws: number[]) {
         super(...throws);
     }
+    setBonusThrows(...bonusThrows: number[]): void {
+        this._bonusThrows = bonusThrows.slice(0, 1);
+    }
     protected canScore(): boolean {
         return true;
     }
     protected setScore(): Frame {
-        this.score = 42;
-        this.hasBeenScored = true;
+        this._score = 42;
+        this._hasBeenScored = true;
         return this;
     }
 }
@@ -34,20 +37,20 @@ describe("Frame", () => {
     it("#getScore", () => {
         expect(stub.getScore()).to.equal(42);
     });
-    it("#doneScoring", () => {
-        expect(stub.doneScoring()).to.be.false;
+    it("#hasBeenScored", () => {
+        expect(stub.hasBeenScored).to.be.false;
         stub.getScore();
-        expect(stub.doneScoring()).to.be.true;
+        expect(stub.hasBeenScored).to.be.true;
     });
     it("#getBaseThrows", () => {
-        const base = stub.getBaseThrows();
+        const base = stub.baseThrows;
         expect(base.length).to.equal(2);
         expect(base).to.have.members([0, 1]);
     });
     it("#getBaseThrows [1, 2, 3]", () => {
         const baseThrows = [1, 2, 3];
         stub = new Stub(...baseThrows);
-        const actual = stub.getBaseThrows();
+        const actual = stub.baseThrows;
         const expected = baseThrows.slice(0, 2);
         expect(actual.length).to.equal(expected.length);
         expect(actual).to.have.members(expected);

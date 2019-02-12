@@ -15,12 +15,12 @@ export interface IFrame {
     setBonusThrows(...bonusThrows: number[]): void;
 
     /**
-     * Returns true iff frame is done scoring
+     * Gets the hasBeenScored property
      */
-    doneScoring(): boolean;
+    hasBeenScored: boolean;
 
     /**
-     * Get the base throws
+     * Gets the base throws property
      */
-    getBaseThrows(): number[];
+    baseThrows: number[];
 }

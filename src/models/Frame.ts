@@ -9,10 +9,10 @@ const debugFip = debug("src:Frame");
 export abstract class Frame implements IFrame {
 
     constructor(...throws: number[]) {
-        this.score = 0;
-        this.hasBeenScored = false;
-        this.bonusThrows = [];
-        this.base = throws.slice(0, 2);
+        this._score = 0;
+        this._hasBeenScored = false;
+        this._bonusThrows = [];
+        this._base = throws.slice(0, 2);
     }
 
     /**
@@ -21,41 +21,34 @@ export abstract class Frame implements IFrame {
      * @overrides IFrame.getScore
      */
     public getScore(): number {
-        if (this.doneScoring()) {
-            return this.score;
+        if (!this.hasBeenScored) {
+            this.setScore();
+            return this._score;
         } else {
-            return this.setScore().score;
+            return this._score;
         }
     }
 
     /**
      * Sets the bonusThrows.
      * @param bonusThrows this rest args contains the array of bonus throws
-     * @overrides IFrame.setBonusThrows
      */
-    public setBonusThrows(...bonusThrows: number[]): void {
-        const unscored = !this.doneScoring();
-        if (unscored) {
-            this.bonusThrows = [];
-        } else {
-            debugFip(`system cannot reset the bonus after frame has been scored`);
-        }
+    public abstract setBonusThrows(...bonusThrows: number[]): void;
+
+    /**
+     * Gets the hasBeenScored property
+     * @overrides IFrame.hasBeenScored
+     */
+    public get hasBeenScored(): boolean {
+        return this._hasBeenScored;
     }
 
     /**
-     * Returns true iff frame is done scoring
-     * @overrides IFrame.doneScoring
-     */
-    public doneScoring(): boolean {
-        return this.hasBeenScored;
-    }
-
-    /**
-     * Get the base throws
+     * Gets the base throws property
      * @overrides IFrame.getBaseThrows
      */
-    public getBaseThrows(): number[] {
-        return this.base;
+    public get baseThrows(): number[] {
+        return this._base;
     }
 
     /**
@@ -63,7 +56,7 @@ export abstract class Frame implements IFrame {
      * errors occurred.
      */
     public validateThrows(): boolean {
-        if (this.base.some(t => isNaN(t))) {
+        if (this._base.some(t => isNaN(t))) {
             const msg = `throw cannot be NaN`;
             debugFip(msg);
             throw new BowlingGameError(msg);
@@ -72,14 +65,9 @@ export abstract class Frame implements IFrame {
     }
 
     /**
-     * Returns true iff this frame has enough throws to be scored.
-     */
-    protected abstract canScore(): boolean;
-
-    /**
      * Sets the score for this frame.
      */
-    protected abstract setScore(): Frame;
+    protected abstract setScore(): void;
 
     //#region Property Definitions
 
@@ -91,22 +79,22 @@ export abstract class Frame implements IFrame {
     /**
      * Property represents the calculated score (includes the base and bonus)
      */
-    protected score: number;
+    protected _score: number;
 
     /**
      * Property represents that the score is already calculated
      */
-    protected hasBeenScored: boolean;
+    protected _hasBeenScored: boolean;
 
     /**
      * Property represents the bonus throws
      */
-    protected bonusThrows: number[];
+    protected _bonusThrows: number[];
 
     /**
      * Property represents the base throws
      */
-    protected base: number[];
+    protected _base: number[];
 
     //#endregion Property Definitions
 }

@@ -30,7 +30,8 @@ describe("SpareFrame", () => {
         expect(test.spare.getScore()).to.equal(0);
         //The score for a spare is not yet calculated until bonus has been set!
         test.spare.setBonusThrows(1);
-        expect(test.spare.getScore()).to.equal(10 + 1);
+        const expected = expectedSum(1);
+        expect(test.spare.getScore()).to.equal(expected);
     });
 
     describe("#getScore", () => {
