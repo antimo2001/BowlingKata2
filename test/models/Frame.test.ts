@@ -13,10 +13,9 @@ class Stub extends Frame {
     setBonusThrows(...bonusThrows: number[]): void {
         this._bonusThrows = bonusThrows.slice(0, 1);
     }
-    protected setScore(): Frame {
+    protected setScore(): boolean {
         this._score = 42;
-        this._hasBeenScored = true;
-        return this;
+        return true;
     }
 }
 
@@ -27,11 +26,7 @@ describe("Frame", () => {
         stub = new Stub(0, 1);
     });
 
-    it("#setBonusThrows", () => {
-        const fn = () => stub.setBonusThrows(1);
-        expect(fn).to.not.throw(Error);
-    });
-    it("#getScore", () => {
+    it("#score", () => {
         expect(stub.score).to.equal(42);
     });
     it("#hasBeenScored", () => {
@@ -39,12 +34,16 @@ describe("Frame", () => {
         stub.score;
         expect(stub.hasBeenScored).to.be.true;
     });
-    it("#getBaseThrows", () => {
+    it("#setBonusThrows", () => {
+        const fn = () => stub.setBonusThrows(1);
+        expect(fn).to.not.throw(Error);
+    });
+    it("#baseThrows", () => {
         const base = stub.baseThrows;
         expect(base.length).to.equal(2);
         expect(base).to.have.members([0, 1]);
     });
-    it("#getBaseThrows [1, 2, 3]", () => {
+    it("#baseThrows [1, 2, 3]", () => {
         const baseThrows = [1, 2, 3];
         stub = new Stub(...baseThrows);
         const actual = stub.baseThrows;

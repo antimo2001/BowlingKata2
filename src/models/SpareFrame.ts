@@ -49,20 +49,21 @@ export class SpareFrame extends Frame {
     }
 
     /**
-     * Set the score for this Spare
+     * Sets the score for this Spare. Returns true if the score is set or false
+     * if the score is not set.
      * @overrides Frame.setScore
      */
-    protected setScore(): void {
+    protected setScore(): boolean {
         const canScore = this._bonusThrows.length >= 1;
         if (!canScore) {
-            return;
+            return false;
         }
         if (this._hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this._score}`);
-            return;
+            return false;
         }
         this._score = Utility.sumApply([...this._base, ...this._bonusThrows]);
-        this._hasBeenScored = true;
+        return true;
     }
 
     /**

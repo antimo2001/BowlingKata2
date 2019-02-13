@@ -43,19 +43,20 @@ export class StrikeFrame extends Frame {
     }
 
     /**
-     * Set the score for this Strike
+     * Sets the score for this Strike. Returns true if the score is set or false
+     * if the score is not set.
      * @overrides Frame.setScore
      */
-    protected setScore(): void {
+    protected setScore(): boolean {
         if (!this.canScore()) {
-            return;
+            return false;
         }
         if (this._hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this._score}`);
-            return;
+            return false;
         }
         this._score = Utility.sumApply([...this._base, ...this._bonusThrows]);
-        this._hasBeenScored = true;
+        return true;
     }
 
     /**

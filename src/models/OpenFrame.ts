@@ -46,20 +46,21 @@ export class OpenFrame extends Frame {
     }
 
     /**
-     * Set the score for this open frame
+     * Sets the score for this open frame. Returns true if the score is set
+     * or false if the score is not set.
      * @overrides Frame.setScore
      */
-    protected setScore(): void {
+    protected setScore(): boolean {
         const canScore = this._base.length > 1;
         if (!canScore) {
             debugFip(`cannot score yet: ${this._base.length}`);
-            return;
+            return false;
         }
         if (this._hasBeenScored) {
             debugFip(`already done scoring; keep score as is: ${this._score}`);
-            return;
+            return false;
         }
         this._score = Utility.sumApply(this._base);
-        this._hasBeenScored = true;
+        return true;
     }
 }

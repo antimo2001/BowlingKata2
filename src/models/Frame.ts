@@ -19,16 +19,16 @@ export abstract class Frame implements IFrame {
 
     /**
      * Gets the score for this frame. This also sets the score if the frame has
-     * not yet been scored, then returns the score.
+     * not yet been scored.
      * @overrides IFrame.score
      */
     get score(): number {
         if (!this.hasBeenScored) {
-            this.setScore();
-            return this._score;
-        } else {
-            return this._score;
+            if (this.setScore()) {
+                this._hasBeenScored = true;
+            }
         }
+        return this._score;
     }
 
     /**
@@ -73,9 +73,10 @@ export abstract class Frame implements IFrame {
     public abstract setBonusThrows(...bonusThrows: number[]): void;
 
     /**
-     * Sets the score for this frame.
+     * Sets the score for this frame. Returns true if the score is set or false
+     * if the score is not set.
      */
-    protected abstract setScore(): void;
+    protected abstract setScore(): boolean;
 
     // #endregion Abstract Methods
 
