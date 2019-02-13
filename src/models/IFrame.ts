@@ -6,17 +6,17 @@ export interface IFrame {
     /**
      * Gets the score for this frame.
      */
-    score: number;
+    readonly score: number;
 
     /**
      * Gets the hasBeenScored property
      */
-    hasBeenScored: boolean;
+    readonly hasBeenScored: boolean;
 
     /**
      * Gets the base throws property
      */
-    baseThrows: number[];
+    readonly baseThrows: number[];
 
     /**
      * Sets the bonusThrows.

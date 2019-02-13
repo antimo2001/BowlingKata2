@@ -16,10 +16,8 @@ export class OpenFrame extends Frame {
      * @overrides Frame.setBonusThrows
      */
     setBonusThrows(): void {
-        if (!this.hasBeenScored) {
-            this._bonusThrows = [];
-        } else {
-            debugFip(`system cannot reset the bonus after frame has been scored`);
+        if (this.hasBeenScored) {
+            debugFip(`system ignores resetting bonus for any open frame`);
         }
     }
 
@@ -29,7 +27,9 @@ export class OpenFrame extends Frame {
      * @overrides Frame.validateThrows
      */
     validateThrows(): boolean {
-        super.validateThrows();
+        if (!super.validateThrows()) {
+            return false;
+        }
         const [ firstThrow, secondThrow ] = this._base;
 
         if (firstThrow + secondThrow >= Frame.MAX_PINS) {

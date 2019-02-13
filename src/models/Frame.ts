@@ -20,6 +20,7 @@ export abstract class Frame implements IFrame {
     /**
      * Gets the score for this frame. This also sets the score if the frame has
      * not yet been scored.
+     * @readonly
      * @overrides IFrame.score
      */
     get score(): number {
@@ -33,14 +34,16 @@ export abstract class Frame implements IFrame {
 
     /**
      * Gets the hasBeenScored property
+     * @readonly
      * @overrides IFrame.hasBeenScored
      */
     get hasBeenScored(): boolean {
         return this._hasBeenScored;
     }
-
+    
     /**
      * Gets the base throws property
+     * @readonly
      * @overrides IFrame.baseThrows
      */
     get baseThrows(): number[] {
@@ -73,8 +76,8 @@ export abstract class Frame implements IFrame {
     public abstract setBonusThrows(...bonusThrows: number[]): void;
 
     /**
-     * Sets the score for this frame. Returns true if the score is set or false
-     * if the score is not set.
+     * Sets the score for this frame.
+     * @returns true if the score is set; false if score is not set
      */
     protected abstract setScore(): boolean;
 
@@ -84,6 +87,7 @@ export abstract class Frame implements IFrame {
 
     /**
      * Property represents the maximum pins for a frame
+     * @readonly
      */
     public static readonly MAX_PINS: number = 10;
 
