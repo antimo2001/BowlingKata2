@@ -14,7 +14,8 @@ This repo is for self practice with typescript and mocha. It also shows a progre
 ### Lessons: Part 2
 
 - its a best practice to create a git pre-commit hook to avoid committing any mocha tests with `describe.only()` or `describe.skip()` in them ...see the following:
-    ```bash
+
+```bash
     #!/bin/sh
     PATTERN="describe\.only\(\|it\.only\(|describe\.skip\(|it\.skip\("
     MESSAGE="Tried to commit mocha tests with .only or .skip; DO NOT DO THAT ANYMORE!"
@@ -26,7 +27,9 @@ This repo is for self practice with typescript and mocha. It also shows a progre
     else
       exit 0
     fi
-    ```
+
+```
+
 - Hint: use grep and the perl regex like this: `grep -Hn --color=always  -P "\s*(describe|it)\.(only|skip)\("  test/*.test.ts`
 
 ### "Do you ever want to use a repl of typescript?"
@@ -45,10 +48,11 @@ To create a git tag, simply create a release at github.com and it prompts you to
 - click button to create a new repo
 - github.com should display a page to add existing local repo
 - execute these git CLI commands to assign the new remote repo with your local repo:
-    ```bash
+
+```bash
     git remote add origin https://github.com/{MY_ACCOUNT}/{MY_NEW_REPO}.git
     git push -u origin master
-    ```
+```
 
 ### VSCode extension: Trigger On Save
 
@@ -72,7 +76,6 @@ TL;DR ...2 major issues ...fileglob config fails to be simple (or is poorly docu
 - [x] refactor classes for 2 goals; new interface: `Scorable` that represents a `score` and so that the BowlingGame only has 10 instances of Frame class ...the prior design could have 10 frames with 2 BonusFrame instances, so up to 12 frames per game ...which is weird and doesn't represent a real bowling game of 10 frames
 - [x] refactor so that all of BowlingGame class's methods are async!
 - [x] refactor so that Frame classes utilize Decorator pattern ...nvm; just use simple class inheritance (Decorator pattern makes sense for modifying a class without utilizing class inheritance)
-- [ ] user-interface? maybe look at [www.bowlinggenius.com](http://www.bowlinggenius.com) for ideas to improve upon
 
 ### Future Exploration
 
