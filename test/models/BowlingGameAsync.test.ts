@@ -158,6 +158,13 @@ describe("BowlingGameAsync", () => {
             const expectedScore = sumReduce(10, 5, 10, 3);
             expect(await test.game.score()).to.equal(expectedScore);
         });
+        it("player bowls 10 zero-spare frames", async () => {
+            await test.playMultipleFrames(9, async () => {
+                test.game.spare(0);
+            });
+            await test.game.bowlTenthFrame(0, 10, 0);
+            expect(await test.game.score()).to.equal(100);
+        });
     });
 
     describe("#spare (error handling)", () => {

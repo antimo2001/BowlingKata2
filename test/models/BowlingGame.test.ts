@@ -180,6 +180,14 @@ describe("BowlingGame", () => {
             expect(test.game.score()).to.equal(expectedScore);
         });
 
+        it("player bowls 10 zero-spare frames", () => {
+            test.playMultipleFrames(9, game => {
+                game.spare(0);
+            });
+            test.game.bowlTenthFrame(0, 10, 0);
+            expect(test.game.score()).to.equal(100);
+        });
+
         describe("Edge cases", () => {
             const gameScores = {
                 part1: [NaN, 15, 30, 45, 55, 55],
