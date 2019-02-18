@@ -26,6 +26,7 @@
     "mocha-reporters": "mocha --reporters > out/mocha-reporters.out",
     "ts-node-solo1": "SET DEBUG=src:prac-for-await &&  ts-node src/prac-for-await.ts",
     "ts-node-solo2": "SET DEBUG=src:prac-getter-setter &&  ts-node src/prac-getter-setter.ts",
+    "ts-node-solo3": "SET DEBUG=src:prac-generator &&  ts-node src/prac-generator.ts",
     "tsc-repl": "ts-node",
     "tsc-repl-help": "ts-node --help",
     "tsc": "tsc",
