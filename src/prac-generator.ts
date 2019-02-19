@@ -44,7 +44,7 @@ class Practices {
     static p3(): void {
         const start = 1000
         const end = Number.MAX_SAFE_INTEGER
-        const step = 90100100100100
+        const step = 150400300200114
         const rrange = Utility2.range(start, end, step)
         for (const i of rrange) {
             console.log(`range(${start}, ${end}, ${step})===${i}`)
