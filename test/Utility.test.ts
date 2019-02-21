@@ -96,6 +96,44 @@ describe("Utility", () => {
             expect(actual).to.have.ordered.members(expectedRange);
         });
     });
+    describe("#rangez", () => {
+        /**
+         * Transforms the given Iterable and returns array
+         * @param iterateme Iterable of numbers to iterate
+         */
+        const transform = (iterateme: Iterable<number>): number[] => {
+            let values: number[] = [];
+            for (const z of iterateme) {
+                values.push(z);
+            }
+            return values;
+        }
+        it("simple params", () => {
+            const expectedRange = [1, 2, 3, 4];
+            const actual = transform(Utility.rangez(1, 5));
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (-1, 11)", () => {
+            const actual = transform(Utility.rangez(-1, 11));
+            const expectedRange = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (2, 10, 2)", () => {
+            const actual = transform(Utility.rangez(2, 10, 2));
+            const expectedRange = [2, 4, 6, 8];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (3, 10, 2)", () => {
+            const actual = transform(Utility.rangez(3, 10, 2));
+            const expectedRange = [3, 5, 7, 9];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (-1, -5, -1)", () => {
+            const actual = transform(Utility.rangez(-1, -5, -1));
+            const expectedRange = [-1, -2, -3, -4];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+    });
     describe("#stall", () => {
         it("stalls in ascending order", async () => {
             let nums: number[] = [1, 2];
