@@ -98,17 +98,20 @@ export default class Practice3 {
      * Use values that cause infinite loop
      */
     static p5(): void {
-        const start = -1
-        const end = -5
-        const step = 1
-        const MAX_LOOPCOUNT = 99
-        let loopcount = 0
+        const start = 5
+        const end = 15
+        const step = -1
+        const MAX_LOOPCOUNT = end + 9
+        let loopcount = start
         const evilrange = Practice3.rangez(start, end, step)
         for (const i of evilrange) {
             console.log(`range(${start}, ${end}, ${step})===${i}`)
-            if (++loopcount >= MAX_LOOPCOUNT) {
-                console.log(`***detected possible infinite loop; break now`)
+            if (loopcount > MAX_LOOPCOUNT) {
+                console.log(`***detected possible infinite loop; break now; ${loopcount}`)
                 break
+            }
+            else {
+                loopcount += 1;
             }
         }
     }
