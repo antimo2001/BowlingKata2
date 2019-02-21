@@ -2,10 +2,9 @@ import debug from 'debug'
 const debugFip = debug("src:prac-generator")
 
 /**
- * practice generators (which is a special iterator the evaluates lazily)
+ * practice generators/iterators
  */
-class Utility2 {
-
+export default class Practice3 {
     /**
      * Return iterator of integers given the start and end integers.
      * @param start first number in range
@@ -40,16 +39,14 @@ class Utility2 {
         actual arrays!
         */
     }
-}
 
-class Practices {
     /**
      * Simple parameter values
      */
     static p1(): void {
         const start = 0
         const end = 9
-        const rrange = Utility2.rangez(start, end)
+        const rrange = Practice3.rangez(start, end)
         //Use a for-of loop to consume the range()
         for (const i of rrange) {
             console.log(`range(${start}, ${end})===${i}`)
@@ -62,28 +59,34 @@ class Practices {
         const start = 10
         const end = 41
         const step = 10
-        const rrange = Utility2.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, end, step)
         for (const i of rrange) {
             console.log(`range(${start}, ${end}, ${step})===${i}`)
         }
     }
+    /**
+     * Use very,very large integer values!
+     */
     static p3(): void {
         const start = 1000
         const end = Number.MAX_SAFE_INTEGER
         const step = 150400300200114
-        const rrange = Utility2.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, end, step)
         for (const i of rrange) {
             debugFip(`range(${start}, ${end}, ${step})===${i}`)
         }
     }
+    /**
+     * Use descending values
+     */
     static p4(): void {
         const start = -1
         const end = -5
         const step = -1
-        const rrange = Utility2.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, end, step)
         const expected = [-1, -2, -3, -4]
         debugFip(`expected===${expected}`)
-        debugFip(`transform(rrange)===${Utility2.transform(rrange)}`)
+        debugFip(`transform(rrange)===${Practice3.transform(rrange)}`)
 
         /*----------------------------------------------------------------------
         Learning Lesson: consuming an Iterable with a for-loop causes it to be
@@ -91,13 +94,16 @@ class Practices {
         an Iterable into an array is almost critical for reusing those values.
         */
     }
+    /**
+     * Use values that cause infinite loop
+     */
     static p5(): void {
         const start = -1
         const end = -5
         const step = 1
         const MAX_LOOPCOUNT = 99
         let loopcount = 0
-        const evilrange = Utility2.rangez(start, end, step)
+        const evilrange = Practice3.rangez(start, end, step)
         for (const i of evilrange) {
             console.log(`range(${start}, ${end}, ${step})===${i}`)
             if (++loopcount >= MAX_LOOPCOUNT) {
@@ -112,9 +118,9 @@ class Practices {
  * ----------------------------------- MAIN -----------------------------------
  */
 {
-    Practices.p5();
-    Practices.p4();
-    // Practices.p3();
-    // Practices.p2();
-    // Practices.p1();
+    Practice3.p5();
+    // Practice3.p4();
+    // Practice3.p3();
+    // Practice3.p2();
+    // Practice3.p1();
 }
