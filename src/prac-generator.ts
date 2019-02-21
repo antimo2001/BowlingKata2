@@ -1,5 +1,5 @@
 import debug from 'debug'
-const debugFip = debug("off:src:prac-generator")
+const debugFip = debug("src:prac-generator")
 
 /**
  * practice generators (which is a special iterator the evaluates lazily)
@@ -29,11 +29,16 @@ class Utility2 {
      * @param iterateme Iterable of numbers to iterate
      */
     static transform(iterateme: Iterable<any>): any[] {
-        let values: any[] = []
-        for (const z of iterateme) {
-            values.push(z)
-        }
-        return values
+        // let values: any[] = []
+        // for (const z of iterateme) {
+        //     values.push(z)
+        // }
+        return Array.from(iterateme)
+
+        /*
+        Learning Lesson: use Array.from() to transform any ArrayLike things into
+        actual arrays!
+        */
     }
 }
 
@@ -68,7 +73,7 @@ class Practices {
         const step = 150400300200114
         const rrange = Utility2.rangez(start, end, step)
         for (const i of rrange) {
-            console.log(`range(${start}, ${end}, ${step})===${i}`)
+            debugFip(`range(${start}, ${end}, ${step})===${i}`)
         }
     }
     static p4(): void {
@@ -76,12 +81,9 @@ class Practices {
         const end = -5
         const step = -1
         const rrange = Utility2.rangez(start, end, step)
-        // for (const i of rrange) {
-        //     console.log(`range(${start}, ${end}, ${step})===${i}`)
-        // }
         const expected = [-1, -2, -3, -4]
-        console.log(`expected===${expected}`)
-        console.log(`transform(rrange)===${Utility2.transform(rrange)}`)
+        debugFip(`expected===${expected}`)
+        debugFip(`transform(rrange)===${Utility2.transform(rrange)}`)
 
         /*----------------------------------------------------------------------
         Learning Lesson: consuming an Iterable with a for-loop causes it to be
@@ -89,14 +91,30 @@ class Practices {
         an Iterable into an array is almost critical for reusing those values.
         */
     }
+    static p5(): void {
+        const start = -1
+        const end = -5
+        const step = 1
+        const MAX_LOOPCOUNT = 99
+        let loopcount = 0
+        const evilrange = Utility2.rangez(start, end, step)
+        for (const i of evilrange) {
+            console.log(`range(${start}, ${end}, ${step})===${i}`)
+            if (++loopcount >= MAX_LOOPCOUNT) {
+                console.log(`***detected possible infinite loop; break now`)
+                break
+            }
+        }
+    }
 }
 
 /**
  * ----------------------------------- MAIN -----------------------------------
  */
 {
+    Practices.p5();
     Practices.p4();
-    Practices.p3();
-    Practices.p2();
-    Practices.p1();
+    // Practices.p3();
+    // Practices.p2();
+    // Practices.p1();
 }

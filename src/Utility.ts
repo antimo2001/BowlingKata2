@@ -52,12 +52,12 @@ export class Utility {
      * @param step interval; defaults to 1
      */
     static * rangez(start: number, stop: number, step: number = 1): Iterable<number> {
-        const ascend = start < stop
-        let i = start
+        const ascend = start < stop;
+        let i = start;
         while ((ascend && i < stop) || (!ascend && i > stop)) {
-            debugFip(`yielding this: ${i}`)
-            yield i
-            i += step
+            debugFip(`yielding this: ${i}`);
+            yield i;
+            i += step;
         }
     }
 }
