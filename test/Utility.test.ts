@@ -95,6 +95,16 @@ describe("Utility", () => {
             const expectedRange = [-1, -2, -3, -4];
             expect(actual).to.have.ordered.members(expectedRange);
         });
+        it("use params: (0, -11, -2)", () => {
+            const actual = Utility.range(0, -11, -2);
+            const expectedRange = [0, -2, -4, -6, -8, -10];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (5, -19, -5)", () => {
+            const actual = Utility.range(5, -19, -5);
+            const expectedRange = [5, 0, -5, -10, -15];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
     });
     describe("#rangez", () => {
         it("simple params", () => {
@@ -120,6 +130,16 @@ describe("Utility", () => {
         it("use params: (-1, -5, -1)", () => {
             const actual = Array.from(Utility.rangez(-1, -5, -1));
             const expectedRange = [-1, -2, -3, -4];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (0, -11, -2)", () => {
+            const actual = Array.from(Utility.rangez(0, -11, -2));
+            const expectedRange = [0, -2, -4, -6, -8, -10];
+            expect(actual).to.have.ordered.members(expectedRange);
+        });
+        it("use params: (5, -19, -5)", () => {
+            const actual = Array.from(Utility.rangez(5, -19, -5));
+            const expectedRange = [5, 0, -5, -10, -15];
             expect(actual).to.have.ordered.members(expectedRange);
         });
     });
