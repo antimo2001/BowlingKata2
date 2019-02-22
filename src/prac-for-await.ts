@@ -9,56 +9,68 @@ let debugCount = 0
  */
 namespace EpicWebService {
 
-    export class Utility {
-        /**
-         * Delay some async operation (useful for simulating slow async functions)
-         * @param delay amount of time in milliseconds to delay; defaults to 3000
-         */
-        static async stall(delay: number = 3000): Promise<void> {
-            return await new Promise(resolve => setTimeout(resolve, delay))
+    /**
+     * Delay some async operation (useful for simulating slow async functions)
+     * @param delay amount of time in milliseconds to delay; defaults to 3000
+     */
+    export async function stall(delay: number = 3000): Promise<void> {
+        return await new Promise(resolve => setTimeout(resolve, delay))
 
-            //Credit for the above code goes to this online source:
-            //https://staxmanade.com/2016/07/easily-simulate-slow-async-calls-using-javascript-async-await/
-        }
+        //Credit for the above code goes to this online source:
+        //https://staxmanade.com/2016/07/easily-simulate-slow-async-calls-using-javascript-async-await/
+    }
 
-        /**
-         * Helper function to debug asynchronously
-         * @param message debug message
-         * @param delay time in ms to delay; defaults to 3000
-         */
-        static async debugLogAsync(message: string, delay = 3000): Promise<void> {
-            //Wrap the sync function debugFip around a function that creates a Promise
-            return await Utility.stall(delay).then(() => {
-                debugCount += 1
-                debugFip(`${debugCount}: ${message}`)
-                console.log(`${debugCount}: ${message}`)
-            })
-        }
+    /**
+     * Helper function to debug asynchronously
+     * @param message debug message
+     * @param delay time in ms to delay; defaults to 3000
+     */
+    export async function debugLogAsync(message: string, delay = 3000): Promise<void> {
+        //Wrap the sync function debugFip around a function that creates a Promise
+        return await EpicWebService.stall(delay).then(() => {
+            debugCount += 1
+            debugFip(`${debugCount}: ${message}`)
+            console.log(`${debugCount}: ${message}`)
+        })
     }
 
     export async function fetchUser(message: string): Promise<string> {
-        return Utility.debugLogAsync(message, 100).then(() => {
+        return EpicWebService.debugLogAsync(message, 100).then(() => {
             return 'done fetchUser()'
         })
     }
     export async function createUser(message: string): Promise<string> {
-        return Utility.debugLogAsync(message, 200).then(() => {
+        return EpicWebService.debugLogAsync(message, 200).then(() => {
             return 'done createUser()'
         })
     }
     export async function deleteUser(message: string): Promise<string> {
-        return Utility.debugLogAsync(message, 300).then(() => {
+        return EpicWebService.debugLogAsync(message, 300).then(() => {
             return 'done deleteUser()'
         })
     }
     export async function fetchAll(message: string): Promise<string> {
-        return Utility.debugLogAsync(message, 400).then(() => {
+        return EpicWebService.debugLogAsync(message, 400).then(() => {
             return 'done fetchAll()'
         })
     }
 }
 
+/**
+ * Flags to use to toggle which practice function to use
+ */
+enum Toggle {
+    One = 1,
+    Two,
+    Three,
+    Four
+}
+
+/**
+ * Bunch of functions to practice the new for-await construct
+ */
 export class Practice1 {
+
     /**
     * This practice function iterates thru async operations poorly! (no for-await construct)
     * Note the iteration is somewhat unpredicatable because the async functions do
@@ -146,19 +158,19 @@ export class Practice1 {
         console.log(`04: END loop to do for-await!`)
     }
 
-    static async main(toggle: string) {
+    static async main(toggle: Toggle) {
         const arr = ['one', 'two2']
         switch (toggle) {
-            case 'practice4':
+            case Toggle.Four:
                 await Practice1.funcForAwaitParallelAgain(arr)
                 break
-            case 'practice3':
+            case Toggle.Three:
                 await Practice1.funcForAwaitParallel(arr)
                 break
-            case 'practice2':
+            case Toggle.Two:
                 await Practice1.funcForAwaitInSeries(arr)
                 break
-            case 'practice1':
+            case Toggle.One:
                 Practice1.funcNoAwait(arr)
                 break
             default:
@@ -185,6 +197,6 @@ export class Practice1 {
 * 7. Use of the `await` keyword inside an async function is OPTIONAL.
 */
 ;(async function() {
-    Practice1.main('practice4');
+    await Practice1.main(Toggle.Four)
 }());
 
