@@ -1,5 +1,5 @@
 import debug from 'debug'
-const debugFip = debug("src:prac-generator")
+const debugFip = debug("offsrc:prac-generator")
 
 /**
  * practice generators/iterators
@@ -20,7 +20,7 @@ export default class Practice3 {
             yield i
             i += step
         }
-        debugFip(`END range`)
+        debugFip(`END rangez`)
     }
 
     /**
@@ -45,11 +45,11 @@ export default class Practice3 {
      */
     static p1(): void {
         const start = 0
-        const end = 9
-        const rrange = Practice3.rangez(start, end)
+        const stop = 9
+        const rrange = Practice3.rangez(start, stop)
         //Use a for-of loop to consume the range()
         for (const i of rrange) {
-            console.log(`range(${start}, ${end})===${i}`)
+            console.log(`range(${start}, ${stop})===${i}`)
         }
     }
     /**
@@ -57,11 +57,11 @@ export default class Practice3 {
      */
     static p2(): void {
         const start = 10
-        const end = 41
+        const stop = 41
         const step = 10
-        const rrange = Practice3.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, stop, step)
         for (const i of rrange) {
-            console.log(`range(${start}, ${end}, ${step})===${i}`)
+            console.log(`range(${start}, ${stop}, ${step})===${i}`)
         }
     }
     /**
@@ -69,11 +69,11 @@ export default class Practice3 {
      */
     static p3(): void {
         const start = 1000
-        const end = Number.MAX_SAFE_INTEGER
+        const stop = Number.MAX_SAFE_INTEGER
         const step = 150400300200114
-        const rrange = Practice3.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, stop, step)
         for (const i of rrange) {
-            debugFip(`range(${start}, ${end}, ${step})===${i}`)
+            debugFip(`range(${start}, ${stop}, ${step})===${i}`)
         }
     }
     /**
@@ -81,12 +81,12 @@ export default class Practice3 {
      */
     static p4(): void {
         const start = -1
-        const end = -5
+        const stop = -5
         const step = -1
-        const rrange = Practice3.rangez(start, end, step)
+        const rrange = Practice3.rangez(start, stop, step)
         const expected = [-1, -2, -3, -4]
-        debugFip(`expected===${expected}`)
-        debugFip(`transform(rrange)===${Practice3.transform(rrange)}`)
+        console.log(`expected===${expected}`)
+        console.log(`transform(rrange)===${Practice3.transform(rrange)}`)
 
         /*----------------------------------------------------------------------
         Learning Lesson: consuming an Iterable with a for-loop causes it to be
@@ -98,20 +98,20 @@ export default class Practice3 {
      * Use values that cause infinite loop
      */
     static p5(): void {
-        const start = 5
-        const end = 15
+        const start = 3
+        const stop = 9
         const step = -1
-        const MAX_LOOPCOUNT = end + 9
-        let loopcount = start
-        const evilrange = Practice3.rangez(start, end, step)
+        const MAX_LOOPCOUNT = stop + 9
+        let loops = start
+        const evilrange = Practice3.rangez(start, stop, step)
         for (const i of evilrange) {
-            console.log(`range(${start}, ${end}, ${step})===${i}`)
-            if (loopcount > MAX_LOOPCOUNT) {
-                console.log(`***detected possible infinite loop; break now; ${loopcount}`)
+            console.log(`range(${start}, ${stop}, ${step})===${i}`)
+            if (loops > MAX_LOOPCOUNT) {
+                console.log(`***detected possible infinite loop; break now; ${loops}`)
                 break
             }
             else {
-                loopcount += 1;
+                loops += 1;
             }
         }
     }
@@ -121,9 +121,9 @@ export default class Practice3 {
  * ----------------------------------- MAIN -----------------------------------
  */
 {
-    Practice3.p5();
-    // Practice3.p4();
-    // Practice3.p3();
-    // Practice3.p2();
-    // Practice3.p1();
+    Practice3.p5()
+    Practice3.p4()
+    Practice3.p3()
+    Practice3.p2()
+    Practice3.p1()
 }
