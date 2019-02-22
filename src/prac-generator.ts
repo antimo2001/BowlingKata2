@@ -49,7 +49,7 @@ export default class Practice3 {
         const rrange = Practice3.rangez(start, stop)
         //Use a for-of loop to consume the range()
         for (const i of rrange) {
-            console.log(`range(${start}, ${stop})===${i}`)
+            console.log(`rangez(${start}, ${stop})===${i}`)
         }
     }
     /**
@@ -61,7 +61,7 @@ export default class Practice3 {
         const step = 10
         const rrange = Practice3.rangez(start, stop, step)
         for (const i of rrange) {
-            console.log(`range(${start}, ${stop}, ${step})===${i}`)
+            console.log(`rangez(${start}, ${stop}, ${step})===${i}`)
         }
     }
     /**
@@ -73,7 +73,7 @@ export default class Practice3 {
         const step = 150400300200114
         const rrange = Practice3.rangez(start, stop, step)
         for (const i of rrange) {
-            debugFip(`range(${start}, ${stop}, ${step})===${i}`)
+            debugFip(`rangez(${start}, ${stop}, ${step})===${i}`)
         }
     }
     /**
@@ -106,9 +106,9 @@ export default class Practice3 {
         const step = -1
         const MAX_LOOPCOUNT = stop + 59
         let loops = start
-        const evilrange = Practice3.rangez(start, stop, step)
-        for (const i of evilrange) {
-            console.log(`range(${start}, ${stop}, ${step})===${i}`)
+        const infiniterange = Practice3.rangez(start, stop, step)
+        for (const i of infiniterange) {
+            console.log(`rangez(${start}, ${stop}, ${step})===${i}`)
             if (loops > MAX_LOOPCOUNT) {
                 console.log(`***detected possible infinite loop; break now; ${loops}`)
                 break
