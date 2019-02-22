@@ -122,8 +122,8 @@ export default class Practice3 {
  */
 {
     Practice3.p5()
-    Practice3.p4()
-    Practice3.p3()
-    Practice3.p2()
-    Practice3.p1()
+    // Practice3.p4()
+    // Practice3.p3()
+    // Practice3.p2()
+    // Practice3.p1()
 }

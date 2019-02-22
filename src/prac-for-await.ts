@@ -198,6 +198,6 @@ export class Practice1 {
 */
 ;(async function() {
     const p = new Practice1()
-    await p.main(PracticeFlag.THREE)
+    await p.main(PracticeFlag.FOUR)
 }());
 
