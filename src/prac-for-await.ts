@@ -1,5 +1,5 @@
 import debug from 'debug'
-const debugFip = debug('src:prac-for-await')
+const debugFip = debug('offsrc:prac-for-await')
 
 let debugCount = 0
 
@@ -36,22 +36,22 @@ namespace EpicWebService {
 
     export async function fetchUser(message: string): Promise<string> {
         return EpicWebService.debugLogAsync(message, 100).then(() => {
-            return 'done fetchUser()'
+            return 'done fetchUser'
         })
     }
     export async function createUser(message: string): Promise<string> {
         return EpicWebService.debugLogAsync(message, 200).then(() => {
-            return 'done createUser()'
+            return 'done createUser'
         })
     }
     export async function deleteUser(message: string): Promise<string> {
         return EpicWebService.debugLogAsync(message, 300).then(() => {
-            return 'done deleteUser()'
+            return 'done deleteUser'
         })
     }
     export async function fetchAll(message: string): Promise<string> {
         return EpicWebService.debugLogAsync(message, 400).then(() => {
-            return 'done fetchAll()'
+            return 'done fetchAll'
         })
     }
 }
@@ -59,11 +59,11 @@ namespace EpicWebService {
 /**
  * Flags to use to toggle which practice function to use
  */
-enum Toggle {
-    One = 1,
-    Two,
-    Three,
-    Four
+const enum PracticeFlag {
+    ONE = 1,
+    TWO,
+    THREE,
+    FOUR
 }
 
 /**
@@ -78,7 +78,7 @@ export class Practice1 {
     * started but may not finish before the entire for-loop ends)
     * @param arr array of numbers or array of strings
     */
-    static funcNoAwait(arr: number[] | string[]) {
+    private funcNoAwait(arr: number[] | string[]) {
         console.log(`01: begin loop (no await)`)
         for (let n of arr) {
             console.log(`loop1: begin iteration ${n}`)
@@ -95,7 +95,7 @@ export class Practice1 {
      * This is an example of how to iterate async operations in a series.
      * @param arr array of numbers or array of strings
      */
-    static async funcForAwaitInSeries(arr: number[] | string[]) {
+    private async funcForAwaitInSeries(arr: number[] | string[]) {
         console.log(`02: begin loop to do for-await!`)
         for await (let n2 of arr) {
             console.log(`loop2: begin iteration ${n2}`)
@@ -112,7 +112,7 @@ export class Practice1 {
      * This is an example of how to iterate async operations in parallel.
      * @param arr array of numbers or array of strings
      */
-    static async funcForAwaitParallel(arr: number[] | string[]) {
+    private async funcForAwaitParallel(arr: number[] | string[]) {
         console.log(`03: begin loop to do for-await in parallel!`)
         for await (let n3 of arr) {
             console.log(`loop3: begin iteration ${n3}`)
@@ -140,7 +140,7 @@ export class Practice1 {
      * console logs as the function above in the exact same order.
      * @param arr array of numbers or array of strings
      */
-    static async funcForAwaitParallelAgain(arr: number[] | string[]) {
+    private async funcForAwaitParallelAgain(arr: number[] | string[]) {
         console.log(`04: begin loop to do for-await in parallel!`)
         for await (let n4 of arr) {
             console.log(`loop4: begin iteration ${n4}`)
@@ -158,20 +158,20 @@ export class Practice1 {
         console.log(`04: END loop to do for-await!`)
     }
 
-    static async main(toggle: Toggle) {
+    public async main(toggle: PracticeFlag) {
         const arr = ['one', 'two2']
         switch (toggle) {
-            case Toggle.Four:
-                await Practice1.funcForAwaitParallelAgain(arr)
+            case PracticeFlag.FOUR:
+                await this.funcForAwaitParallelAgain(arr)
                 break
-            case Toggle.Three:
-                await Practice1.funcForAwaitParallel(arr)
+            case PracticeFlag.THREE:
+                await this.funcForAwaitParallel(arr)
                 break
-            case Toggle.Two:
-                await Practice1.funcForAwaitInSeries(arr)
+            case PracticeFlag.TWO:
+                await this.funcForAwaitInSeries(arr)
                 break
-            case Toggle.One:
-                Practice1.funcNoAwait(arr)
+            case PracticeFlag.ONE:
+                this.funcNoAwait(arr)
                 break
             default:
                 console.log(`...unexpected default case was used`)
@@ -197,6 +197,7 @@ export class Practice1 {
 * 7. Use of the `await` keyword inside an async function is OPTIONAL.
 */
 ;(async function() {
-    await Practice1.main(Toggle.Four)
+    const p = new Practice1()
+    await p.main(PracticeFlag.THREE)
 }());
 
