@@ -84,14 +84,17 @@ export default class Practice3 {
         const stop = -5
         const step = -1
         const rrange = Practice3.rangez(start, stop, step)
+        const rrange2 = Array.from(rrange);
         const expected = [-1, -2, -3, -4]
-        console.log(`expected===${expected}`)
-        console.log(`transform(rrange)===${Practice3.transform(rrange)}`)
+        console.log(`isblank: [${Practice3.transform(rrange)}]`)
+        console.log(`isgood: [${Practice3.transform(rrange2)}]`)
+        console.log(`expected: [${expected}]`)
 
         /*----------------------------------------------------------------------
-        Learning Lesson: consuming an Iterable with a for-loop causes it to be
-        consumed and is not consumable again! Thus, transforming the values from
-        an Iterable into an array is almost critical for reusing those values.
+        Learning Lesson: consuming an Iterable with a for-loop (or even with an
+        Array.from) causes it to be consumed and is not consumable again! Thus,
+        transforming the values from an Iterable into an array is almost critical
+        for reusing those values.
         */
     }
     /**
@@ -101,7 +104,7 @@ export default class Practice3 {
         const start = 3
         const stop = 9
         const step = -1
-        const MAX_LOOPCOUNT = stop + 9
+        const MAX_LOOPCOUNT = stop + 59
         let loops = start
         const evilrange = Practice3.rangez(start, stop, step)
         for (const i of evilrange) {
