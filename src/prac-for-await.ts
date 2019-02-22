@@ -13,7 +13,7 @@ namespace EpicWebService {
      * Delay some async operation (useful for simulating slow async functions)
      * @param delay amount of time in milliseconds to delay; defaults to 3000
      */
-    export async function stall(delay: number = 3000): Promise<void> {
+    async function stall(delay: number = 3000): Promise<void> {
         return await new Promise(resolve => setTimeout(resolve, delay))
 
         //Credit for the above code goes to this online source:
@@ -25,9 +25,9 @@ namespace EpicWebService {
      * @param message debug message
      * @param delay time in ms to delay; defaults to 3000
      */
-    export async function debugLogAsync(message: string, delay = 3000): Promise<void> {
+    async function debugLogAsync(message: string, delay = 3000): Promise<void> {
         //Wrap the sync function debugFip around a function that creates a Promise
-        return await EpicWebService.stall(delay).then(() => {
+        return await stall(delay).then(() => {
             debugCount += 1
             debugFip(`${debugCount}: ${message}`)
             console.log(`${debugCount}: ${message}`)
@@ -35,22 +35,22 @@ namespace EpicWebService {
     }
 
     export async function fetchUser(message: string): Promise<string> {
-        return EpicWebService.debugLogAsync(message, 100).then(() => {
+        return debugLogAsync(message, 100).then(() => {
             return 'done fetchUser'
         })
     }
     export async function createUser(message: string): Promise<string> {
-        return EpicWebService.debugLogAsync(message, 200).then(() => {
+        return debugLogAsync(message, 200).then(() => {
             return 'done createUser'
         })
     }
     export async function deleteUser(message: string): Promise<string> {
-        return EpicWebService.debugLogAsync(message, 300).then(() => {
+        return debugLogAsync(message, 300).then(() => {
             return 'done deleteUser'
         })
     }
     export async function fetchAll(message: string): Promise<string> {
-        return EpicWebService.debugLogAsync(message, 400).then(() => {
+        return debugLogAsync(message, 400).then(() => {
             return 'done fetchAll'
         })
     }
