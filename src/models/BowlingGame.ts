@@ -115,7 +115,7 @@ export class BowlingGame {
         frame.set('bonus', []);
         frame.set('score', NaN);
         if (!this.validateFrame(frame)) {
-            debugFip(`***FATAL: frame is invalid; program should not continue`);
+            debugFip(`***frame is invalid`);
         }
         return frame;
     }
@@ -223,41 +223,25 @@ export class BowlingGame {
             const [frame, i, frames] = params;
             const type: FrameType = frame.get('type');
             const base: number[] = frame.get('base');
-            const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
-            let bonus: number[] = [];
-            let score: number;
-            switch (type) {
-                case FrameType.STRIKE:
-                    const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
-                    bonus = [...bonus1, ...bonus2].slice(0, type);
-                    score = Utility.sumApply([...base, ...bonus]);
-                    frame.set('bonus', bonus);
-                    frame.set('score', score);
-                    frame.set('hasBeenScored', true);
-                    break;
-                case FrameType.SPARE:
-                    bonus = bonus1.slice(0, type);
-                    score = Utility.sumApply([...base, ...bonus]);
-                    frame.set('bonus', bonus);
-                    frame.set('score', score);
-                    frame.set('hasBeenScored', true);
-                    break;
-                case FrameType.OPEN:
-                    score = Utility.sumApply(base);
-                    frame.set('score', score);
-                    frame.set('hasBeenScored', true);
-                    break;
-                case FrameType.TENTH:
-                    score = Utility.sumApply(base);
-                    frame.set('score', score);
-                    frame.set('hasBeenScored', true);
-                    break;
-                default:
-                    debugFip(`***unexpected FrameType: ${type}`);
-                    frame.set('score', 0);
-                    frame.set('hasBeenScored', false);
-                    break;
+            const isSpareOrStrike = type === FrameType.SPARE || type === FrameType.STRIKE;
+            const isOpenOrTenth = type === FrameType.OPEN || type === FrameType.TENTH;
+            if (!isSpareOrStrike && !isOpenOrTenth) {
+                debugFip(`***unexpected FrameType: ${type}`);
+                frame.set('score', 0);
+                frame.set('hasBeenScored', false);
+                //Continue the foreach loop
+                return;
             }
+            let score = Utility.sum(...base);
+            if (isSpareOrStrike) {
+                const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+                const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
+                const bonus = [...bonus1, ...bonus2].slice(0, type);
+                frame.set('bonus', bonus);
+                score = Utility.sum(...base, ...bonus);
+            }
+            frame.set('score', score);
+            frame.set('hasBeenScored', true);
         });
     }
     /**

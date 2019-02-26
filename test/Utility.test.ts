@@ -21,6 +21,11 @@ describe("Utility", () => {
         it("params: (1, 3, 5)", () => {
             expect(Utility.sum(1, 3, 5)).to.equal(9);
         });
+        it("params: (...arr1, ...arr2)", () => {
+            const arr1 = [1, 2, 3];
+            const arr2 = [4, 5, 6];
+            expect(Utility.sum(...arr1, ...arr2)).to.equal(21);
+        });
     });
     describe("#sumApply", () => {
         it("params: (1, 2)", () => {
@@ -37,6 +42,11 @@ describe("Utility", () => {
         });
         it("params: (4, 4, -8)", () => {
             expect(Utility.sumApply([4, 4, -8])).to.equal(0);
+        });
+        it("params: ([...arr1, ...arr2])", () => {
+            const arr1 = [1, 2, 3];
+            const arr2 = [4, 5, 6];
+            expect(Utility.sumApply([...arr1, ...arr2])).to.equal(21);
         });
     });
     describe("#sum, #sumApply (iterations)", () => {
