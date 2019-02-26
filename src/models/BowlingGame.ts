@@ -1,21 +1,32 @@
 import debug from 'debug';
-import { Frame } from './Frame';
-import { StrikeFrame } from './StrikeFrame';
-import { SpareFrame } from './SpareFrame';
-import { OpenFrame } from './OpenFrame';
-import { TenthFrame } from './TenthFrame';
+// import { Frame } from './Frame';
+// import { StrikeFrame } from './StrikeFrame';
+// import { SpareFrame } from './SpareFrame';
+// import { OpenFrame } from './OpenFrame';
+// import { TenthFrame } from './TenthFrame';
 import { BowlingGameError } from './BowlingGameError';
 
 const debugFip = debug("src:BowlingGame");
+
+/**
+ * Define enum to determine how many bonus rolls gets added.
+ */
+export enum FrameType {
+    OPEN = 0,
+    SPARE,
+    STRIKE,
+    TENTH
+}
 
 /**
  * Class represents a BowlingGame
  */
 export class BowlingGame {
     /**
-     * Represents all frames for a bowling game
+     * Represents all frames for a bowling game (use array of hashmaps)
      */
-    private frames: Frame[];
+    private frames: Map<string, any>[];
+
     /**
      * Represents the accumlated scores for each frame of the game
      */
@@ -33,10 +44,12 @@ export class BowlingGame {
      * @param secondThrow the second throw in the frame
      */
     public open(firstThrow: number, secondThrow: number): void {
-        const frame = new OpenFrame(firstThrow, secondThrow);
-        if (frame.validateThrows()) {
-            this.frames.push(frame);
-        }
+        const base = [firstThrow, secondThrow];
+        const frame = new Map<string, any>();
+        frame.set('type', FrameType.OPEN);
+        frame.set('base', base);
+        frame.set('hasBeenScored', false);
+        this.frames.push(frame);
     }
     /**
      * Method for a player bowling a spare frame. Throws errors if first throw is
@@ -44,19 +57,23 @@ export class BowlingGame {
      * @param firstThrow the first throw in the frame
      */
     public spare(firstThrow: number): void {
-        const spare = new SpareFrame(firstThrow);
-        if (spare.validateThrows()) {
-            this.frames.push(spare);
-        }
+        const base = [firstThrow, 10 - firstThrow];
+        const frame = new Map<string, any>();
+        frame.set('type', FrameType.SPARE);
+        frame.set('base', base);
+        frame.set('hasBeenScored', false);
+        this.frames.push(frame);
     }
     /**
      * Method for a player bowling a strike
      */
     public strike(): void {
-        const strike = new StrikeFrame();
-        if (strike.validateThrows()) {
-            this.frames.push(strike);
-        }
+        const base = [10];
+        const frame = new Map<string, any>();
+        frame.set('type', FrameType.SPARE);
+        frame.set('base', base);
+        frame.set('hasBeenScored', false);
+        this.frames.push(frame);
     }
     /**
      * Method for a player bowling the extra throws in the 10th frame. Throws
@@ -70,10 +87,11 @@ export class BowlingGame {
         const first = [throw1, throw2];
         //Concat throw3 only if it is defined
         const all = throw3!==undefined ? [...first, throw3] : first;
-        const tenth = new TenthFrame(...all);
-        if (tenth.validateThrows()) {
-            this.frames.push(tenth);
-        }
+        const frame = new Map<string, any>();
+        frame.set('type', FrameType.SPARE);
+        frame.set('base', all);
+        frame.set('hasBeenScored', false);
+        this.frames.push(frame);
     }
     /**
      * Gets the score for any frame of the game (ranges from 1 to 10). Throws
@@ -130,10 +148,12 @@ export class BowlingGame {
     private cannotScoreYet(): boolean {
         const f = this.frames;
         const fc = this.frames.length;
+        const t0: FrameType = f[0].get('type');
+        const t1: FrameType = f[1].get('type');
         const violations = [
-            fc === 2 && f[0] instanceof StrikeFrame && f[1] instanceof StrikeFrame,
-            fc === 1 && f[0] instanceof StrikeFrame,
-            fc === 1 && f[0] instanceof SpareFrame,
+            fc === 2 && t0 === FrameType.SPARE && t1 === FrameType.STRIKE,
+            fc === 1 && t0 === FrameType.STRIKE,
+            fc === 1 && t0 === FrameType.SPARE,
         ];
         return violations.some(v => !!v);
     }
@@ -142,25 +162,27 @@ export class BowlingGame {
      * Set the bonusThrows for each frame
      */
     private setBonusThrowsPerFrame(): void {
-        const getBaseThrowsOrEmpty = (frame: Frame): number[] => {
-            return !!frame ? frame.baseThrows : [];
+        const getBaseThrowsOrEmpty = (frame: Map<string, any>): number[] => {
+            const base: number[] = frame.get('base');
+            return !!base ? base : [];
         }
         //Set the bonus for each frame (especially unscored frames)
-        this.frames.filter(f => !f.hasBeenScored).map((...params) => {
+        this.frames.filter(f => !f.get('hasBeenScored')).map((...params) => {
             const [ frame, i, frames ] = params;
             const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+            const type: FrameType = frame.get('type');
             let bonus: number[] = [];
-            if (frame instanceof StrikeFrame) {
+            if (type === FrameType.STRIKE) {
                 const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
                 bonus = [...bonus1, ...bonus2];
             }
-            else if (frame instanceof SpareFrame) {
+            else if (type === FrameType.SPARE) {
                 bonus = bonus1;
             }
             return { frame, bonus };
         }).forEach(fb => {
             const { frame, bonus } = fb;
-            frame.setBonusThrows(...bonus);
+            frame.set('bonus', bonus);
         });
     }
     /**
@@ -174,6 +196,8 @@ export class BowlingGame {
         }
         let total: number = 0;
         const cumulatives = this.frames.map(frame => {
+            // TODO: calculate the score here
+            throw new Error(`notyetimplemented`)
             total += frame.score;
             return total;
         });
