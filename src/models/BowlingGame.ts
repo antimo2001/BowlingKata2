@@ -112,7 +112,6 @@ export class BowlingGame {
         frame.set('canScore', false);
         frame.set('hasBeenScored', false);
         frame.set('base', base);
-        frame.set('bonus', []);
         frame.set('score', NaN);
         if (!this.validateFrame(frame)) {
             debugFip(`***frame is invalid`);
@@ -215,7 +214,7 @@ export class BowlingGame {
      * Set the bonus and the score for each frame
      */
     private setBonusThrowsPerFrame(): void {
-        const getBaseThrowsOrEmpty = (frame: Map<string, any>): number[] => {
+        const getBase = (frame: Map<string, any>): number[] => {
             return (!!frame ? frame.get('base') : []);
         }
         //Set the bonus for each frame (especially unscored frames)
@@ -234,10 +233,10 @@ export class BowlingGame {
             }
             let score = Utility.sum(...base);
             if (isSpareOrStrike) {
-                const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
-                const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
-                const bonus = [...bonus1, ...bonus2].slice(0, type);
-                frame.set('bonus', bonus);
+                let b1 = getBase(frames[i + 1]);
+                let b2 = type === FrameType.STRIKE ? getBase(frames[i + 2]) : [];
+                //Calculate the bonus of this strike or spare using the enum value
+                let bonus = [...b1, ...b2].slice(0, type);
                 score = Utility.sum(...base, ...bonus);
             }
             frame.set('score', score);
