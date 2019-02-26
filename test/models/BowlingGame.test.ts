@@ -541,13 +541,13 @@ describe("BowlingGame", () => {
             expect(evilfunc).to.throw(rxError);
         }
         it("errors when negative pins", () => {
-            assertError(/throw cannot be negative/, -1, 2, 3);
+            assertError(/throw cannot be negative/, -1, 1);
         });
         it("errors when negative pins (part 2)", () => {
-            assertError(/throw cannot be negative/, 1, -2, 3);
+            assertError(/throw cannot be negative/, 2, -2);
         });
         it("errors when negative pins (part 3)", () => {
-            assertError(/throw cannot be negative/, 1, 2, -3);
+            assertError(/throw cannot be negative/, 3, 7, -3);
         });
         it("errors when 3rd throw is required", () => {
             assertError(/the 3rd throw cannot be undefined/, 5, 5);
