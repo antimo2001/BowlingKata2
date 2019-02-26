@@ -4,18 +4,18 @@ import debug from 'debug';
 // import { SpareFrame } from './SpareFrame';
 // import { OpenFrame } from './OpenFrame';
 // import { TenthFrame } from './TenthFrame';
+import { Utility } from '../Utility';
 import { BowlingGameError } from './BowlingGameError';
 
-const debugFip = debug("src:BowlingGame");
+const debugFip = debug("fip01:src:BowlingGame");
 
 /**
- * Define enum to determine how many bonus rolls gets added.
+ * Define enum to represent a bowling game's frame.
  */
-export enum FrameType {
+const enum FrameType {
     OPEN = 0,
     SPARE,
     STRIKE,
-    TENTH
 }
 
 /**
@@ -24,7 +24,6 @@ export enum FrameType {
 export class BowlingGame {
     /**
      * Represents all frames for a bowling game (use array of hashmaps)
-     * TODO: can i reuse the same BowlingGame unit tests?
      */
     private frames: Map<string, any>[];
 
@@ -46,10 +45,7 @@ export class BowlingGame {
      */
     public open(firstThrow: number, secondThrow: number): void {
         const base = [firstThrow, secondThrow];
-        const frame = new Map<string, any>();
-        frame.set('type', FrameType.OPEN);
-        frame.set('base', base);
-        frame.set('hasBeenScored', false);
+        const frame = this.constructFrame(FrameType.OPEN, base);
         this.frames.push(frame);
     }
     /**
@@ -59,21 +55,14 @@ export class BowlingGame {
      */
     public spare(firstThrow: number): void {
         const base = [firstThrow, 10 - firstThrow];
-        const frame = new Map<string, any>();
-        frame.set('type', FrameType.SPARE);
-        frame.set('base', base);
-        frame.set('hasBeenScored', false);
+        const frame = this.constructFrame(FrameType.SPARE, base);
         this.frames.push(frame);
     }
     /**
      * Method for a player bowling a strike
      */
     public strike(): void {
-        const base = [10];
-        const frame = new Map<string, any>();
-        frame.set('type', FrameType.SPARE);
-        frame.set('base', base);
-        frame.set('hasBeenScored', false);
+        const frame = this.constructFrame(FrameType.STRIKE, [10]);
         this.frames.push(frame);
     }
     /**
@@ -88,10 +77,7 @@ export class BowlingGame {
         const first = [throw1, throw2];
         //Concat throw3 only if it is defined
         const all = throw3!==undefined ? [...first, throw3] : first;
-        const frame = new Map<string, any>();
-        frame.set('type', FrameType.SPARE);
-        frame.set('base', all);
-        frame.set('hasBeenScored', false);
+        const frame = this.constructFrame(FrameType.OPEN, all);
         this.frames.push(frame);
     }
     /**
@@ -115,6 +101,22 @@ export class BowlingGame {
     public score(): number {
         this.updateScoresPerFrame();
         return this.scores[this.scores.length - 1];
+    }
+
+    /**
+     * Initialize a frame hashmap thing
+     * @param type FrameType
+     * @param base the base throws to initialize the frame
+     */
+    private constructFrame(type: FrameType, base: number[]): Map<string, any> {
+        let frame = new Map<string, any>();
+        frame.set('type', type);
+        frame.set('canScore', false);
+        frame.set('hasBeenScored', false);
+        frame.set('base', base);
+        frame.set('bonus', []);
+        frame.set('score', NaN);
+        return frame;
     }
 
     /**
@@ -149,10 +151,10 @@ export class BowlingGame {
     private cannotScoreYet(): boolean {
         const f = this.frames;
         const fc = this.frames.length;
-        const t0: FrameType = f[0].get('type');
-        const t1: FrameType = f[1].get('type');
+        const t0: FrameType = !!f[0] ? f[0].get('type') : null;
+        const t1: FrameType = !!f[1] ? f[1].get('type') : null;
         const violations = [
-            fc === 2 && t0 === FrameType.SPARE && t1 === FrameType.STRIKE,
+            fc === 2 && t0 === FrameType.STRIKE && t1 === FrameType.STRIKE,
             fc === 1 && t0 === FrameType.STRIKE,
             fc === 1 && t0 === FrameType.SPARE,
         ];
@@ -164,26 +166,47 @@ export class BowlingGame {
      */
     private setBonusThrowsPerFrame(): void {
         const getBaseThrowsOrEmpty = (frame: Map<string, any>): number[] => {
-            const base: number[] = frame.get('base');
-            return !!base ? base : [];
+            return (!!frame ? frame.get('base') : []);
         }
         //Set the bonus for each frame (especially unscored frames)
-        this.frames.filter(f => !f.get('hasBeenScored')).map((...params) => {
-            const [ frame, i, frames ] = params;
-            const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
+        this.frames.forEach((frame, i, frames) => {
+            const hasBeenScored: boolean = frame.get('hasBeenScored');
+            if (hasBeenScored) {
+                debugFip(`Continue foreach loop: ${i}`);
+                return;
+            }
             const type: FrameType = frame.get('type');
+            const base: number[] = frame.get('base');
+            const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
             let bonus: number[] = [];
-            if (type === FrameType.STRIKE) {
-                const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
-                bonus = [...bonus1, ...bonus2];
+            let score: number;
+            switch (type) {
+                case FrameType.STRIKE:
+                    const bonus2 = getBaseThrowsOrEmpty(frames[i + 2]);
+                    bonus = [...bonus1, ...bonus2].slice(0, type);
+                    score = Utility.sumApply([...base, ...bonus]);
+                    frame.set('bonus', bonus);
+                    frame.set('score', score);
+                    frame.set('hasBeenScored', true);
+                    break;
+                case FrameType.SPARE:
+                    bonus = bonus1.slice(0, type);
+                    score = Utility.sumApply([...base, ...bonus]);
+                    frame.set('bonus', bonus);
+                    frame.set('score', score);
+                    frame.set('hasBeenScored', true);
+                    break;
+                case FrameType.OPEN:
+                    score = Utility.sumApply(base);
+                    frame.set('score', score);
+                    frame.set('hasBeenScored', true);
+                    break;
+                default:
+                    debugFip(`***unexpected FrameType: ${type}`);
+                    frame.set('score', 0);
+                    frame.set('hasBeenScored', false);
+                    break;
             }
-            else if (type === FrameType.SPARE) {
-                bonus = bonus1;
-            }
-            return { frame, bonus };
-        }).forEach(fb => {
-            const { frame, bonus } = fb;
-            frame.set('bonus', bonus);
         });
     }
     /**
@@ -197,9 +220,10 @@ export class BowlingGame {
         }
         let total: number = 0;
         const cumulatives = this.frames.map(frame => {
-            // TODO: calculate the score here
-            throw new Error(`notyetimplemented`)
-            total += frame.score;
+            if (frame.get('hasBeenScored')) {
+                const score: number = frame.get('score');
+                total += score;
+            }
             return total;
         });
         debugFip(`cumulatives===${cumulatives}`);
