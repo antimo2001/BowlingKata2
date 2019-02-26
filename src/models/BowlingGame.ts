@@ -24,6 +24,7 @@ export enum FrameType {
 export class BowlingGame {
     /**
      * Represents all frames for a bowling game (use array of hashmaps)
+     * TODO: can i reuse the same BowlingGame unit tests?
      */
     private frames: Map<string, any>[];
 
