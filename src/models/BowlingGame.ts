@@ -1,13 +1,8 @@
 import debug from 'debug';
-// import { Frame } from './Frame';
-// import { StrikeFrame } from './StrikeFrame';
-// import { SpareFrame } from './SpareFrame';
-// import { OpenFrame } from './OpenFrame';
-// import { TenthFrame } from './TenthFrame';
 import { Utility } from '../Utility';
 import { BowlingGameError } from './BowlingGameError';
 
-const debugFip = debug("fip01:src:BowlingGame");
+const debugFip = debug("src:BowlingGame");
 
 /**
  * Define enum to represent a bowling game's frame.
@@ -16,6 +11,7 @@ const enum FrameType {
     OPEN = 0,
     SPARE,
     STRIKE,
+    TENTH,
 }
 
 /**
@@ -77,7 +73,7 @@ export class BowlingGame {
         const first = [throw1, throw2];
         //Concat throw3 only if it is defined
         const all = throw3!==undefined ? [...first, throw3] : first;
-        const frame = this.constructFrame(FrameType.OPEN, all);
+        const frame = this.constructFrame(FrameType.TENTH, all);
         this.frames.push(frame);
     }
     /**
@@ -103,8 +99,10 @@ export class BowlingGame {
         return this.scores[this.scores.length - 1];
     }
 
+    // #region Private Methods
+
     /**
-     * Initialize a frame hashmap thing
+     * Initializes a frame; also verifies if the frame is valid
      * @param type FrameType
      * @param base the base throws to initialize the frame
      */
@@ -116,9 +114,62 @@ export class BowlingGame {
         frame.set('base', base);
         frame.set('bonus', []);
         frame.set('score', NaN);
+        if (!this.validateFrame(frame)) {
+            debugFip(`***FATAL: frame is invalid; program should not continue`);
+        }
         return frame;
     }
+    /**
+     * Raise errors if the frame is invalid. Returns true if it is ok.
+     * @param frame the hashmap to validate against certain rules
+     */
+    private validateFrame(frame: Map<string, any>): boolean {
+        const type: FrameType = frame.get('type');
+        const base: number[] = frame.get('base');
+        const MAX_PINS = 10;
+        let msg: string;
+        if (base.some(n => isNaN(n))) {
+            msg = `throw cannot be NaN`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (type === FrameType.SPARE) {
+            if (base[0] >= MAX_PINS) {
+                msg = `first throw of a spare cannot exceed ${MAX_PINS} pins`;
+                debugFip(msg);
+                throw new BowlingGameError(msg);
+            }
+        }
+        if (type === FrameType.OPEN) {
+            const [firstThrow, secondThrow] = base;
+            if (firstThrow + secondThrow >= MAX_PINS) {
+                msg = `2 throws cannot exceed ${MAX_PINS} pins`;
+                debugFip(msg);
+                throw new BowlingGameError(msg);
+            }
+        }
+        if (type === FrameType.TENTH) {
+            const [t1, t2, t3] = base;
+            if (t1 + t2 >= MAX_PINS && t3 === undefined) {
+                msg = `the 3rd throw cannot be undefined`;
+                debugFip(msg);
+                throw new BowlingGameError(msg);
+            }
+            if (t1 + t2 < MAX_PINS && t3 !== undefined) {
+                msg = `the 3rd throw is not allowed since first throws are too low`;
+                debugFip(msg);
+                throw new BowlingGameError(msg);
+            }
+        }
+        if (base.some(t => t < 0)) {
+            msg = `throw cannot be negative`;
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
 
+        //No errors, so return true
+        return true;
+    }
     /**
      * Update the accumlated scores for this game
      */
@@ -160,21 +211,16 @@ export class BowlingGame {
         ];
         return violations.some(v => !!v);
     }
-
     /**
-     * Set the bonusThrows for each frame
+     * Set the bonus and the score for each frame
      */
     private setBonusThrowsPerFrame(): void {
         const getBaseThrowsOrEmpty = (frame: Map<string, any>): number[] => {
             return (!!frame ? frame.get('base') : []);
         }
         //Set the bonus for each frame (especially unscored frames)
-        this.frames.forEach((frame, i, frames) => {
-            const hasBeenScored: boolean = frame.get('hasBeenScored');
-            if (hasBeenScored) {
-                debugFip(`Continue foreach loop: ${i}`);
-                return;
-            }
+        this.frames.filter(f => !f.get('hasBeenScored')).forEach((...params) => {
+            const [frame, i, frames] = params;
             const type: FrameType = frame.get('type');
             const base: number[] = frame.get('base');
             const bonus1 = getBaseThrowsOrEmpty(frames[i + 1]);
@@ -197,6 +243,11 @@ export class BowlingGame {
                     frame.set('hasBeenScored', true);
                     break;
                 case FrameType.OPEN:
+                    score = Utility.sumApply(base);
+                    frame.set('score', score);
+                    frame.set('hasBeenScored', true);
+                    break;
+                case FrameType.TENTH:
                     score = Utility.sumApply(base);
                     frame.set('score', score);
                     frame.set('hasBeenScored', true);
@@ -229,4 +280,7 @@ export class BowlingGame {
         debugFip(`cumulatives===${cumulatives}`);
         return cumulatives;
     }
+
+    // #endregion Private Methods
+
 }

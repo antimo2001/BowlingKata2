@@ -46,7 +46,7 @@ class TestSubject {
     }
 }
 
-xdescribe("BowlingGameAsync", () => {
+describe("BowlingGameAsync", () => {
     let test: TestSubject;
 
     beforeEach(() => {
@@ -283,10 +283,10 @@ xdescribe("BowlingGameAsync", () => {
             await assertError(-1, 1);
         });
         it("shows error when negative throws (part 2)", async () => {
-            await assertError(2, -2, 0);
+            await assertError(2, -2);
         });
         it("shows error when negative throws (part 3)", async () => {
-            await assertError(3, 2, -4);
+            await assertError(3, 7, -3);
         });
     });
 
