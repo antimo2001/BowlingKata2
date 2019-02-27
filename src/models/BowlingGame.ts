@@ -126,44 +126,35 @@ export class BowlingGame {
         const type: FrameType = frame.get('type');
         const base: number[] = frame.get('base');
         const MAX_PINS = 10;
-        let msg: string;
-        if (base.some(n => isNaN(n))) {
-            msg = `throw cannot be NaN`;
+        const raiseError = (msg: string) => {
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
+        if (base.some(n => isNaN(n))) {
+            raiseError(`throw cannot be NaN`);
+        }
         if (type === FrameType.SPARE) {
             if (base[0] >= MAX_PINS) {
-                msg = `first throw of a spare cannot exceed ${MAX_PINS} pins`;
-                debugFip(msg);
-                throw new BowlingGameError(msg);
+                raiseError(`first throw of a spare cannot exceed ${MAX_PINS} pins`);
             }
         }
         if (type === FrameType.OPEN) {
             const [firstThrow, secondThrow] = base;
             if (firstThrow + secondThrow >= MAX_PINS) {
-                msg = `2 throws cannot exceed ${MAX_PINS} pins`;
-                debugFip(msg);
-                throw new BowlingGameError(msg);
+                raiseError(`2 throws cannot exceed ${MAX_PINS} pins`);
             }
         }
         if (type === FrameType.TENTH) {
             const [t1, t2, t3] = base;
             if (t1 + t2 >= MAX_PINS && t3 === undefined) {
-                msg = `the 3rd throw cannot be undefined`;
-                debugFip(msg);
-                throw new BowlingGameError(msg);
+                raiseError(`the 3rd throw cannot be undefined`);
             }
             if (t1 + t2 < MAX_PINS && t3 !== undefined) {
-                msg = `the 3rd throw is not allowed since first throws are too low`;
-                debugFip(msg);
-                throw new BowlingGameError(msg);
+                raiseError(`the 3rd throw is not allowed since first throws are too low`);
             }
         }
         if (base.some(t => t < 0)) {
-            msg = `throw cannot be negative`;
-            debugFip(msg);
-            throw new BowlingGameError(msg);
+            raiseError(`throw cannot be negative`);
         }
 
         //No errors, so return true
