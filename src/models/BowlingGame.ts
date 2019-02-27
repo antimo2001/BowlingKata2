@@ -41,7 +41,7 @@ export class BowlingGame {
      */
     public open(firstThrow: number, secondThrow: number): void {
         const base = [firstThrow, secondThrow];
-        const frame = this.constructFrame(FrameType.OPEN, base);
+        const frame = FrameUtil.construct(FrameType.OPEN, base);
         this.frames.push(frame);
     }
     /**
@@ -51,14 +51,14 @@ export class BowlingGame {
      */
     public spare(firstThrow: number): void {
         const base = [firstThrow, 10 - firstThrow];
-        const frame = this.constructFrame(FrameType.SPARE, base);
+        const frame = FrameUtil.construct(FrameType.SPARE, base);
         this.frames.push(frame);
     }
     /**
      * Method for a player bowling a strike
      */
     public strike(): void {
-        const frame = this.constructFrame(FrameType.STRIKE, [10]);
+        const frame = FrameUtil.construct(FrameType.STRIKE, [10]);
         this.frames.push(frame);
     }
     /**
@@ -73,7 +73,7 @@ export class BowlingGame {
         const first = [throw1, throw2];
         //Concat throw3 only if it is defined
         const all = throw3!==undefined ? [...first, throw3] : first;
-        const frame = this.constructFrame(FrameType.TENTH, all);
+        const frame = FrameUtil.construct(FrameType.TENTH, all);
         this.frames.push(frame);
     }
     /**
@@ -101,65 +101,6 @@ export class BowlingGame {
 
     // #region Private Methods
 
-    /**
-     * Initializes a frame; also verifies if the frame is valid
-     * @param type FrameType
-     * @param base the base throws to initialize the frame
-     */
-    private constructFrame(type: FrameType, base: number[]): Map<string, any> {
-        let frame = new Map<string, any>();
-        frame.set('type', type);
-        frame.set('canScore', false);
-        frame.set('hasBeenScored', false);
-        frame.set('base', base);
-        frame.set('score', NaN);
-        if (!this.validateFrame(frame)) {
-            debugFip(`***frame is invalid`);
-        }
-        return frame;
-    }
-    /**
-     * Raise errors if the frame is invalid. Returns true if it is ok.
-     * @param frame the hashmap to validate against certain rules
-     */
-    private validateFrame(frame: Map<string, any>): boolean {
-        const type: FrameType = frame.get('type');
-        const base: number[] = frame.get('base');
-        const MAX_PINS = 10;
-        const raiseError = (msg: string) => {
-            debugFip(msg);
-            throw new BowlingGameError(msg);
-        }
-        if (base.some(n => isNaN(n))) {
-            raiseError(`throw cannot be NaN`);
-        }
-        if (type === FrameType.SPARE) {
-            if (base[0] >= MAX_PINS) {
-                raiseError(`first throw of a spare cannot exceed ${MAX_PINS} pins`);
-            }
-        }
-        if (type === FrameType.OPEN) {
-            const [firstThrow, secondThrow] = base;
-            if (firstThrow + secondThrow >= MAX_PINS) {
-                raiseError(`2 throws cannot exceed ${MAX_PINS} pins`);
-            }
-        }
-        if (type === FrameType.TENTH) {
-            const [t1, t2, t3] = base;
-            if (t1 + t2 >= MAX_PINS && t3 === undefined) {
-                raiseError(`the 3rd throw cannot be undefined`);
-            }
-            if (t1 + t2 < MAX_PINS && t3 !== undefined) {
-                raiseError(`the 3rd throw is not allowed since first throws are too low`);
-            }
-        }
-        if (base.some(t => t < 0)) {
-            raiseError(`throw cannot be negative`);
-        }
-
-        //No errors, so return true
-        return true;
-    }
     /**
      * Update the accumlated scores for this game
      */
@@ -201,32 +142,6 @@ export class BowlingGame {
         ];
         return violations.some(v => !!v);
     }
-
-    /**
-     * Get the base throws from the given frame; returns [] if undefined
-     * @param frame the hashmap to get the base from
-     */
-    private getBase(frame: Map<string, any>): number[] {
-        return (!!frame ? frame.get('base') : []);
-    }
-    /**
-     * Verify the frame-type is a valid value; also sets the score to 0 and the
-     * hasBeenScored property to false
-     * @param frame the hashmap to verify the frame-type
-     */
-    private isTypeValid(frame: Map<string, any>): boolean {
-        const type: FrameType = frame.get('type');
-        const isValid = [FrameType.OPEN, 1, 2, 3].some(t => t === type);
-        if (!isValid) {
-            debugFip(`***unexpected FrameType: ${type}`);
-            frame.set('score', 0);
-            frame.set('hasBeenScored', false);
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
     /**
      * Set the bonus and the score for each frame
      */
@@ -236,20 +151,20 @@ export class BowlingGame {
         unscored.forEach((frame, i, frames) => {
             const type: FrameType = frame.get('type');
             const base: number[] = frame.get('base');
-            if (!this.isTypeValid(frame)) {
+            if (!FrameUtil.isTypeValid(frame)) {
+                FrameUtil.setScore(frame, 0, false);
                 //Continue the foreach loop
                 return;
             }
             let score = Utility.sum(...base);
             if (type === FrameType.SPARE || type === FrameType.STRIKE) {
                 //Calculate the bonus of this strike or spare using the FrameType
-                let b1 = this.getBase(frames[i + 1]);
-                let b2 = type === FrameType.STRIKE ? this.getBase(frames[i + 2]) : [];
+                let b1 = FrameUtil.getBase(frames[i + 1]);
+                let b2 = type === FrameType.STRIKE ? FrameUtil.getBase(frames[i + 2]) : [];
                 let bonus = [...b1, ...b2].slice(0, type);
                 score = Utility.sum(...base, ...bonus);
             }
-            frame.set('score', score);
-            frame.set('hasBeenScored', true);
+            FrameUtil.setScore(frame, score, true);
         });
     }
     /**
@@ -275,4 +190,95 @@ export class BowlingGame {
 
     // #endregion Private Methods
 
+}
+
+/**
+ * This local class of static methods is for managing a frame
+ */
+class FrameUtil {
+    /**
+     * Initializes a frame; also verifies if the frame is valid
+     * @param type FrameType
+     * @param base the base throws to initialize the frame
+     */
+    static construct(type: FrameType, base: number[]): Map<string, any> {
+        let frame = new Map<string, any>();
+        frame.set('type', type);
+        frame.set('hasBeenScored', false);
+        frame.set('base', base);
+        frame.set('score', NaN);
+        if (!FrameUtil.validate(frame)) {
+            debugFip(`***frame is invalid`);
+        }
+        return frame;
+    }
+    /**
+     * Raise error if the frame is not valid; returns true if its ok
+     * @param frame the frame to validate
+     */
+    static validate(frame: Map<string, any>) {
+        const type: FrameType = frame.get('type');
+        const base: number[] = frame.get('base');
+        const MAX_PINS = 10;
+        const raiseError = (msg: string) => {
+            debugFip(msg);
+            throw new BowlingGameError(msg);
+        }
+        if (base.some(n => isNaN(n))) {
+            raiseError(`throw cannot be NaN`);
+        }
+        if (type === FrameType.SPARE) {
+            if (base[0] >= MAX_PINS) {
+                raiseError(`first throw of a spare cannot exceed ${MAX_PINS} pins`);
+            }
+        }
+        if (type === FrameType.OPEN) {
+            const [t1, t2] = base;
+            if (t1 + t2 >= MAX_PINS) {
+                raiseError(`2 throws cannot exceed ${MAX_PINS} pins`);
+            }
+        }
+        if (type === FrameType.TENTH) {
+            const [t1, t2, t3] = base;
+            if (t1 + t2 >= MAX_PINS && t3 === undefined) {
+                raiseError(`the 3rd throw cannot be undefined`);
+            }
+            if (t1 + t2 < MAX_PINS && t3 !== undefined) {
+                raiseError(`the 3rd throw is not allowed since first throws are too low`);
+            }
+        }
+        if (base.some(t => t < 0)) {
+            raiseError(`throw cannot be negative`);
+        }
+
+        //No errors, so return true
+        return true;
+    }
+    /**
+     * Get the base throws from the given frame; returns [] if undefined
+     * @param frame the hashmap to get the base from
+     */
+    static getBase(frame: Map<string, any>): number[] {
+        return (!!frame ? frame.get('base') : []);
+    }
+    /**
+     * Verify the frame-type is a valid value
+     * @param frame the hashmap to verify the frame-type
+     */
+    static isTypeValid(frame: Map<string, any>): boolean {
+        const type: FrameType = frame.get('type');
+        const isValid = [FrameType.OPEN, 1, 2, 3].some(t => t === type);
+        if (!isValid) {
+            debugFip(`***unexpected FrameType: ${type}`);
+        }
+        return isValid;
+    }
+    /**
+     * Set the score and hasBeenScore property of the given frame
+     * @param frame
+     */
+    static setScore(frame: Map<string, any>, score: number, hasBeenScored: boolean): void {
+        frame.set('score', score);
+        frame.set('hasBeenScored', hasBeenScored);
+    }
 }
