@@ -179,7 +179,7 @@ export class BowlingGame {
         }
 
         try {
-            this.setBonusThrowsPerFrame();
+            this.setFrameBonusAndScore();
         } catch (err) {
             debugFip(`***setBonusThrowsPerFrame() failed with error: ${err}`);
             throw err;
@@ -210,32 +210,50 @@ export class BowlingGame {
         ];
         return violations.some(v => !!v);
     }
+
+    /**
+     * Get the base throws from the given frame; returns [] if undefined
+     * @param frame the hashmap to get the base from
+     */
+    private getBase(frame: Map<string, any>): number[] {
+        return (!!frame ? frame.get('base') : []);
+    }
+    /**
+     * Verify the frame-type is a valid value; also sets the score to 0 and the
+     * hasBeenScored property to false
+     * @param frame the hashmap to verify the frame-type
+     */
+    private isTypeValid(frame: Map<string, any>): boolean {
+        const type: FrameType = frame.get('type');
+        const isValid = [FrameType.OPEN, 1, 2, 3].some(t => t === type);
+        if (!isValid) {
+            debugFip(`***unexpected FrameType: ${type}`);
+            frame.set('score', 0);
+            frame.set('hasBeenScored', false);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     /**
      * Set the bonus and the score for each frame
      */
-    private setBonusThrowsPerFrame(): void {
-        const getBase = (frame: Map<string, any>): number[] => {
-            return (!!frame ? frame.get('base') : []);
-        }
+    private setFrameBonusAndScore(): void {
         //Set the bonus for each frame (especially unscored frames)
-        this.frames.filter(f => !f.get('hasBeenScored')).forEach((...params) => {
-            const [frame, i, frames] = params;
+        const unscored = this.frames.filter(f => !f.get('hasBeenScored'));
+        unscored.forEach((frame, i, frames) => {
             const type: FrameType = frame.get('type');
             const base: number[] = frame.get('base');
-            const isSpareOrStrike = type === FrameType.SPARE || type === FrameType.STRIKE;
-            const isOpenOrTenth = type === FrameType.OPEN || type === FrameType.TENTH;
-            if (!isSpareOrStrike && !isOpenOrTenth) {
-                debugFip(`***unexpected FrameType: ${type}`);
-                frame.set('score', 0);
-                frame.set('hasBeenScored', false);
+            if (!this.isTypeValid(frame)) {
                 //Continue the foreach loop
                 return;
             }
             let score = Utility.sum(...base);
-            if (isSpareOrStrike) {
-                let b1 = getBase(frames[i + 1]);
-                let b2 = type === FrameType.STRIKE ? getBase(frames[i + 2]) : [];
-                //Calculate the bonus of this strike or spare using the enum value
+            if (type === FrameType.SPARE || type === FrameType.STRIKE) {
+                //Calculate the bonus of this strike or spare using the FrameType
+                let b1 = this.getBase(frames[i + 1]);
+                let b2 = type === FrameType.STRIKE ? this.getBase(frames[i + 2]) : [];
                 let bonus = [...b1, ...b2].slice(0, type);
                 score = Utility.sum(...base, ...bonus);
             }
