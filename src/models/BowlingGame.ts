@@ -5,16 +5,6 @@ import { BowlingGameError } from './BowlingGameError';
 const debugFip = debug("src:BowlingGame");
 
 /**
- * Define enum to represent a bowling game's frame.
- */
-const enum FrameType {
-    OPEN = 0,
-    SPARE,
-    STRIKE,
-    TENTH,
-}
-
-/**
  * Class represents a BowlingGame
  */
 export class BowlingGame {
@@ -41,7 +31,7 @@ export class BowlingGame {
      */
     public open(firstThrow: number, secondThrow: number): void {
         const base = [firstThrow, secondThrow];
-        const frame = FrameUtil.construct(FrameType.OPEN, base);
+        const frame = FrameUtil.initialize(FrameType.OPEN, base);
         this.frames.push(frame);
     }
     /**
@@ -51,14 +41,14 @@ export class BowlingGame {
      */
     public spare(firstThrow: number): void {
         const base = [firstThrow, 10 - firstThrow];
-        const frame = FrameUtil.construct(FrameType.SPARE, base);
+        const frame = FrameUtil.initialize(FrameType.SPARE, base);
         this.frames.push(frame);
     }
     /**
      * Method for a player bowling a strike
      */
     public strike(): void {
-        const frame = FrameUtil.construct(FrameType.STRIKE, [10]);
+        const frame = FrameUtil.initialize(FrameType.STRIKE, [10]);
         this.frames.push(frame);
     }
     /**
@@ -73,7 +63,7 @@ export class BowlingGame {
         const first = [throw1, throw2];
         //Concat throw3 only if it is defined
         const all = throw3!==undefined ? [...first, throw3] : first;
-        const frame = FrameUtil.construct(FrameType.TENTH, all);
+        const frame = FrameUtil.initialize(FrameType.TENTH, all);
         this.frames.push(frame);
     }
     /**
@@ -149,16 +139,16 @@ export class BowlingGame {
         //Set the bonus for each frame (especially unscored frames)
         const unscored = this.frames.filter(f => !f.get('hasBeenScored'));
         unscored.forEach((frame, i, frames) => {
-            const type: FrameType = frame.get('type');
-            const base: number[] = frame.get('base');
             if (!FrameUtil.isTypeValid(frame)) {
                 FrameUtil.setScore(frame, 0, false);
-                //Continue the foreach loop
+                //Continue the foreach loop if unexpected type
                 return;
             }
+            const type: FrameType = frame.get('type');
+            const base: number[] = frame.get('base');
             let score = Utility.sum(...base);
             if (type === FrameType.SPARE || type === FrameType.STRIKE) {
-                //Calculate the bonus of this strike or spare using the FrameType
+                //Calculate the bonus of this spare or strike using the FrameType
                 let b1 = FrameUtil.getBase(frames[i + 1]);
                 let b2 = type === FrameType.STRIKE ? FrameUtil.getBase(frames[i + 2]) : [];
                 let bonus = [...b1, ...b2].slice(0, type);
@@ -193,15 +183,25 @@ export class BowlingGame {
 }
 
 /**
+ * Define enum to represent a bowling game's frame.
+ */
+const enum FrameType {
+    OPEN = 0,
+    SPARE = 1,
+    STRIKE = 2,
+    TENTH,
+}
+
+/**
  * This local class of static methods is for managing a frame
  */
 class FrameUtil {
     /**
      * Initializes a frame; also verifies if the frame is valid
-     * @param type FrameType
+     * @param type the FrameType enum to set the frame
      * @param base the base throws to initialize the frame
      */
-    static construct(type: FrameType, base: number[]): Map<string, any> {
+    static initialize(type: FrameType, base: number[]): Map<string, any> {
         let frame = new Map<string, any>();
         frame.set('type', type);
         frame.set('hasBeenScored', false);
