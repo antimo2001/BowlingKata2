@@ -179,7 +179,6 @@ export class BowlingGame {
     }
 
     // #endregion Private Methods
-
 }
 
 /**
@@ -220,7 +219,8 @@ class FrameUtil {
         const type: FrameType = frame.get('type');
         const base: number[] = frame.get('base');
         const MAX_PINS = 10;
-        const raiseError = (msg: string) => {
+        /** Helper function that raises a BowlingGameError */
+        const raiseError = (msg: string): never => {
             debugFip(msg);
             throw new BowlingGameError(msg);
         }
@@ -274,8 +274,10 @@ class FrameUtil {
         return isValid;
     }
     /**
-     * Set the score and hasBeenScore property of the given frame
-     * @param frame
+     * Set the score and hasBeenScored property of the given frame
+     * @param frame the hashmap to modify
+     * @param score the new score
+     * @param hasBeenScored the value to set the flag
      */
     static setScore(frame: Map<string, any>, score: number, hasBeenScored: boolean): void {
         frame.set('score', score);
