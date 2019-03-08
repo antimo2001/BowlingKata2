@@ -4,13 +4,8 @@
   "http.proxyStrictSSL": false,
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.cursorStyle": "block",
-  "triggerTaskOnSave.on": false,
-  "triggerTaskOnSave.tasks": {
-    "build": [
-      "**/**"
-    ],
-    "test": [
-      "**/**"
-    ]
+  "workbench.colorCustomizations": {
+    "terminal.foreground": "#00FD61",
+    "terminal.background": "#383737"
   }
 }
